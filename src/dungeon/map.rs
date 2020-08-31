@@ -6,15 +6,15 @@ pub enum TileType {
 #[derive(Default, Clone)]
 pub struct Map {
     pub tiles : Vec<TileType>,
-    pub width : i32,
-    pub height : i32,
+    pub width : usize,
+    pub height : usize,
 }
 
 impl Map {
 
     /// Generates an empty map, consisting entirely of solid walls
-    pub fn new(width: i32, height: i32) -> Map {
-        let map_tile_count = (width*height) as usize;
+    pub fn new(width: usize, height: usize) -> Map {
+        let map_tile_count = width*height;
         Map{
             tiles : vec![TileType::Wall; map_tile_count],
             width,
@@ -22,8 +22,8 @@ impl Map {
         }
     }
 
-    pub fn at(&self, x: i32, y: i32) -> TileType {
-        let idx = (y as usize * self.width as usize) + x as usize;
+    pub fn at(&self, x: usize, y: usize) -> TileType {
+        let idx = y * self.width + x;
         self.tiles[idx]
     }
 

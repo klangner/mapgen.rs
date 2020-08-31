@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/klangner/mapgen.rs.svg?branch=master)](https://travis-ci.org/klangner/mapgen.rs)
 [![Crates.io](https://img.shields.io/crates/v/mapgen.svg)](https://crates.io/crates/mapgen) 
-[![Crates.io](https://img.shields.io/crates/l/mapgen.svg)](https://github.com/klangner/mapgen.rs/blob/master/LICENSE-MIT)
 [![mapgen.rs](https://docs.rs/mapgen/badge.svg)](https://docs.rs/mapgen/)
 
 Generate procedural maps for games.

@@ -1,0 +1,15 @@
+[package]
+name = "mapgen-demo"
+version = "0.1.0"
+authors = ["Krzysztof Langner <klangner@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+amethyst = {version = "0.15", features = ["tiles", "no-slow-safety-checks"]}
+log = { version = "0.4.8", features = ["serde"] }
+mapgen = {path=".."}
+
+[features]
+default = ["metal"]
+metal = ["amethyst/metal"]
+vulkan = ["amethyst/vulkan"]
