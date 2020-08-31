@@ -7,16 +7,8 @@ keywords = ["game", "map", "map-generator"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/klangner/mapgen.rs"
 homepage = "https://github.com/klangner/mapgen.rs"
-documentation = "https://docs.rs/mapgen.rs"
+documentation = "https://docs.rs/mapgen"
 edition = "2018"
 
 [dependencies]
 log = { version = "0.4.8", features = ["serde"] }
-
-[dev-dependencies]
-amethyst = {version = "0.15", features = ["tiles", "no-slow-safety-checks"]}
-
-[features]
-default = ["metal"]
-metal = ["amethyst/metal"]
-vulkan = ["amethyst/vulkan"]
