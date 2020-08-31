@@ -22,11 +22,17 @@ impl Map {
         }
     }
 
+    /// Get TileType at the given location
     pub fn at(&self, x: usize, y: usize) -> TileType {
         let idx = y * self.width + x;
         self.tiles[idx]
     }
 
+    /// Modify tile at the given location
+    pub fn set_tile(&mut self, x: usize, y: usize, tile: TileType) {
+        let idx = y * self.width + x;
+        self.tiles[idx] = tile;
+    }
 }
 
 /// ------------------------------------------------------------------------------------------------

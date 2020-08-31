@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use amethyst::{
     assets::{AssetStorage, Loader},
     core::{
@@ -20,7 +21,9 @@ use amethyst::{
     winit,
 };
 use mapgen::dungeon::{
+    MapGenerator,
     map::{Map, TileType},
+    cellular_automata::CellularAutomataGen,
 };
 
 
@@ -63,16 +66,22 @@ fn init_camera(world: &mut World, transform: Transform, camera: Camera) -> Entit
         .build()
 }
 
+fn init_map(world: &mut World) {
+    let gen = CellularAutomataGen::new(80, 50);
+    let mut rng = StdRng::seed_from_u64(0);
+    let map = gen.generate_map(&mut rng);
+    world.insert(map); 
+}
+
 
 struct PlayState;
 impl SimpleState for PlayState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
 
-        let world = data.world;
+        let mut world = data.world;
         
         // Create map
-        let map = Map::new(80, 50);
-        world.insert(map);
+        init_map(&mut world);
 
         let map_sprite_sheet_handle =
             load_tiles_sprite_sheet(world, "texture/cp437_20x20.png", "texture/cp437_20x20.ron");
