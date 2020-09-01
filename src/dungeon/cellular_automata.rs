@@ -1,8 +1,35 @@
+//! Cellular automata map generator and modifier.
+//! 
+//! Check this [article](http://www.roguebasin.com/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels)
+//! for more information about the algorithm behind this generator.
+//! 
+//! Since this algorithm works in interations it is possible to take existing map 
+//! and apply single interaction to it. This is the idea behind MapModifier implementation.
+//! 
+//! Example generator usage:
+//! ```
+//! use rand::prelude::*;
+//! use mapgen::dungeon::{
+//!     MapGenerator,
+//!     cellular_automata::CellularAutomataGen
+//! };
+//! 
+//! let mut rng = StdRng::seed_from_u64(100);
+//! let gen = CellularAutomataGen::new(80, 50);
+//! let map = gen.generate_map(&mut rng);
+//! 
+//! assert_eq!(map.width, 80);
+//! assert_eq!(map.height, 50);
+//! ```
+//! 
+
+
 use rand::prelude::*;
 use super::{MapGenerator, MapModifier};
 use super::map::{Map, TileType};
 
 
+/// Map generator and modifier
 pub struct CellularAutomataGen {
     width: usize,
     height: usize
@@ -15,6 +42,7 @@ impl MapGenerator for CellularAutomataGen {
 }
 
 impl CellularAutomataGen {
+    /// Create generator which will create map with the given dimension.
     pub fn new(width: usize, height: usize) -> CellularAutomataGen {
         CellularAutomataGen {width, height}
     }

@@ -10,11 +10,58 @@ This library is based on the code from the [Roguelike tutorial](https://github.c
 I highly recommend it for learning how to write Roguelike in Rust.
 
 
+## Demo app
+
+If you want to check how the maps look like, then:
+  * Clone this rep
+  * Go to the demo folder
+  * Run demo app (`cargo run`)
+
+
 ## Features
 
 ### Dungeons
-  * [ ] Cellural automata
 
+  * Map generators
+    * [ ] BSP Interior
+    * [ ] BSP Room 
+    * [x] Cellular automata
+    * [ ] Diffusion-Limited Aggregation (DLA)
+    * [ ] Drunkard's walk
+    * [ ] Maze
+    * [ ] Prefabs
+    * [ ] Voronoi hive
+    * [ ] Wave Function Collapse
+  * Map modifiers (filters)
+    * [ ] Area exit point
+    * [ ] Area starting point
+    * [x] Cellular automata
+    * [ ] Cull unreachable areas
+    * [ ] Voronoi spawning
+
+
+## Usage
+
+Add dependency to your project
+```
+mapgen = "0.1"
+```
+
+Using single map generator:
+
+```rust
+use rand::prelude::*;
+use mapgen::dungeon::{
+    MapGenerator,
+    cellular_automata::CellularAutomataGen
+};
+
+let mut rng = StdRng::seed_from_u64(100);
+let gen = CellularAutomataGen::new(80, 50);
+let map = gen.generate_map(&mut rng)
+```
+
+For more information check the [doc](https://docs.rs/mapgen)
 
 # License
 
