@@ -98,7 +98,7 @@ impl SimpleState for PlayState {
         init_map(&mut world);
 
         let map_sprite_sheet_handle =
-            load_tiles_sprite_sheet(world, "texture/cp437_20x20.png", "texture/cp437_20x20.ron");
+            load_tiles_sprite_sheet(world, "texture/ascii.png", "texture/ascii.ron");
 
         let (width, height) = {
             let dim = world.read_resource::<ScreenDimensions>();
