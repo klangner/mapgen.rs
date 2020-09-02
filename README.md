@@ -34,7 +34,7 @@ If you want to check how the maps look like, then:
     * [ ] Wave Function Collapse
   * Map modifiers (filters)
     * [ ] Area exit point
-    * [ ] Area starting point
+    * [x] Area starting point
     * [x] Cellular automata
     * [ ] Cull unreachable areas
     * [ ] Voronoi spawning

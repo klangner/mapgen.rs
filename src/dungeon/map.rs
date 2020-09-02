@@ -9,14 +9,22 @@
 
 /// Position on the map
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
-pub struct Position {
+pub struct Point {
     x: usize,
     y: usize
 }
 
-impl Position {
-    pub fn new(x: usize, y: usize) -> Position {
-        Position {x, y}
+impl Point {
+    /// Create new point
+    pub fn new(x: usize, y: usize) -> Point {
+        Point {x, y}
+    }
+
+    /// Euclidean distance to a given point
+    pub fn distance_to(self, point: &Point) -> f32 {
+        let a = (self.x as f32 - point.x as f32).powf(2.0);
+        let b = (self.y as f32 - point.y as f32).powf(2.0);
+        (a + b).sqrt()
     }
 }
 
@@ -32,8 +40,8 @@ pub struct Map {
     pub tiles : Vec<TileType>,
     pub width : usize,
     pub height : usize,
-    pub starting_point: Option<Position>,
-    pub exit_point: Option<Position>
+    pub starting_point: Option<Point>,
+    pub exit_point: Option<Point>
 }
 
 impl Map {
@@ -69,6 +77,14 @@ impl Map {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_distance() {
+        let p1 = Point::new(10, 10);
+        let p2 = Point::new(14, 7);
+        let distance = p1.distance_to(&p2);
+        assert_eq!(distance, 5.0);
+    }
 
     #[test]
     fn test_new_map() {

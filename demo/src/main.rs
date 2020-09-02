@@ -1,4 +1,3 @@
-use rand::prelude::*;
 use amethyst::{
     assets::{AssetStorage, Loader},
     core::{
@@ -14,6 +13,7 @@ use amethyst::{
         sprite::{SpriteSheet, SpriteSheetFormat, SpriteSheetHandle},
         types::DefaultBackend,
         RenderFlat2D, RenderToWindow, RenderingBundle, Texture,
+        palette::Srgba,
     },
     tiles::{MortonEncoder, RenderTiles2D, Tile, TileMap},
     utils::application_root_dir,
@@ -21,9 +21,10 @@ use amethyst::{
     winit,
 };
 use mapgen::dungeon::{
-    MapGenerator,
-    map::{Map, TileType},
+    MapBuilder,
+    map::{Map, Point, TileType},
     cellular_automata::CellularAutomataGen,
+    starting_point::{AreaStartingPosition, XStart, YStart},
 };
 
 
@@ -33,10 +34,23 @@ struct MapTiles ;
 impl Tile for MapTiles {
     fn sprite(&self, p: Point3<u32>, world: &World) -> Option<usize> {
         let map = world.read_resource::<Map>();
-        if map.at(p.x as usize, p.y as usize) == TileType::Wall {
+        let player_pos = Point::new(p.x as usize, p.y as usize);
+        if map.starting_point == Some(player_pos) {
+            Some(64)
+        } else if map.at(p.x as usize, p.y as usize) == TileType::Wall {
             Some(35)
         } else {
             Some(46)
+        }
+    }
+
+    fn tint(&self, p: Point3<u32>, world: &World) -> Srgba {
+        let map = world.read_resource::<Map>();
+        let player_pos = Point::new(p.x as usize, p.y as usize);
+        if map.starting_point == Some(player_pos) {
+            Srgba::new(1.0, 1.0, 0.0, 1.0)
+        } else {
+            Srgba::new(1.0, 1.0, 1.0, 1.0)
         }
     }
 }
@@ -67,9 +81,9 @@ fn init_camera(world: &mut World, transform: Transform, camera: Camera) -> Entit
 }
 
 fn init_map(world: &mut World) {
-    let gen = CellularAutomataGen::new(80, 50);
-    let mut rng = StdRng::seed_from_u64(0);
-    let map = gen.generate_map(&mut rng);
+    let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+        .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+        .build_map();
     world.insert(map); 
 }
 

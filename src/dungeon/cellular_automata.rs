@@ -23,7 +23,6 @@
 //! ```
 //! 
 
-
 use rand::prelude::*;
 use super::{MapGenerator, MapModifier};
 use super::map::{Map, TileType};

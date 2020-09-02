@@ -6,10 +6,30 @@
 //! * MapGenerators are use to create initial map.
 //! * MapModifiers modify existing map.
 //! 
+//! Example
+//! ```
+//! use mapgen::dungeon::{
+//!     MapBuilder,
+//!     map::{Map, Point, TileType},
+//!     cellular_automata::CellularAutomataGen,
+//!     starting_point::{AreaStartingPosition, XStart, YStart},
+//! };
+//! 
+//! let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+//!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+//!             .build_map();
+//! 
+//! assert_eq!(map.width, 80);
+//! assert_eq!(map.height, 50);
+//! assert_eq!(map.starting_point.is_some(), true);
+//! ```
+//! 
 
 pub mod map;
 pub mod cellular_automata;
+pub mod starting_point;
 
+use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
 use map::Map;
 
@@ -34,16 +54,19 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
+    /// Create Map Builder with initial map generator
     pub fn new(generator : Box<dyn MapGenerator>) -> MapBuilder {
+        let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         MapBuilder { 
             generator, 
             modifiers: Vec::new(),
-            rng: StdRng::seed_from_u64(0)
+            rng: StdRng::seed_from_u64(system_time.as_secs())
         }
     }
 
-    pub fn with(&mut self, modifier : Box<dyn MapModifier>) {
+    pub fn with(&mut self, modifier : Box<dyn MapModifier>) -> &mut MapBuilder {
         self.modifiers.push(modifier);
+        self
     }
 
     pub fn build_map(&mut self) -> Map {
@@ -51,10 +74,31 @@ impl MapBuilder {
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
-            modifier.modify_map(&mut self.rng, &mut map);
+            map = modifier.modify_map(&mut self.rng, &map);
         }
 
         map
     }
 }
 
+/// ------------------------------------------------------------------------------------------------
+/// Module unit tests
+/// ------------------------------------------------------------------------------------------------
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cellular_automata::CellularAutomataGen;
+    use starting_point::{AreaStartingPosition, XStart, YStart};
+
+    #[test]
+    fn test_ca_map() {
+        let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .build_map();
+
+        assert_eq!(map.width, 80);
+        assert_eq!(map.height, 50);
+        assert_eq!(map.starting_point.is_some(), true);
+    }
+
+}
