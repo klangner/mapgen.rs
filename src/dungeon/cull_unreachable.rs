@@ -1,9 +1,16 @@
+//! Remove unreachable areas from the map.
+//! 
+//! This modifier reuires starting position on the map.
+//! It will add wall on every tile which is not accessible from the starting point.
+//! 
+
 use rand::prelude::StdRng;
 use super::MapModifier;
 use super::map::{Map, TileType};
 use super::dijkstra::DijkstraMap;
 
 
+/// Remove unreachable areas from the map.
 pub struct CullUnreachable {}
 
 impl MapModifier for CullUnreachable {
