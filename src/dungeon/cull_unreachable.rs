@@ -1,6 +1,6 @@
 //! Remove unreachable areas from the map.
 //! 
-//! This modifier reuires starting position on the map.
+//! This modifier reiquires starting position on the map.
 //! It will add wall on every tile which is not accessible from the starting point.
 //! 
 
