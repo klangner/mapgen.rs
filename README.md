@@ -36,7 +36,7 @@ If you want to check how the maps look like, then:
     * [ ] Area exit point
     * [x] Area starting point
     * [x] Cellular automata
-    * [ ] Cull unreachable areas
+    * [x] Cull unreachable areas
     * [ ] Voronoi spawning
 
 
@@ -59,6 +59,21 @@ use mapgen::dungeon::{
 let mut rng = StdRng::seed_from_u64(100);
 let gen = CellularAutomataGen::new(80, 50);
 let map = gen.generate_map(&mut rng)
+```
+
+Use MapBuilder for chaining map generator and modifiers
+
+```rust
+use mapgen::dungeon::{
+    MapBuilder,
+    map::{Map, Point, TileType},
+    cellular_automata::CellularAutomataGen,
+    starting_point::{AreaStartingPosition, XStart, YStart},
+};
+
+let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .build_map();
 ```
 
 For more information check the [doc](https://docs.rs/mapgen)

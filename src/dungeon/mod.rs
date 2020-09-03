@@ -27,7 +27,9 @@
 
 pub mod map;
 pub mod cellular_automata;
+pub mod cull_unreachable;
 pub mod starting_point;
+mod dijkstra;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;

@@ -7,11 +7,14 @@
 //! specific game.
 //! 
 
+use std::fmt;
+
+
 /// Position on the map
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Point {
-    x: usize,
-    y: usize
+    pub x: usize,
+    pub y: usize
 }
 
 impl Point {
@@ -58,16 +61,75 @@ impl Map {
         }
     }
 
+    /// Create map from given string
+    pub fn from_string(map_string: &str) -> Map {
+        let lines: Vec<&str> = map_string.split("\n")
+            .map(|l| l.trim())
+            .filter(|l| l.len() > 0)
+            .collect();
+        let cols = lines.iter().map(|l| l.len()).max().get_or_insert(1).to_owned();
+        let rows = lines.len();
+        let mut map = Map::new(cols, rows);
+
+        for i in 0..rows {
+            let line = lines[i].as_bytes();
+            for j in 0..line.len() {
+                if line[j] as char == ' ' {
+                    map.set_tile(j, i, TileType::Floor);
+                }
+            }
+        }
+        map
+    }
+
     /// Get TileType at the given location
     pub fn at(&self, x: usize, y: usize) -> TileType {
         let idx = y * self.width + x;
         self.tiles[idx]
     }
 
+    /// Get available exists from the given tile
+    pub fn get_available_exits(&self, x: usize, y: usize) -> Vec<(usize, usize, f32)> {
+        let mut exits = Vec::new();
+
+        // Cardinal directions
+        if self.is_exit_valid(x-1, y) { exits.push((x-1, y, 1.0)) };
+        if self.is_exit_valid(x+1, y) { exits.push((x+1, y, 1.0)) };
+        if self.is_exit_valid(x, y-1) { exits.push((x, y-1, 1.0)) };
+        if self.is_exit_valid(x, y+1) { exits.push((x, y+1, 1.0)) };
+
+        // Diagonals
+        if self.is_exit_valid(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
+        if self.is_exit_valid(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
+        if self.is_exit_valid(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
+        if self.is_exit_valid(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
+
+        exits
+    }    
+ 
+    // Check if given tile can be accessed
+    fn is_exit_valid(&self, x:usize, y:usize) -> bool {
+        if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
+        self.at(x, y) == TileType::Floor
+    }
+
     /// Modify tile at the given location
     pub fn set_tile(&mut self, x: usize, y: usize, tile: TileType) {
         let idx = y * self.width + x;
         self.tiles[idx] = tile;
+    }
+}
+
+impl fmt::Display for Map {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for y in 0..self.height {
+            let bytes: Vec<u8> = (0..self.width)
+                .map(|x| if self.at(x, y) == TileType::Wall {'#'} else {' '} as u8)
+                .collect();
+            let line = String::from_utf8(bytes).expect("Can't convert map to string");
+            let _ = write!(f, "{}\n", line);
+        }
+        Ok(())
     }
 }
 
@@ -94,5 +156,41 @@ mod tests {
                 assert_eq!(map.at(i, j), TileType::Wall);
             }
         }
+    }
+
+    #[test]
+    fn test_from_string() {
+        let map_str = "
+        ##########
+        #        #
+        ##########
+        ";
+        let map = Map::from_string(map_str);
+
+        assert_eq!(map.width, 10);
+        assert_eq!(map.height, 3);
+        for i in 0..10 {
+            assert_eq!(map.at(i, 0), TileType::Wall);
+            assert_eq!(map.at(i, 2), TileType::Wall);
+            if i == 0 || i == 9 {
+                assert_eq!(map.at(i, 1), TileType::Wall);
+            } else {
+                assert_eq!(map.at(i, 1), TileType::Floor);
+            }
+        }
+    }
+
+    #[test]
+    fn test_exists() {
+        let map_str = "
+        ##########
+        #        #
+        #        #
+        ##########
+        ";
+        let map = Map::from_string(map_str);
+        let exists = map.get_available_exits(1, 1);
+        let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
+        assert_eq!(exists, expected_exists);
     }
 }

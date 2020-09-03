@@ -25,6 +25,7 @@ use mapgen::dungeon::{
     map::{Map, Point, TileType},
     cellular_automata::CellularAutomataGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
+    cull_unreachable::CullUnreachable,
 };
 
 
@@ -83,6 +84,7 @@ fn init_camera(world: &mut World, transform: Transform, camera: Camera) -> Entit
 fn init_map(world: &mut World) {
     let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
         .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+        .with(CullUnreachable::new())
         .build_map();
     world.insert(map); 
 }
