@@ -3,7 +3,7 @@
 //! This modifier will try to add starting point by finding the floor title closes 
 //! to the given point.
 //! 
-//! Example generator usage:
+//! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::dungeon::{

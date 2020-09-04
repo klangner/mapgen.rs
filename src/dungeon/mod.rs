@@ -28,6 +28,7 @@
 pub mod map;
 pub mod cellular_automata;
 pub mod cull_unreachable;
+pub mod distant_exit;
 pub mod starting_point;
 mod dijkstra;
 

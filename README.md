@@ -33,7 +33,7 @@ If you want to check how the maps look like, then:
     * [ ] Voronoi hive
     * [ ] Wave Function Collapse
   * Map modifiers (filters)
-    * [ ] Area exit point
+    * [x] Area exit point
     * [x] Area starting point
     * [x] Cellular automata
     * [x] Cull unreachable areas
@@ -69,10 +69,12 @@ use mapgen::dungeon::{
     map::{Map, Point, TileType},
     cellular_automata::CellularAutomataGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
+    cull_unreachable::CullUnreachable,
 };
 
 let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .with(CullUnreachable::new())
             .build_map();
 ```
 

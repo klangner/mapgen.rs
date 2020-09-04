@@ -68,6 +68,8 @@ impl DijkstraMap {
 
         if let Some(pos) = map.starting_point {
             open_list.push_back(((pos.x, pos.y), 0.0));
+            let idx = self.xy_idx(pos.x, pos.y);
+            self.tiles[idx] = 0.0;
         }
 
         while let Some(((x, y), depth)) = open_list.pop_front() {
@@ -78,7 +80,7 @@ impl DijkstraMap {
                 let prev_depth = self.tiles[idx];
                 if new_depth >= prev_depth { continue; }
                 if new_depth >= self.max_depth { continue; }
-                self.tiles[idx] = depth;
+                self.tiles[idx] = new_depth;
                 open_list.push_back(((x, y), new_depth));
             }
         }
@@ -87,8 +89,6 @@ impl DijkstraMap {
     fn xy_idx(&self, x: usize, y: usize) -> usize {
         (y * self.size_x ) + x 
     }
-
-
 }
 
 /// ------------------------------------------------------------------------------------------------
@@ -107,8 +107,10 @@ mod tests {
         ##########
         ";
         let mut map = Map::from_string(map_str);
-        map.starting_point = Some(Point::new(9, 1));
+        map.starting_point = Some(Point::new(8, 1));
         let dm = DijkstraMap::new(&map);
+
+        println!("{:?}", &dm.tiles.iter().map(|&v| if v == f32::MAX {9.0} else {v}).collect::<Vec<f32>>());
 
         assert_eq!(dm.size_x, 10);
         assert_eq!(dm.size_y, 3);
@@ -121,6 +123,46 @@ mod tests {
             } else {
                 assert_eq!(dm.tiles[idx], (8 - i) as f32);
             }
+        }
+    }
+
+    #[test]
+    fn test_2() {
+        let map_str = "
+        ####
+        #  #
+        #  #
+        ####
+        ";
+        let mut map = Map::from_string(map_str);
+        map.starting_point = Some(Point::new(2, 2));
+        let dm = DijkstraMap::new(&map);
+        let expected = [MAX, MAX, MAX, MAX,
+                        MAX, 1.45, 1.0, MAX, 
+                        MAX, 1.0, 0.0, MAX, 
+                        MAX, MAX, MAX, MAX];
+
+        assert_eq!(dm.tiles, expected);
+    }
+
+    #[test]
+    fn test_3() {
+        let map_str = "
+        ##########
+        #        #
+        #  #     #
+        ##########
+        ";
+        let mut map = Map::from_string(map_str);
+        map.starting_point = Some(Point::new(8, 2));
+        let dm = DijkstraMap::new(&map);
+        let expected = [MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 
+                        MAX, 7.45, 6.45, 5.45, 4.45, 3.45, 2.45, 1.45, 1.0, MAX, 
+                        MAX, 7.9, 6.9, MAX, 4.0, 3.0, 2.0, 1.0, 0.0, MAX, 
+                        MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX];
+
+        for (v, e) in dm.tiles.iter().zip(expected.iter()) {
+            assert!(f32::abs(v - e) <= 0.01);
         }
     }
 }

@@ -26,6 +26,7 @@ use mapgen::dungeon::{
     cellular_automata::CellularAutomataGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
+    distant_exit::DistantExit,
 };
 
 
@@ -35,9 +36,11 @@ struct MapTiles ;
 impl Tile for MapTiles {
     fn sprite(&self, p: Point3<u32>, world: &World) -> Option<usize> {
         let map = world.read_resource::<Map>();
-        let player_pos = Point::new(p.x as usize, p.y as usize);
-        if map.starting_point == Some(player_pos) {
+        let pos = Point::new(p.x as usize, p.y as usize);
+        if map.starting_point == Some(pos) {
             Some(64)
+        } else if map.exit_point == Some(pos) {
+            Some(62)
         } else if map.at(p.x as usize, p.y as usize) == TileType::Wall {
             Some(35)
         } else {
@@ -47,8 +50,8 @@ impl Tile for MapTiles {
 
     fn tint(&self, p: Point3<u32>, world: &World) -> Srgba {
         let map = world.read_resource::<Map>();
-        let player_pos = Point::new(p.x as usize, p.y as usize);
-        if map.starting_point == Some(player_pos) {
+        let pos = Some(Point::new(p.x as usize, p.y as usize));
+        if map.starting_point == pos || map.exit_point == pos {
             Srgba::new(1.0, 1.0, 0.0, 1.0)
         } else {
             Srgba::new(1.0, 1.0, 1.0, 1.0)
@@ -85,6 +88,7 @@ fn init_map(world: &mut World) {
     let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
         .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
         .with(CullUnreachable::new())
+        .with(DistantExit::new())
         .build_map();
     world.insert(map); 
 }
