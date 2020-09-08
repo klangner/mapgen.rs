@@ -11,7 +11,7 @@ use std::fmt;
 
 
 /// Position on the map
-#[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
+#[derive(Default, PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Point {
     pub x: usize,
     pub y: usize
@@ -84,8 +84,12 @@ impl Map {
 
     /// Get TileType at the given location
     pub fn at(&self, x: usize, y: usize) -> TileType {
-        let idx = y * self.width + x;
-        self.tiles[idx]
+        if x >= self.width || y >= self.height {
+            TileType::Wall
+        } else {
+            let idx = (y as usize) * self.width + (x as usize);
+            self.tiles[idx]
+        }
     }
 
     /// Get available exists from the given tile
@@ -109,14 +113,15 @@ impl Map {
  
     // Check if given tile can be accessed
     fn is_exit_valid(&self, x:usize, y:usize) -> bool {
-        if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
         self.at(x, y) == TileType::Floor
     }
 
     /// Modify tile at the given location
     pub fn set_tile(&mut self, x: usize, y: usize, tile: TileType) {
-        let idx = y * self.width + x;
-        self.tiles[idx] = tile;
+        if x < self.width && y < self.height {
+            let idx = (y as usize) * self.width + (x as usize);
+            self.tiles[idx] = tile;
+        }
     }
 }
 

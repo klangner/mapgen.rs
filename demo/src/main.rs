@@ -38,13 +38,13 @@ impl Tile for MapTiles {
         let map = world.read_resource::<Map>();
         let pos = Point::new(p.x as usize, p.y as usize);
         if map.starting_point == Some(pos) {
-            Some(64)
+            Some(160)
         } else if map.exit_point == Some(pos) {
-            Some(62)
+            Some(12)
         } else if map.at(p.x as usize, p.y as usize) == TileType::Wall {
-            Some(35)
+            Some(320)
         } else {
-            Some(46)
+            Some(19)
         }
     }
 
@@ -104,7 +104,7 @@ impl SimpleState for PlayState {
         init_map(&mut world);
 
         let map_sprite_sheet_handle =
-            load_tiles_sprite_sheet(world, "texture/ascii.png", "texture/ascii.ron");
+            load_tiles_sprite_sheet(world, "texture/basic.png", "texture/basic.ron");
 
         let (width, height) = {
             let dim = world.read_resource::<ScreenDimensions>();
