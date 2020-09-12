@@ -42,7 +42,7 @@ impl Tile for MapTiles {
         } else if map.exit_point == Some(pos) {
             Some(12)
         } else if map.at(p.x as usize, p.y as usize) == TileType::Wall {
-            Some(320)
+            Some(140)
         } else {
             Some(19)
         }
