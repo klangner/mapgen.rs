@@ -4,6 +4,8 @@
 
 ```
 wasm-pack build
+cd www
+npm run build
 ```
 
 This app uses:

@@ -3,3 +3,4 @@
 Cargo.lock
 .vscode/
 pkg/
+package-lock.json
