@@ -4,13 +4,18 @@ version = "0.1.1"
 authors = ["Krzysztof Langner <klangner@gmail.com>"]
 edition = "2018"
 
-[dependencies]
-rand = "0.7"
-amethyst = {version = "0.15", features = ["tiles", "no-slow-safety-checks"]}
-log = { version = "0.4.8", features = ["serde"] }
-mapgen = {path=".."}
+[lib]
+crate-type = ["cdylib"]
 
-[features]
-default = ["metal"]
-metal = ["amethyst/metal"]
-vulkan = ["amethyst/vulkan"]
+[dependencies]
+wasm-bindgen = "0.2.68"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'Document',
+  'Element',
+  'HtmlElement',
+  'Node',
+  'Window',
+]
