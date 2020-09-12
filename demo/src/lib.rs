@@ -11,7 +11,7 @@ pub fn main() -> Result<(), JsValue> {
 
     // Manufacture the element we're gonna append
     let val = document.create_element("p")?;
-    val.set_inner_html("Hello from Rust!");
+    val.set_inner_html("Hello from Rust! 1");
 
     body.append_child(&val)?;
 
