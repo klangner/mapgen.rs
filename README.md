@@ -4,11 +4,7 @@
 [![Crates.io](https://img.shields.io/crates/v/mapgen.svg)](https://crates.io/crates/mapgen) 
 [![mapgen.rs](https://docs.rs/mapgen/badge.svg)](https://docs.rs/mapgen/)
 
-Generate procedural maps for games.
-
-## Demo app
-
-Check [demo app](https://klangner.github.io/mapgen.rs/)
+Generate procedural maps for games. [Try it in the browser](https://klangner.github.io/mapgen.rs/) using WebAssembly.
 
 
 ## Features
