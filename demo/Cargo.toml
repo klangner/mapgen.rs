@@ -2,13 +2,19 @@
 name = "mapgen-demo"
 version = "0.1.1"
 authors = ["Krzysztof Langner <klangner@gmail.com>"]
+description = "Map generator demo"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/klangner/mapgen.rs"
 edition = "2018"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2.68"
+rand = { version = "0.7", features = ["wasm-bindgen"] }
+mapgen = {path=".."}
+wasm-bindgen = "0.2"
+js-sys = "0.3"
 
 [dependencies.web-sys]
 version = "0.3.4"

@@ -53,17 +53,14 @@ pub trait MapModifier {
 pub struct MapBuilder {
     generator: Box<dyn MapGenerator>,
     modifiers: Vec<Box<dyn MapModifier>>,
-    rng: StdRng,
 }
 
 impl MapBuilder {
     /// Create Map Builder with initial map generator
     pub fn new(generator : Box<dyn MapGenerator>) -> MapBuilder {
-        let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         MapBuilder { 
             generator, 
             modifiers: Vec::new(),
-            rng: StdRng::seed_from_u64(system_time.as_secs())
         }
     }
 
@@ -72,16 +69,25 @@ impl MapBuilder {
         self
     }
 
+    /// Build map using random number seeded with system time
     pub fn build_map(&mut self) -> Map {
-        let mut map = self.generator.generate_map(&mut self.rng);
+        let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
+        let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
+        self.build_map_with_rng(&mut rng)
+    }
+
+    /// Build map using provided random number generator
+    pub fn build_map_with_rng(&mut self, rng: &mut StdRng) -> Map {
+        let mut map = self.generator.generate_map(rng);
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
-            map = modifier.modify_map(&mut self.rng, &map);
+            map = modifier.modify_map(rng, &map);
         }
 
         map
     }
+
 }
 
 /// ------------------------------------------------------------------------------------------------

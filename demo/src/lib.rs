@@ -1,24 +1,46 @@
 use wasm_bindgen::prelude::*;
+use rand::prelude::*;
+use js_sys::Date;
+use mapgen::dungeon::{
+    MapBuilder,
+    map::Map,
+    cellular_automata::CellularAutomataGen,
+    starting_point::{AreaStartingPosition, XStart, YStart},
+    cull_unreachable::CullUnreachable,
+    distant_exit::DistantExit,
+};
 
-// Called when the wasm module is instantiated
-#[wasm_bindgen(start)]
-pub fn main() -> Result<(), JsValue> {
-    // Use `web_sys`'s global `window` function to get a handle on the global
-    // window object.
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let body = document.body().expect("document should have a body");
 
-    // Manufacture the element we're gonna append
-    let val = document.create_element("p")?;
-    val.set_inner_html("Hello from Rust! 1");
-
-    body.append_child(&val)?;
-
-    Ok(())
+#[wasm_bindgen]
+pub struct World {
+    map: Map,
 }
 
 #[wasm_bindgen]
-pub fn add(a: u32, b: u32) -> u32 {
-    a + b
+impl World {
+    pub fn new(width: u32, height: u32) -> World {
+        let seed = Date::new_0().get_time() as u64;
+        let mut rng = StdRng::seed_from_u64(seed);
+        let map = MapBuilder::new(Box::new(CellularAutomataGen::new(width as usize, height as usize)))
+            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .with(CullUnreachable::new())
+            .with(DistantExit::new())
+            .build_map_with_rng(&mut rng);
+        World { map }
+    }
+
+    pub fn width(&self) -> u32 {
+        self.map.width as u32
+    }
+
+    pub fn height(&self) -> u32 {
+        self.map.height as u32
+    }
 }
+
+
+// Called when the wasm module is instantiated
+// #[wasm_bindgen(start)]
+// pub fn main() -> Result<(), JsValue> {
+//     Ok(())
+// }
