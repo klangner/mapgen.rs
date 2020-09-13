@@ -3,7 +3,7 @@ use rand::prelude::*;
 use js_sys::Date;
 use mapgen::dungeon::{
     MapBuilder,
-    map::Map,
+    map::TileType,
     cellular_automata::CellularAutomataGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
@@ -13,7 +13,9 @@ use mapgen::dungeon::{
 
 #[wasm_bindgen]
 pub struct World {
-    map: Map,
+    width: u32,
+    height: u32,
+    tiles: Vec<bool>,
 }
 
 #[wasm_bindgen]
@@ -26,15 +28,23 @@ impl World {
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_map_with_rng(&mut rng);
-        World { map }
+        let tiles = (0..map.tiles.len()).map(|i| map.tiles[i] == TileType::Floor).collect();
+        World { 
+            width,
+            height,
+            tiles }
     }
 
     pub fn width(&self) -> u32 {
-        self.map.width as u32
+        self.width
     }
 
     pub fn height(&self) -> u32 {
-        self.map.height as u32
+        self.height
+    }
+
+    pub fn tiles(&self) -> *const bool {
+        self.tiles.as_ptr()
     }
 }
 
