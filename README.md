@@ -6,16 +6,9 @@
 
 Generate procedural maps for games.
 
-This library is based on the code from the [Roguelike tutorial](https://github.com/thebracket/rustrogueliketutorial).
-I highly recommend it for learning how to write Roguelike in Rust.
-
-
 ## Demo app
 
-If you want to check how the maps look like, then:
-  * Clone this rep
-  * Go to the demo folder
-  * Run demo app (`cargo run`)
+Check [demo app](https://klangner.github.io/mapgen.rs/)
 
 
 ## Features
@@ -79,6 +72,11 @@ let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
 ```
 
 For more information check the [doc](https://docs.rs/mapgen)
+
+
+This library is based on the code from the [Roguelike tutorial](https://github.com/thebracket/rustrogueliketutorial).
+I highly recommend it for learning how to write Roguelike in Rust.
+
 
 # License
 
