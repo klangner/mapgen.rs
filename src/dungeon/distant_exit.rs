@@ -6,8 +6,9 @@
 
 use std::f32;
 use rand::prelude::StdRng;
-use super::{MapModifier};
-use super::map::{Map, Point};
+use crate::common::geometry::Point;
+use super::MapModifier;
+use super::map::Map;
 use super::dijkstra::DijkstraMap;
 
 
@@ -53,7 +54,8 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapModifier;
-    use crate::dungeon::map::{Point, Map};
+    use crate::common::geometry::Point;
+    use crate::dungeon::map::Map;
 
     #[test]
     fn test_exit() {

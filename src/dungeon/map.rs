@@ -8,30 +8,9 @@
 //! 
 
 use std::fmt;
+use crate::common::geometry::{Point, Rect};
 
 
-/// Position on the map
-#[derive(Default, PartialEq, Copy, Clone, Debug, Eq, Hash)]
-pub struct Point {
-    pub x: usize,
-    pub y: usize
-}
-
-impl Point {
-    /// Create new point
-    pub fn new(x: usize, y: usize) -> Point {
-        Point {x, y}
-    }
-
-    /// Euclidean distance to a given point
-    pub fn distance_to(self, point: &Point) -> f32 {
-        let a = (self.x as f32 - point.x as f32).powf(2.0);
-        let b = (self.y as f32 - point.y as f32).powf(2.0);
-        (a + b).sqrt()
-    }
-}
-
-/// Possible tile type on the map
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub enum TileType {
     Wall, Floor
@@ -123,6 +102,16 @@ impl Map {
             self.tiles[idx] = tile;
         }
     }
+    
+    /// Create room on the map at given location
+    /// Room is created by setting all tiles in the room to the Floor
+    pub fn create_room(&mut self, rect: &Rect) {
+        for x in rect.x1..rect.x2 {
+            for y in rect.y1..rect.y2 {
+                self.set_tile(x as usize, y as usize, TileType::Floor);
+            }
+        }
+    }
 }
 
 impl fmt::Display for Map {
@@ -144,14 +133,6 @@ impl fmt::Display for Map {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_distance() {
-        let p1 = Point::new(10, 10);
-        let p2 = Point::new(14, 7);
-        let distance = p1.distance_to(&p2);
-        assert_eq!(distance, 5.0);
-    }
 
     #[test]
     fn test_new_map() {
@@ -198,4 +179,20 @@ mod tests {
         let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
         assert_eq!(exists, expected_exists);
     }
+
+        #[test]
+    fn test_create_room() {
+        let mut map = Map::new(5, 5);
+        map.create_room(&Rect::new(1, 1, 3, 3));
+        for x in 0..map.width {
+            for y in 0..map.height {
+                if x == 0 || y == 0 || x == 4 || y == 4 {
+                    assert_eq!(map.at(x, y), TileType::Wall);
+                } else {
+                    assert_eq!(map.at(x, y), TileType::Floor);
+                }
+            }
+        }
+    }
+
 }

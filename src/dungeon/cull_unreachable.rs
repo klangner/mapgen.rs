@@ -50,7 +50,8 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapModifier;
-    use crate::dungeon::map::{Point, Map};
+    use crate::common::geometry::Point;
+    use crate::dungeon::map::Map;
 
     #[test]
     fn test_culling() {

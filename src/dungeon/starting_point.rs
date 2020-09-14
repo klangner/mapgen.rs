@@ -6,9 +6,10 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
+//! use mapgen::common::geometry::Point;
 //! use mapgen::dungeon::{
 //!     MapModifier,
-//!     map::{Map, Point, TileType},
+//!     map::{Map, TileType},
 //!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
 //! 
@@ -24,7 +25,8 @@
 
 use rand::prelude::StdRng;
 use super::{MapModifier};
-use super::map::{Map, Point, TileType};
+use crate::common::geometry::Point;
+use super::map::{Map, TileType};
 
 
 /// Initial x region position

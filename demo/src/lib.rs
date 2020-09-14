@@ -4,6 +4,7 @@ use mapgen::dungeon::{
     MapBuilder,
     map::TileType,
     cellular_automata::CellularAutomataGen,
+    random_rooms::RandomRoomsGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
     distant_exit::DistantExit,
@@ -29,11 +30,24 @@ pub struct World {
 impl World {
     pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(Box::new(CellularAutomataGen::new(width as usize, height as usize)))
+        let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .with(DistantExit::new())
-            .build_map_with_rng(&mut rng);
+            .build_map_with_rng(width as usize, height as usize, &mut rng);
+        let tiles = (0..map.tiles.len())
+            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .collect();
+        World { 
+            width,
+            height,
+            tiles }
+    }
+
+    pub fn new_random_rooms(width: u32, height: u32, seed: u32) -> World {
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(Box::new(RandomRoomsGen::new()))
+            .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
             .collect();

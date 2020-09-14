@@ -8,9 +8,10 @@
 //! Example generator usage:
 //! ---
 //! use rand::prelude::*;
+//! use crate::common::geometry::Point;
 //! use mapgen::dungeon::{
 //!     MapModifier,
-//!     map::{Map, Point, TileType},
+//!     map::{Map, TileType},
 //!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
 //! 
@@ -97,7 +98,8 @@ impl DijkstraMap {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::dungeon::map::{Point, Map};
+    use crate::common::geometry::Point;
+    use crate::dungeon::map::Map;
 
     #[test]
     fn test_culling() {

@@ -28,7 +28,10 @@ function newCellularAutomata() {
 }
 
 function newSimpleRooms() {
-    console.log("Simple rooms")
+    var seed = Date.now();
+    world = World.new_random_rooms(width, height, seed);
+    requestAnimationFrame(renderLoop);
+    infoDiv.textContent = "Random Rooms with the seed: " + seed;
 }
 
 const renderLoop = () => {

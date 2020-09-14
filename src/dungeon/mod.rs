@@ -8,16 +8,17 @@
 //! 
 //! Example
 //! ```
+//! use mapgen::common::geometry::Point;
 //! use mapgen::dungeon::{
 //!     MapBuilder,
-//!     map::{Map, Point, TileType},
+//!     map::{Map, TileType},
 //!     cellular_automata::CellularAutomataGen,
 //!     starting_point::{AreaStartingPosition, XStart, YStart},
 //! };
 //! 
-//! let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+//! let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-//!             .build_map();
+//!             .build_map(80, 50);
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -29,6 +30,7 @@ pub mod map;
 pub mod cellular_automata;
 pub mod cull_unreachable;
 pub mod distant_exit;
+pub mod random_rooms;
 pub mod starting_point;
 mod dijkstra;
 
@@ -40,7 +42,7 @@ use map::Map;
 /// Trait which should be implemented by any map generator which want to be used
 /// by MapBuilder
 pub trait MapGenerator {
-    fn generate_map(&self, rng: &mut StdRng) -> Map;
+    fn generate_map(&self, width: usize, height: usize, rng: &mut StdRng) -> Map;
 }
 
 /// Trait which should be implemented by map modifier. 
@@ -70,15 +72,15 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build_map(&mut self) -> Map {
+    pub fn build_map(&mut self, width: usize, height: usize) -> Map {
         let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
-        self.build_map_with_rng(&mut rng)
+        self.build_map_with_rng(width, height, &mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_map_with_rng(&mut self, rng: &mut StdRng) -> Map {
-        let mut map = self.generator.generate_map(rng);
+    pub fn build_map_with_rng(&mut self, width: usize, height: usize, rng: &mut StdRng) -> Map {
+        let mut map = self.generator.generate_map(width, height, rng);
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
@@ -101,9 +103,9 @@ mod tests {
 
     #[test]
     fn test_ca_map() {
-        let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+        let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-            .build_map();
+            .build_map(80, 50);
 
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);

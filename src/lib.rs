@@ -4,4 +4,5 @@
 //!   * Dungeon maps
 //! 
  
+pub mod common;
 pub mod dungeon;
