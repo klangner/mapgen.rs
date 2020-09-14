@@ -19,6 +19,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
     * [ ] Drunkard's walk
     * [ ] Maze
     * [ ] Prefabs
+    * [x] Random rooms
     * [ ] Voronoi hive
     * [ ] Wave Function Collapse
   * Map modifiers (filters)
@@ -26,6 +27,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
     * [x] Area starting point
     * [x] Cellular automata
     * [x] Cull unreachable areas
+    * [x] Room corridors nearest
     * [ ] Voronoi spawning
 
 
