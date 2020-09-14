@@ -1,6 +1,5 @@
 use wasm_bindgen::prelude::*;
 use rand::prelude::*;
-use js_sys::Date;
 use mapgen::dungeon::{
     MapBuilder,
     map::TileType,
@@ -12,23 +11,32 @@ use mapgen::dungeon::{
 
 
 #[wasm_bindgen]
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Cell {
+    Floor = 0,
+    Wall = 1,
+}
+
+#[wasm_bindgen]
 pub struct World {
     width: u32,
     height: u32,
-    tiles: Vec<bool>,
+    tiles: Vec<Cell>,
 }
 
 #[wasm_bindgen]
 impl World {
-    pub fn new(width: u32, height: u32) -> World {
-        let seed = Date::new_0().get_time() as u64;
-        let mut rng = StdRng::seed_from_u64(seed);
+    pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
+        let mut rng = StdRng::seed_from_u64(seed as u64);
         let map = MapBuilder::new(Box::new(CellularAutomataGen::new(width as usize, height as usize)))
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_map_with_rng(&mut rng);
-        let tiles = (0..map.tiles.len()).map(|i| map.tiles[i] == TileType::Floor).collect();
+        let tiles = (0..map.tiles.len())
+            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .collect();
         World { 
             width,
             height,
@@ -43,14 +51,7 @@ impl World {
         self.height
     }
 
-    pub fn tiles(&self) -> *const bool {
+    pub fn tiles(&self) -> *const Cell {
         self.tiles.as_ptr()
     }
 }
-
-
-// Called when the wasm module is instantiated
-// #[wasm_bindgen(start)]
-// pub fn main() -> Result<(), JsValue> {
-//     Ok(())
-// }
