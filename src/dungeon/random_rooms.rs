@@ -56,8 +56,8 @@ impl RandomRoomsGen {
         for _ in 0..self.max_rooms {
             let w = random::random_range(rng, self.min_room_size, self.max_room_size);
             let h = random::random_range(rng, self.min_room_size, self.max_room_size);
-            let x = random::random_range(rng, 0, width - w);
-            let y = random::random_range(rng, 0, height - h);
+            let x = random::random_range(rng, 1, width - w);
+            let y = random::random_range(rng, 1, height - h);
             let new_room = Rect::new(x as i32, y as i32, w as i32, h as i32);
             let intersects = rooms.iter().any(|r| new_room.intersect(r));
             if !intersects {
