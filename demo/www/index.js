@@ -23,10 +23,8 @@ const ctx = canvas.getContext('2d');
 function newCellularAutomata() {
     var seed = Date.now();
     world = World.new_cellular_automata(width, height, seed);
-    drawGrid();
-    drawCells();
     requestAnimationFrame(renderLoop);
-    infoDiv.textContent = "Cellular automata with the seed: " + seed;
+    infoDiv.textContent = "Cellular Automata with the seed: " + seed;
 }
 
 function newSimpleRooms() {
