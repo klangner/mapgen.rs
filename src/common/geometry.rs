@@ -14,6 +14,11 @@ impl Point {
         Point {x, y}
     }
 
+    /// Create new point from i32 coords
+    pub fn new_i32(x: i32, y: i32) -> Point {
+        Point::new(x as usize, y as usize)
+    }
+
     /// Euclidean distance to a given point
     pub fn distance_to(self, point: &Point) -> f32 {
         let a = (self.x as f32 - point.x as f32).powf(2.0);
@@ -41,8 +46,8 @@ impl Rect {
         self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     }
 
-    pub fn center(&self) -> (i32, i32) {
-        ((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+    pub fn center(&self) -> Point {
+        Point::new_i32((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
     }
 }
 

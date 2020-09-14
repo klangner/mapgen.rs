@@ -8,6 +8,7 @@ use mapgen::dungeon::{
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
     distant_exit::DistantExit,
+    rooms_corridors_nearest::NearestCorridors,
 };
 
 
@@ -47,6 +48,7 @@ impl World {
     pub fn new_random_rooms(width: u32, height: u32, seed: u32) -> World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
         let map = MapBuilder::new(Box::new(RandomRoomsGen::new()))
+            .with(NearestCorridors::new())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})

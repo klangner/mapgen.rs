@@ -55,15 +55,6 @@
 /******/ 		"../pkg/mapgen_demo_bg.wasm": function() {
 /******/ 			return {
 /******/ 				"./mapgen_demo_bg.js": {
-/******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_object_drop_ref"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_getTime_29addd71c7089c47": function(p0i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getTime_29addd71c7089c47"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_new0_a3af66503e735141": function() {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_new0_a3af66503e735141"]();
-/******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_throw"](p0i32,p1i32);
 /******/ 					}
@@ -168,7 +159,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"bf853f7fb17b7aed38db"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"bbf7fe2631d06e11148e"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {

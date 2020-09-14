@@ -31,6 +31,7 @@ pub mod cellular_automata;
 pub mod cull_unreachable;
 pub mod distant_exit;
 pub mod random_rooms;
+pub mod rooms_corridors_nearest;
 pub mod starting_point;
 mod dijkstra;
 

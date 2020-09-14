@@ -23,7 +23,9 @@ pub struct Map {
     pub width : usize,
     pub height : usize,
     pub starting_point: Option<Point>,
-    pub exit_point: Option<Point>
+    pub exit_point: Option<Point>,
+    pub rooms: Vec<Rect>,
+    pub corridors: Vec<Vec<Point>>,
 }
 
 impl Map {
@@ -37,6 +39,8 @@ impl Map {
             height,
             starting_point: None,
             exit_point: None,
+            rooms: Vec::new(),
+            corridors: Vec::new()
         }
     }
 
@@ -105,10 +109,34 @@ impl Map {
     
     /// Create room on the map at given location
     /// Room is created by setting all tiles in the room to the Floor
-    pub fn create_room(&mut self, rect: &Rect) {
+    pub fn add_room(&mut self, rect: Rect) {
         for x in rect.x1..rect.x2 {
             for y in rect.y1..rect.y2 {
                 self.set_tile(x as usize, y as usize, TileType::Floor);
+            }
+        }
+        self.rooms.push(rect);
+    }
+
+    pub fn add_corridor(&mut self, from: Point, to:Point) {
+        let mut corridor = Vec::new();
+        let mut x = from.x;
+        let mut y = from.y;
+
+        while x != to.x || y != to.y {
+            if x < to.x {
+                x += 1;
+            } else if x > to.x {
+                x -= 1;
+            } else if y < to.y {
+                y += 1;
+            } else if y > to.y {
+                y -= 1;
+            }
+
+            if self.at(x, y) != TileType::Floor {
+                corridor.push(Point::new(x, y));
+                self.set_tile(x, y, TileType::Floor);
             }
         }
     }
@@ -183,7 +211,7 @@ mod tests {
         #[test]
     fn test_create_room() {
         let mut map = Map::new(5, 5);
-        map.create_room(&Rect::new(1, 1, 3, 3));
+        map.add_room(Rect::new(1, 1, 3, 3));
         for x in 0..map.width {
             for y in 0..map.height {
                 if x == 0 || y == 0 || x == 4 || y == 4 {
@@ -195,4 +223,23 @@ mod tests {
         }
     }
 
+    #[test]
+    fn test_add_corridor() {
+        let map_str = "
+        ##########
+        #    #   #
+        ##########
+        ";
+        let mut map = Map::from_string(map_str);
+        let expected_map_str = "
+        ##########
+        #        #
+        ##########
+        ";
+        let expected_map = Map::from_string(expected_map_str);
+
+        map.add_corridor(Point::new(1, 1), Point::new(8, 1));
+
+        assert_eq!(map.tiles, expected_map.tiles);
+    }
 }

@@ -50,7 +50,6 @@ impl RandomRoomsGen {
 
     fn build_rooms(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
         let mut map = Map::new(width, height);
-        let mut rooms : Vec<Rect> = Vec::new();
 
         // Create room dimensions
         for _ in 0..self.max_rooms {
@@ -59,15 +58,10 @@ impl RandomRoomsGen {
             let x = random::random_range(rng, 1, width - w);
             let y = random::random_range(rng, 1, height - h);
             let new_room = Rect::new(x as i32, y as i32, w as i32, h as i32);
-            let intersects = rooms.iter().any(|r| new_room.intersect(r));
+            let intersects = map.rooms.iter().any(|r| new_room.intersect(r));
             if !intersects {
-                rooms.push(new_room);
+                map.add_room(new_room);
             }
-        }
-
-        // Apply rooms to the map
-        for room in rooms {
-            map.create_room(&room);
         }
         
         map
