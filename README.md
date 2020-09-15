@@ -12,7 +12,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
 ### Dungeons
 
   * Map generators
-    * [ ] BSP Interior
+    * [x] BSP Interior
     * [x] BSP Rooms
     * [x] Cellular automata
     * [ ] Diffusion-Limited Aggregation (DLA)

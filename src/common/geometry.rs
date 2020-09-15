@@ -30,15 +30,19 @@ impl Point {
 /// Rectangle region on the map
 #[derive(PartialEq, Copy, Clone)]
 pub struct Rect {
-    pub x1 : i32,
-    pub x2 : i32,
-    pub y1 : i32,
-    pub y2 : i32
+    pub x1 : usize,
+    pub x2 : usize,
+    pub y1 : usize,
+    pub y2 : usize
 }
 
 impl Rect {
-    pub fn new(x:i32, y: i32, width:i32, height:i32) -> Rect {
+    pub fn new(x: usize, y: usize, width: usize, height: usize) -> Rect {
         Rect{x1:x, y1:y, x2:x+width, y2:y+height}
+    }
+
+    pub fn new_i32(x:i32, y: i32, width:i32, height:i32) -> Rect {
+        Rect::new(x as usize, y as usize, width as usize, height as usize)
     }
 
     /// Returns true if this overlaps with other
@@ -47,7 +51,23 @@ impl Rect {
     }
 
     pub fn center(&self) -> Point {
-        Point::new_i32((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+        Point::new((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+    }
+
+    pub fn width(&self) -> usize {
+        if self.x2 >= self.x1 {
+            self.x2 - self.x1
+        } else {
+            self.x1 - self.x2
+        }
+    }
+
+    pub fn height(&self) -> usize {
+        if self.y2 >= self.y1 {
+            self.y2 - self.y1
+        } else {
+            self.y1 - self.y2
+        }
     }
 }
 
@@ -72,4 +92,12 @@ mod tests {
         let rect2 = Rect::new(30, 30, 60, 60);
         assert!(rect1.intersect(&rect2));
     }
+
+    #[test]
+    fn test_size() {
+        let rect1 = Rect::new(10, 10, 40, 30);
+        assert_eq!(rect1.width(), 40);
+        assert_eq!(rect1.height(), 30);
+    }
+
 }

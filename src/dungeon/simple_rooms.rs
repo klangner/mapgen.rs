@@ -23,7 +23,7 @@
 use rand::prelude::*;
 use super::MapGenerator;
 use crate::common::geometry::Rect;
-use crate::common::random;
+use crate::common::random::Rng;
 use super::map::{Map};
 
 
@@ -54,11 +54,11 @@ impl SimpleRoomsGen {
 
         // Create room dimensions
         for _ in 0..self.max_rooms {
-            let w = random::random_range(rng, self.min_room_size, self.max_room_size);
-            let h = random::random_range(rng, self.min_room_size, self.max_room_size);
-            let x = random::random_range(rng, 1, width - w);
-            let y = random::random_range(rng, 1, height - h);
-            let new_room = Rect::new(x as i32, y as i32, w as i32, h as i32);
+            let w = rng.random_range(self.min_room_size, self.max_room_size);
+            let h = rng.random_range(self.min_room_size, self.max_room_size);
+            let x = rng.random_range(1, width - w);
+            let y = rng.random_range(1, height - h);
+            let new_room = Rect::new(x, y, w, h);
             let intersects = map.rooms.iter().any(|r| new_room.intersect(r));
             if !intersects {
                 map.add_room(new_room);

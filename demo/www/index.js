@@ -32,9 +32,9 @@ function newSimpleRooms() {
     requestAnimationFrame(renderLoop);
 }
 
-function newBspRooms() {
+function newBspInterior() {
     var seed = Date.now();
-    world = World.new_bsp_rooms(width, height, seed);
+    world = World.new_bsp_interior(width, height, seed);
     requestAnimationFrame(renderLoop);
 }
 
@@ -107,5 +107,5 @@ newRandomGen();
 // Connect UI element
 document.getElementById('cellular-automata-option').addEventListener('click', newCellularAutomata);
 document.getElementById('simple-rooms-option').addEventListener('click', newSimpleRooms);
-document.getElementById('bsp-rooms-option').addEventListener('click', newBspRooms);
+document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
 document.getElementById('random-option').addEventListener('click', newRandomGen);

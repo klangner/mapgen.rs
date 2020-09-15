@@ -55,6 +55,69 @@
 /******/ 		"../pkg/mapgen_demo_bg.wasm": function() {
 /******/ 			return {
 /******/ 				"./mapgen_demo_bg.js": {
+/******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_object_drop_ref"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_3ac1b33c90b52596": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getRandomValues_3ac1b33c90b52596"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_randomFillSync_6f956029658662ec": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_randomFillSync_6f956029658662ec"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_self_1c83eb4471d9eb9b": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_self_1c83eb4471d9eb9b"]();
+/******/ 					},
+/******/ 					"__wbg_static_accessor_MODULE_abf5ae284bffdf45": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_static_accessor_MODULE_abf5ae284bffdf45"]();
+/******/ 					},
+/******/ 					"__wbg_require_5b2b5b594d809d9f": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_require_5b2b5b594d809d9f"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_crypto_c12f14e810edcaa2": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_crypto_c12f14e810edcaa2"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_msCrypto_679be765111ba775": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_msCrypto_679be765111ba775"](p0i32);
+/******/ 					},
+/******/ 					"__wbindgen_is_undefined": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_is_undefined"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_05a60bf171bfc2be": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getRandomValues_05a60bf171bfc2be"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_instanceof_Window_adf3196bdc02b386": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_instanceof_Window_adf3196bdc02b386"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_document_6cc8d0b87c0a99b9": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_document_6cc8d0b87c0a99b9"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getElementById_0cb6ad9511b1efc0": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getElementById_0cb6ad9511b1efc0"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_setinnerHTML_4ff235db1a3cb4d8": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_setinnerHTML_4ff235db1a3cb4d8"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_call_8e95613cc6524977": function(p0i32,p1i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_call_8e95613cc6524977"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_object_clone_ref"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_newnoargs_f3b8a801d5d4b079": function(p0i32,p1i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_newnoargs_f3b8a801d5d4b079"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_self_07b2f89e82ceb76d": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_self_07b2f89e82ceb76d"]();
+/******/ 					},
+/******/ 					"__wbg_window_ba85d88572adc0dc": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_window_ba85d88572adc0dc"]();
+/******/ 					},
+/******/ 					"__wbg_globalThis_b9277fc37e201fe5": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_globalThis_b9277fc37e201fe5"]();
+/******/ 					},
+/******/ 					"__wbg_global_e16303fe83e1d57f": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_global_e16303fe83e1d57f"]();
+/******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_throw"](p0i32,p1i32);
 /******/ 					}
@@ -159,7 +222,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"bbf7fe2631d06e11148e"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"cbb67d3121ca19dbc9af"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {

@@ -23,7 +23,7 @@
 use rand::prelude::*;
 use super::MapGenerator;
 use crate::common::geometry::Rect;
-use crate::common::random;
+use crate::common::random::Rng;
 use super::map::{Map, TileType};
 
 
@@ -48,7 +48,7 @@ impl BspRoomsGen {
         let mut map = Map::new(width, height);
         let mut rects: Vec<Rect> = Vec::new();
         // Start with a single map-sized rectangle
-        rects.push( Rect::new(2, 2, (width-5) as i32, (height-5) as i32) ); 
+        rects.push( Rect::new(2, 2, width-5, height-5) ); 
         let first_room = rects[0];
         rects.append(&mut self.split_into_subrects(first_room)); // Divide the first room
 
@@ -71,10 +71,10 @@ impl BspRoomsGen {
 
     fn split_into_subrects(&self, rect: Rect) -> Vec<Rect> {
         let mut rects: Vec<Rect> = Vec::new();
-        let width = i32::abs(rect.x1 - rect.x2);
-        let height = i32::abs(rect.y1 - rect.y2);
-        let half_width = i32::max(width / 2, 1);
-        let half_height = i32::max(height / 2, 1);
+        let width = rect.width();
+        let height = rect.height();
+        let half_width = usize::max(width / 2, 1);
+        let half_height = usize::max(height / 2, 1);
 
         rects.push(Rect::new( rect.x1, rect.y1, half_width, half_height ));
         rects.push(Rect::new( rect.x1, rect.y1 + half_height, half_width, half_height ));
@@ -86,22 +86,22 @@ impl BspRoomsGen {
 
     fn get_random_rect(&self, rng : &mut StdRng, rects: &Vec<Rect>) -> Rect {
         if rects.len() == 1 { return rects[0]; }
-        let idx = random::random_range(rng, 0, rects.len());
+        let idx = rng.random_range(0, rects.len());
         rects[idx]
     }
 
     fn get_random_sub_rect(&self, rect: Rect, rng: &mut StdRng) -> Rect {
         let mut result = rect;
-        let rect_width = i32::abs(rect.x1 - rect.x2);
-        let rect_height = i32::abs(rect.y1 - rect.y2);
+        let rect_width = rect.width();
+        let rect_height = rect.height();
 
-        let w = usize::max(3, random::random_range(rng, 1, usize::min(rect_width as usize, 20))) + 1;
-        let h = usize::max(3, random::random_range(rng, 1, usize::min(rect_height as usize, 20))) + 1;
+        let w = usize::max(3, rng.random_range(1, usize::min(rect_width as usize, 20))) + 1;
+        let h = usize::max(3, rng.random_range(1, usize::min(rect_height as usize, 20))) + 1;
 
-        result.x1 += random::random_range(rng, 0, 6) as i32;
-        result.y1 += random::random_range(rng, 0, 6) as i32;
-        result.x2 = result.x1 + w as i32;
-        result.y2 = result.y1 + h as i32;
+        result.x1 += rng.random_range(0, 6);
+        result.y1 += rng.random_range(0, 6);
+        result.x2 = result.x1 + w;
+        result.y2 = result.y1 + h;
 
         result
     }
@@ -121,8 +121,8 @@ impl BspRoomsGen {
 
         for y in expanded.y1 ..= expanded.y2 {
             for x in expanded.x1 ..= expanded.x2 {
-                if x > map.width as i32 -2 { can_build = false; }
-                if y > map.height as i32 -2 { can_build = false; }
+                if x > map.width - 2 { can_build = false; }
+                if y > map.height - 2 { can_build = false; }
                 if x < 1 { can_build = false; }
                 if y < 1 { can_build = false; }
                 if can_build {

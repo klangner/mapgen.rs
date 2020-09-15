@@ -6,7 +6,7 @@ use mapgen::dungeon::{
     map::TileType,
     cellular_automata::CellularAutomataGen,
     simple_rooms::SimpleRoomsGen,
-    bsp_rooms::BspRoomsGen,
+    bsp_interior::BspInteriorGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
     distant_exit::DistantExit,
@@ -64,11 +64,10 @@ impl World {
             tiles }
     }
 
-    pub fn new_bsp_rooms(width: u32, height: u32, seed: u32) -> World {
-        World::print_map_info(format!("BSP Rooms with the seed: {}", seed));
+    pub fn new_bsp_interior(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("BSP Interior with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(BspRoomsGen::new())
-            .with(NearestCorridors::new())
+        let map = MapBuilder::new(BspInteriorGen::new())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
@@ -87,7 +86,7 @@ impl World {
         } else if px < 0.6666 {
             World::new_simple_rooms(width, height, seed)
         } else {
-            World::new_bsp_rooms(width, height, seed)
+            World::new_bsp_interior(width, height, seed)
         }
     }
 
