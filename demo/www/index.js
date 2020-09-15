@@ -24,14 +24,18 @@ function newCellularAutomata() {
     var seed = Date.now();
     world = World.new_cellular_automata(width, height, seed);
     requestAnimationFrame(renderLoop);
-    infoDiv.textContent = "Cellular Automata with the seed: " + seed;
 }
 
 function newSimpleRooms() {
     var seed = Date.now();
-    world = World.new_random_rooms(width, height, seed);
+    world = World.new_simple_rooms(width, height, seed);
     requestAnimationFrame(renderLoop);
-    infoDiv.textContent = "Random Rooms with the seed: " + seed;
+}
+
+function newRandomGen() {
+    var seed = Date.now();
+    world = World.new_random(width, height, seed);
+    requestAnimationFrame(renderLoop);
 }
 
 const renderLoop = () => {
@@ -92,8 +96,9 @@ const drawCells = () => {
     ctx.stroke();
 };
 
-newCellularAutomata();
+newRandomGen();
 
 // Connect UI element
 document.getElementById('cellular-automata-option').addEventListener('click', newCellularAutomata);
 document.getElementById('simple-rooms-option').addEventListener('click', newSimpleRooms);
+document.getElementById('random-option').addEventListener('click', newRandomGen);

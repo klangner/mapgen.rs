@@ -1,17 +1,18 @@
 //! Random rooms map generator.
 //! 
-//! Try to generate rooms of different size to fille the whole map area.
+//! Try to generate rooms of different size to fill the map area. 
+//! Rooms will not overlap.
 //! 
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::dungeon::{
 //!     MapGenerator,
-//!     random_rooms::RandomRoomsGen
+//!     simple_rooms::SimpleRoomsGen
 //! };
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = RandomRoomsGen::new();
+//! let gen = SimpleRoomsGen::new();
 //! let map = gen.generate_map(80, 50, &mut rng);
 //! 
 //! assert_eq!(map.width, 80);
@@ -26,22 +27,22 @@ use crate::common::random;
 use super::map::{Map};
 
 
-pub struct RandomRoomsGen {
+pub struct SimpleRoomsGen {
     max_rooms: usize,
     min_room_size: usize,
     max_room_size: usize,
 }
 
-impl MapGenerator for RandomRoomsGen {
+impl MapGenerator for SimpleRoomsGen {
     fn generate_map(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
         self.build_rooms(width, height, rng)
     }
 }
 
 
-impl RandomRoomsGen {
-    pub fn new() -> Box<RandomRoomsGen> {
-        Box::new(RandomRoomsGen{
+impl SimpleRoomsGen {
+    pub fn new() -> Box<SimpleRoomsGen> {
+        Box::new(SimpleRoomsGen{
             max_rooms: 30,
             min_room_size: 6,
             max_room_size: 10

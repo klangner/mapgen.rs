@@ -19,7 +19,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
     * [ ] Drunkard's walk
     * [ ] Maze
     * [ ] Prefabs
-    * [x] Random rooms
+    * [x] Simple rooms
     * [ ] Voronoi hive
     * [ ] Wave Function Collapse
   * Map modifiers (filters)
