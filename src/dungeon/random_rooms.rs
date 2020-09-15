@@ -40,12 +40,12 @@ impl MapGenerator for RandomRoomsGen {
 
 
 impl RandomRoomsGen {
-    pub fn new() -> RandomRoomsGen {
-        RandomRoomsGen{
+    pub fn new() -> Box<RandomRoomsGen> {
+        Box::new(RandomRoomsGen{
             max_rooms: 30,
             min_room_size: 6,
             max_room_size: 10
-        }
+        })
     }
 
     fn build_rooms(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {

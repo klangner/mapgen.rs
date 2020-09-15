@@ -39,8 +39,8 @@ impl MapGenerator for CellularAutomataGen {
 
 impl CellularAutomataGen {
     /// Create generator which will create map with the given dimension.
-    pub fn new() -> CellularAutomataGen {
-        CellularAutomataGen {}
+    pub fn new() -> Box<CellularAutomataGen> {
+        Box::new(CellularAutomataGen {})
     }
 
     /// Generate map

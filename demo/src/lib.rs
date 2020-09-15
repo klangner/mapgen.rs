@@ -31,7 +31,7 @@ pub struct World {
 impl World {
     pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
+        let map = MapBuilder::new(CellularAutomataGen::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .with(DistantExit::new())
@@ -47,7 +47,7 @@ impl World {
 
     pub fn new_random_rooms(width: u32, height: u32, seed: u32) -> World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(Box::new(RandomRoomsGen::new()))
+        let map = MapBuilder::new(RandomRoomsGen::new())
             .with(NearestCorridors::new())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())

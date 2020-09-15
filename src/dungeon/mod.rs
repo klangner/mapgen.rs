@@ -16,7 +16,7 @@
 //!     starting_point::{AreaStartingPosition, XStart, YStart},
 //! };
 //! 
-//! let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
+//! let map = MapBuilder::new(CellularAutomataGen::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
 //!             .build_map(80, 50);
 //! 
@@ -104,7 +104,7 @@ mod tests {
 
     #[test]
     fn test_ca_map() {
-        let map = MapBuilder::new(Box::new(CellularAutomataGen::new()))
+        let map = MapBuilder::new(CellularAutomataGen::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .build_map(80, 50);
 
