@@ -63,7 +63,7 @@ use mapgen::dungeon::{
     cull_unreachable::CullUnreachable,
 };
 
-let map = MapBuilder::new(Box::new(CellularAutomataGen::new(80, 50)))
+let map = MapBuilder::new(CellularAutomataGen::new(80, 50))
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .build_map();
