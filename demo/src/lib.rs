@@ -6,6 +6,7 @@ use mapgen::dungeon::{
     map::TileType,
     cellular_automata::CellularAutomataGen,
     simple_rooms::SimpleRoomsGen,
+    bsp_rooms::BspRoomsGen,
     starting_point::{AreaStartingPosition, XStart, YStart},
     cull_unreachable::CullUnreachable,
     distant_exit::DistantExit,
@@ -63,12 +64,30 @@ impl World {
             tiles }
     }
 
+    pub fn new_bsp_rooms(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("BSP Rooms with the seed: {}", seed));
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(BspRoomsGen::new())
+            .with(NearestCorridors::new())
+            .build_map_with_rng(width as usize, height as usize, &mut rng);
+        let tiles = (0..map.tiles.len())
+            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .collect();
+        World { 
+            width,
+            height,
+            tiles }
+    }
+
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
         let mut rng = rand::thread_rng();
-        if rng.gen::<f32>() < 0.5 {
+        let px = rng.gen::<f32>();
+        if px < 0.3333 {
             World::new_cellular_automata(width, height, seed)
-        } else {
+        } else if px < 0.6666 {
             World::new_simple_rooms(width, height, seed)
+        } else {
+            World::new_bsp_rooms(width, height, seed)
         }
     }
 

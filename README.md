@@ -13,7 +13,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
 
   * Map generators
     * [ ] BSP Interior
-    * [ ] BSP Room 
+    * [x] BSP Rooms
     * [x] Cellular automata
     * [ ] Diffusion-Limited Aggregation (DLA)
     * [ ] Drunkard's walk
@@ -35,7 +35,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
 
 Add dependency to your project
 ```
-mapgen = "0.1"
+mapgen = "0.2"
 ```
 
 Using single map generator:

@@ -6,7 +6,11 @@ use rand::prelude::*;
 /// Generate random number between start (inclusive) and end (exclusive).
 pub fn random_range(rng: &mut StdRng, start: usize, end: usize) -> usize {
     let max = (end - start) as u32;
-    ((rng.next_u32() % max) + start as u32) as usize
+    if max == 0 {
+        start
+    } else {
+        ((rng.next_u32() % max) + start as u32) as usize
+    }
 }
 
 /// ------------------------------------------------------------------------------------------------
