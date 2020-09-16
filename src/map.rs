@@ -8,13 +8,17 @@
 //! 
 
 use std::fmt;
-use super::geometry::{Point, Rect};
+use super::geometry::{Point, Rect, usize_abs};
 
 
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub enum TileType {
     Wall, Floor
 }
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum Symmetry { None, Horizontal, Vertical, Both }
+
 
 /// Map data
 #[derive(Default, Clone)]
@@ -137,6 +141,64 @@ impl Map {
             if self.at(x, y) != TileType::Floor {
                 corridor.push(Point::new(x, y));
                 self.set_tile(x, y, TileType::Floor);
+            }
+        }
+    }
+
+    pub fn paint(&mut self, mode: Symmetry, brush_size: usize, x: usize, y: usize) {
+        match mode {
+            Symmetry::None => self.apply_paint(brush_size, x, y),
+            Symmetry::Horizontal => {
+                let center_x = self.width / 2;
+                if x == center_x {
+                    self.apply_paint(brush_size, x, y);
+                } else {
+                    let dist_x = usize_abs(center_x, x);
+                    self.apply_paint(brush_size, center_x + dist_x, y);
+                    self.apply_paint(brush_size, center_x - dist_x, y);
+                }
+            }
+            Symmetry::Vertical => {
+                let center_y = self.height / 2;
+                if y == center_y {
+                    self.apply_paint(brush_size, x, y);
+                } else {
+                    let dist_y = usize_abs(center_y, y);
+                    self.apply_paint(brush_size, x, center_y + dist_y);
+                    self.apply_paint(brush_size, x, center_y - dist_y);
+                }
+            }
+            Symmetry::Both => {
+                let center_x = self.width / 2;
+                let center_y = self.height / 2;
+                if x == center_x && y == center_y {
+                    self.apply_paint(brush_size, x, y);
+                } else {
+                    let dist_x = usize_abs(center_x, x);
+                    self.apply_paint(brush_size, center_x + dist_x, y);
+                    self.apply_paint(brush_size, center_x - dist_x, y);
+                    let dist_y = usize_abs(center_y, y);
+                    self.apply_paint(brush_size, x, center_y + dist_y);
+                    self.apply_paint(brush_size, x, center_y - dist_y);
+                }
+            }
+        }
+    }
+
+    fn apply_paint(&mut self, brush_size: usize, x: usize, y: usize) {
+        match brush_size {
+            1 => {
+                self.set_tile(x, y, TileType::Floor);
+            }
+            _ => {
+                let half_brush_size = brush_size / 2;
+                for brush_y in y-half_brush_size .. y+half_brush_size {
+                    for brush_x in x-half_brush_size .. x+half_brush_size {
+                        if brush_x > 1 && brush_x < self.width-1 && brush_y > 1 && brush_y < self.height-1 {
+                            self.set_tile(brush_x, brush_y, TileType::Floor);
+                        }
+                    }
+                }
             }
         }
     }

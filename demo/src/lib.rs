@@ -11,6 +11,7 @@ use mapgen::{
         cull_unreachable::CullUnreachable,
         distant_exit::DistantExit,
         rooms_corridors_nearest::NearestCorridors,
+        drunkard::DrunkardsWalkGen,
     },
     map::TileType,
 };
@@ -80,13 +81,29 @@ impl World {
             tiles }
     }
 
+    pub fn new_drunkard(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("Drunkard with the seed: {}", seed));
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(DrunkardsWalkGen::open_halls())
+            .build_map_with_rng(width as usize, height as usize, &mut rng);
+        let tiles = (0..map.tiles.len())
+            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .collect();
+        World { 
+            width,
+            height,
+            tiles }
+    }
+
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
         let mut rng = rand::thread_rng();
         let px = rng.gen::<f32>();
-        if px < 0.3333 {
+        if px < 0.25 {
             World::new_cellular_automata(width, height, seed)
-        } else if px < 0.6666 {
+        } else if px < 0.5 {
             World::new_simple_rooms(width, height, seed)
+        } else if px < 0.75 {
+            World::new_drunkard(width, height, seed)
         } else {
             World::new_bsp_interior(width, height, seed)
         }

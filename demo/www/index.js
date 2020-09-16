@@ -38,6 +38,12 @@ function newBspInterior() {
     requestAnimationFrame(renderLoop);
 }
 
+function newDrunkard() {
+    var seed = Date.now();
+    world = World.new_drunkard(width, height, seed);
+    requestAnimationFrame(renderLoop);
+}
+
 function newRandomGen() {
     var seed = Date.now();
     world = World.new_random(width, height, seed);
@@ -108,4 +114,5 @@ newRandomGen();
 document.getElementById('cellular-automata-option').addEventListener('click', newCellularAutomata);
 document.getElementById('simple-rooms-option').addEventListener('click', newSimpleRooms);
 document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
+document.getElementById('drunkard-option').addEventListener('click', newDrunkard);
 document.getElementById('random-option').addEventListener('click', newRandomGen);

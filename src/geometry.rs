@@ -71,6 +71,18 @@ impl Rect {
     }
 }
 
+/// Calculate abs value between 2 usize values
+/// Example:
+/// ```
+/// use mapgen::geometry::usize_abs;
+/// 
+/// assert_eq!(usize_abs(5, 3), 2);
+/// assert_eq!(usize_abs(3, 5), 2);
+/// ```
+pub fn usize_abs(x: usize, y: usize) -> usize {
+    if x >= y {x - y} else {y - x}
+}
+
 /// ------------------------------------------------------------------------------------------------
 /// Module unit tests
 /// ------------------------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
     * [x] BSP Rooms
     * [x] Cellular automata
     * [ ] Diffusion-Limited Aggregation (DLA)
-    * [ ] Drunkard's walk
+    * [x] Drunkard's walk
     * [ ] Maze
     * [ ] Prefabs
     * [x] Simple rooms
