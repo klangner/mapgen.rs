@@ -8,12 +8,14 @@
 //! 
 //! Example
 //! ```
-//! use mapgen::common::geometry::Point;
-//! use mapgen::dungeon::{
-//!     MapBuilder,
+//! use mapgen::{
+//!     map_builder::{
+//!         MapModifier, MapBuilder,
+//!         cellular_automata::CellularAutomataGen,
+//!         starting_point::{AreaStartingPosition, XStart, YStart}
+//!     },
 //!     map::{Map, TileType},
-//!     cellular_automata::CellularAutomataGen,
-//!     starting_point::{AreaStartingPosition, XStart, YStart},
+//!     geometry::Point,
 //! };
 //! 
 //! let map = MapBuilder::new(CellularAutomataGen::new())
@@ -26,20 +28,19 @@
 //! ```
 //! 
 
-pub mod map;
-pub mod cellular_automata;
-pub mod cull_unreachable;
 pub mod bsp_interior;
 pub mod bsp_rooms;
+pub mod cellular_automata;
+pub mod cull_unreachable;
 pub mod distant_exit;
+// pub mod drunkard;
 pub mod simple_rooms;
 pub mod rooms_corridors_nearest;
 pub mod starting_point;
-mod dijkstra;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
-use map::Map;
+use crate::map::Map;
 
 
 /// Trait which should be implemented by any map generator which want to be used

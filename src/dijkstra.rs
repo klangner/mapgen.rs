@@ -98,8 +98,8 @@ impl DijkstraMap {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::common::geometry::Point;
-    use crate::dungeon::map::Map;
+    use crate::geometry::Point;
+    use crate::map::Map;
 
     #[test]
     fn test_culling() {

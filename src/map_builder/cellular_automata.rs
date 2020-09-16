@@ -9,7 +9,7 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::dungeon::{
+//! use mapgen::map_builder::{
 //!     MapGenerator,
 //!     cellular_automata::CellularAutomataGen
 //! };
@@ -25,7 +25,7 @@
 
 use rand::prelude::*;
 use super::{MapGenerator, MapModifier};
-use super::map::{Map, TileType};
+use crate::map::{Map, TileType};
 
 
 /// Map generator and modifier

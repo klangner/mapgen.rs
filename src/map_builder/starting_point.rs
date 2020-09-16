@@ -6,11 +6,13 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::common::geometry::Point;
-//! use mapgen::dungeon::{
-//!     MapModifier,
+//! use mapgen::{
+//!     map_builder::{
+//!         MapModifier,
+//!         starting_point::{AreaStartingPosition, XStart, YStart},
+//!     },
 //!     map::{Map, TileType},
-//!     starting_point::{AreaStartingPosition, XStart, YStart}
+//!     geometry::Point,
 //! };
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
@@ -25,8 +27,8 @@
 
 use rand::prelude::StdRng;
 use super::{MapModifier};
-use crate::common::geometry::Point;
-use super::map::{Map, TileType};
+use crate::geometry::Point;
+use crate::map::{Map, TileType};
 
 
 /// Initial x region position

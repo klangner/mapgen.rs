@@ -1,16 +1,18 @@
 use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
-use mapgen::dungeon::{
-    MapBuilder,
+use mapgen::{
+    map_builder::{
+        MapBuilder,
+        cellular_automata::CellularAutomataGen,
+        simple_rooms::SimpleRoomsGen,
+        bsp_interior::BspInteriorGen,
+        starting_point::{AreaStartingPosition, XStart, YStart},
+        cull_unreachable::CullUnreachable,
+        distant_exit::DistantExit,
+        rooms_corridors_nearest::NearestCorridors,
+    },
     map::TileType,
-    cellular_automata::CellularAutomataGen,
-    simple_rooms::SimpleRoomsGen,
-    bsp_interior::BspInteriorGen,
-    starting_point::{AreaStartingPosition, XStart, YStart},
-    cull_unreachable::CullUnreachable,
-    distant_exit::DistantExit,
-    rooms_corridors_nearest::NearestCorridors,
 };
 
 

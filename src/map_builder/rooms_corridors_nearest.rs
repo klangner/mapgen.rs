@@ -2,7 +2,7 @@
 //! 
 use rand::prelude::StdRng;
 use super::MapModifier;
-use super::map::Map;
+use crate::map::Map;
 use std::collections::HashSet;
 
 

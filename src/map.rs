@@ -8,7 +8,7 @@
 //! 
 
 use std::fmt;
-use crate::common::geometry::{Point, Rect};
+use super::geometry::{Point, Rect};
 
 
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]

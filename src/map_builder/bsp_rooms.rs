@@ -6,7 +6,7 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::dungeon::{
+//! use mapgen::map_builder::{
 //!     MapGenerator,
 //!     bsp_rooms::BspRoomsGen
 //! };
@@ -22,9 +22,9 @@
 
 use rand::prelude::*;
 use super::MapGenerator;
-use crate::common::geometry::Rect;
-use crate::common::random::Rng;
-use super::map::{Map, TileType};
+use crate::geometry::Rect;
+use crate::random::Rng;
+use crate::map::{Map, TileType};
 
 
 pub struct BspRoomsGen {

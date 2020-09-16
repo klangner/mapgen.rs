@@ -6,7 +6,7 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::dungeon::{
+//! use mapgen::map_builder::{
 //!     MapGenerator,
 //!     bsp_interior::BspInteriorGen
 //! };
@@ -22,9 +22,9 @@
 
 use rand::prelude::*;
 use super::MapGenerator;
-use crate::common::geometry::{Point, Rect};
-use crate::common::random::Rng;
-use super::map::Map;
+use crate::geometry::{Point, Rect};
+use crate::random::Rng;
+use crate::map::Map;
 
 
 pub struct BspInteriorGen {

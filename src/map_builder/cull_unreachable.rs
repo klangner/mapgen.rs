@@ -6,8 +6,8 @@
 
 use rand::prelude::StdRng;
 use super::MapModifier;
-use super::map::{Map, TileType};
-use super::dijkstra::DijkstraMap;
+use crate::map::{Map, TileType};
+use crate::dijkstra::DijkstraMap;
 
 
 /// Remove unreachable areas from the map.
@@ -50,8 +50,8 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapModifier;
-    use crate::common::geometry::Point;
-    use crate::dungeon::map::Map;
+    use crate::geometry::Point;
+    use crate::map::Map;
 
     #[test]
     fn test_culling() {

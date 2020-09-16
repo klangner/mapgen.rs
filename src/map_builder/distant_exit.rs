@@ -6,10 +6,10 @@
 
 use std::f32;
 use rand::prelude::StdRng;
-use crate::common::geometry::Point;
+use crate::geometry::Point;
 use super::MapModifier;
-use super::map::Map;
-use super::dijkstra::DijkstraMap;
+use crate::map::Map;
+use crate::dijkstra::DijkstraMap;
 
 
 /// Add exist position to the map based on the distance from the start point.
@@ -54,8 +54,8 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapModifier;
-    use crate::common::geometry::Point;
-    use crate::dungeon::map::Map;
+    use crate::geometry::Point;
+    use crate::map::Map;
 
     #[test]
     fn test_exit() {

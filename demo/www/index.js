@@ -50,7 +50,7 @@ const renderLoop = () => {
     drawGrid();
     drawCells();
 
-    requestAnimationFrame(renderLoop);
+    // requestAnimationFrame(renderLoop);
 };
 
 const drawGrid = () => {

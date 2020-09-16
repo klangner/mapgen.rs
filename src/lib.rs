@@ -4,5 +4,9 @@
 //!   * Dungeon maps
 //! 
  
-pub mod common;
-pub mod dungeon;
+pub mod map_builder;
+pub mod geometry;
+pub mod map;
+
+pub (crate) mod dijkstra;
+pub (crate) mod random;

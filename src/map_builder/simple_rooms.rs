@@ -6,7 +6,7 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::dungeon::{
+//! use mapgen::map_builder::{
 //!     MapGenerator,
 //!     simple_rooms::SimpleRoomsGen
 //! };
@@ -22,9 +22,9 @@
 
 use rand::prelude::*;
 use super::MapGenerator;
-use crate::common::geometry::Rect;
-use crate::common::random::Rng;
-use super::map::{Map};
+use crate::geometry::Rect;
+use crate::random::Rng;
+use crate::map::{Map};
 
 
 pub struct SimpleRoomsGen {
