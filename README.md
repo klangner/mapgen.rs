@@ -35,7 +35,7 @@ Generate procedural maps for games. [Try it in the browser](https://klangner.git
 
 Add dependency to your project
 ```
-mapgen = "0.2"
+mapgen = "0.3"
 ```
 
 Using single map generator:
