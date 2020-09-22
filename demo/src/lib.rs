@@ -1,19 +1,16 @@
 use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
-use mapgen::{
-    map_builder::{
-        MapBuilder,
-        cellular_automata::CellularAutomataGen,
-        simple_rooms::SimpleRoomsGen,
-        bsp_interior::BspInteriorGen,
-        starting_point::{AreaStartingPosition, XStart, YStart},
-        cull_unreachable::CullUnreachable,
-        distant_exit::DistantExit,
-        rooms_corridors_nearest::NearestCorridors,
-        drunkard::DrunkardsWalkGen,
-    },
-    map::TileType,
+use mapgen::{MapBuilder, TileType};
+use mapgen::filter::{
+    CellularAutomata,
+    SimpleRooms,
+    BspInterior,
+    {AreaStartingPosition, XStart, YStart},
+    CullUnreachable,
+    DistantExit,
+    NearestCorridors,
+    DrunkardsWalk,
 };
 
 
@@ -38,7 +35,8 @@ impl World {
     pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Cellular Automata with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(CellularAutomataGen::new())
+        let map = MapBuilder::new()
+            .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .with(DistantExit::new())
@@ -55,7 +53,8 @@ impl World {
     pub fn new_simple_rooms(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Simple Rooms with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(SimpleRoomsGen::new())
+        let map = MapBuilder::new()
+            .with(SimpleRooms::new())
             .with(NearestCorridors::new())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
@@ -70,7 +69,8 @@ impl World {
     pub fn new_bsp_interior(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("BSP Interior with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(BspInteriorGen::new())
+        let map = MapBuilder::new()
+            .with(BspInterior::new())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
@@ -84,7 +84,8 @@ impl World {
     pub fn new_drunkard(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Drunkard with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(DrunkardsWalkGen::open_halls())
+        let map = MapBuilder::new()
+            .with(DrunkardsWalk::open_halls())
             .build_map_with_rng(width as usize, height as usize, &mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
