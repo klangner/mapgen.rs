@@ -22,8 +22,8 @@
 //! 
 
 use rand::prelude::*;
-use super::MapFilter;
-use crate::map::{Map, TileType};
+use crate::MapFilter;
+use crate::{Map, TileType};
 
 
 /// Map generator and modifier

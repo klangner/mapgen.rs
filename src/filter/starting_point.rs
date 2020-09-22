@@ -21,9 +21,9 @@
 //! 
 
 use rand::prelude::StdRng;
-use super::MapFilter;
+use crate::MapFilter;
 use crate::geometry::Point;
-use crate::map::{Map, TileType};
+use crate::{Map, TileType};
 
 
 /// Initial x region position

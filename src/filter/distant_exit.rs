@@ -7,8 +7,8 @@
 use std::f32;
 use rand::prelude::StdRng;
 use crate::geometry::Point;
-use super::MapFilter;
-use crate::map::Map;
+use crate::MapFilter;
+use crate::Map;
 use crate::dijkstra::DijkstraMap;
 
 

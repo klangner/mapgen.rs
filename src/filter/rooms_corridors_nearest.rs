@@ -1,8 +1,8 @@
 //! Connect nearest rooms on the map with corridors
 //! 
 use rand::prelude::StdRng;
-use super::MapFilter;
-use crate::map::Map;
+use crate::MapFilter;
+use crate::Map;
 use std::collections::HashSet;
 
 

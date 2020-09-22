@@ -19,10 +19,10 @@
 //! 
 
 use rand::prelude::*;
-use super::MapFilter;
+use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use crate::map::{Map, TileType};
+use crate::{Map, TileType};
 
 
 pub struct BspRooms {

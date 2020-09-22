@@ -5,8 +5,8 @@
 //! 
 
 use rand::prelude::StdRng;
-use super::MapFilter;
-use crate::map::{Map, TileType};
+use crate::MapFilter;
+use crate::{Map, TileType};
 use crate::dijkstra::DijkstraMap;
 
 

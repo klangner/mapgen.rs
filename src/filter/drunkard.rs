@@ -14,7 +14,7 @@
 //! 
 
 use rand::prelude::*;
-use super::MapFilter;
+use crate::MapFilter;
 use crate::{
     map::{Map, Symmetry, TileType},
     geometry::Point,
