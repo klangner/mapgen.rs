@@ -7,7 +7,7 @@
 use std::f32;
 use rand::prelude::StdRng;
 use crate::geometry::Point;
-use super::MapModifier;
+use super::MapFilter;
 use crate::map::Map;
 use crate::dijkstra::DijkstraMap;
 
@@ -15,7 +15,7 @@ use crate::dijkstra::DijkstraMap;
 /// Add exist position to the map based on the distance from the start point.
 pub struct DistantExit {} 
 
-impl MapModifier for DistantExit {
+impl MapFilter for DistantExit {
     fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
         self.build(map)
     }
@@ -53,7 +53,7 @@ impl DistantExit {
 mod tests {
     use rand::prelude::*;
     use super::*;
-    use super::MapModifier;
+    use super::MapFilter;
     use crate::geometry::Point;
     use crate::map::Map;
 

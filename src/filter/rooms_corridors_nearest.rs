@@ -1,14 +1,14 @@
 //! Connect nearest rooms on the map with corridors
 //! 
 use rand::prelude::StdRng;
-use super::MapModifier;
+use super::MapFilter;
 use crate::map::Map;
 use std::collections::HashSet;
 
 
 pub struct NearestCorridors {}
 
-impl MapModifier for NearestCorridors {
+impl MapFilter for NearestCorridors {
     fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
         self.corridors(map)
     }

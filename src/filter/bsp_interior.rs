@@ -6,14 +6,14 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::map_builder::{
-//!     MapGenerator,
-//!     bsp_interior::BspInteriorGen
+//! use mapgen::{Map, MapFilter};
+//! use mapgen::filter::{
+//!     BspInterior
 //! };
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspInteriorGen::new();
-//! let map = gen.generate_map(80, 50, &mut rng);
+//! let gen = BspInterior::new();
+//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -21,34 +21,34 @@
 //! 
 
 use rand::prelude::*;
-use super::MapGenerator;
+use super::MapFilter;
 use crate::geometry::{Point, Rect};
 use crate::random::Rng;
 use crate::map::Map;
 
 
-pub struct BspInteriorGen {
+pub struct BspInterior {
     min_room_size: usize,
 }
 
-impl MapGenerator for BspInteriorGen {
-    fn generate_map(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
-        self.build(rng, width, height)
+impl MapFilter for BspInterior {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map {
+        self.build(rng, map)
     }
 }
 
-impl BspInteriorGen {
+impl BspInterior {
 
-    pub fn new() -> Box<BspInteriorGen> {
-        Box::new(BspInteriorGen{
+    pub fn new() -> Box<BspInterior> {
+        Box::new(BspInterior{
             min_room_size: 8,
         })
     }
 
-    fn build(&self, rng: &mut StdRng, width: usize, height: usize) -> Map {
-        let mut map = Map::new(width, height);
+    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+        let mut new_map = map.clone();
         let mut rects: Vec<Rect> = Vec::new();
-        rects.push( Rect::new(1, 1, map.width-2, map.height-2) ); 
+        rects.push( Rect::new(1, 1, new_map.width-2, new_map.height-2) ); 
         let first_room = rects[0];
         // Divide the first room
         self.add_subrects(first_room, rng, &mut rects); 
@@ -56,21 +56,21 @@ impl BspInteriorGen {
         let rooms_copy = rects.clone();
         for r in rooms_copy.iter() {
             let room = *r;
-            map.add_room(room);
+            new_map.add_room(room);
         }
 
         // Now we want corridors
-        for i in 0..map.rooms.len()-1 {
-            let room = map.rooms[i];
-            let next_room = map.rooms[i+1];
+        for i in 0..new_map.rooms.len()-1 {
+            let room = new_map.rooms[i];
+            let next_room = new_map.rooms[i+1];
             let start_x = room.x1 + rng.random_range(1, room.width());
             let start_y = room.y1 + rng.random_range(1, room.height());
             let end_x = next_room.x1 + (rng.random_range(1, next_room.width()));
             let end_y = next_room.y1 + (rng.random_range(1, next_room.width()));
-            map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
+            new_map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
         }
 
-       map 
+       new_map 
     }
 
     fn add_subrects(&self, rect: Rect, rng: &mut StdRng, rects: &mut Vec<Rect>) {

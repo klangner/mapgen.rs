@@ -6,14 +6,9 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{
-//!     map_builder::{
-//!         MapModifier,
-//!         starting_point::{AreaStartingPosition, XStart, YStart},
-//!     },
-//!     map::{Map, TileType},
-//!     geometry::Point,
-//! };
+//! use mapgen::{MapFilter, Map, TileType};
+//! use mapgen::filter::starting_point::{AreaStartingPosition, XStart, YStart};
+//! use mapgen::geometry::Point;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let mut map = Map::new(80, 50);
@@ -26,7 +21,7 @@
 //! 
 
 use rand::prelude::StdRng;
-use super::{MapModifier};
+use super::MapFilter;
 use crate::geometry::Point;
 use crate::map::{Map, TileType};
 
@@ -43,7 +38,7 @@ pub struct AreaStartingPosition {
     y : YStart
 }
 
-impl MapModifier for AreaStartingPosition {
+impl MapFilter for AreaStartingPosition {
     fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
         self.build(map)
     }

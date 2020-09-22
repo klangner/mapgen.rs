@@ -4,9 +4,12 @@
 //!   * Dungeon maps
 //! 
  
-pub mod map_builder;
+pub mod filter;
 pub mod geometry;
 pub mod map;
+
+pub use map::{Map, TileType};
+pub use filter::{MapFilter, MapBuilder};
 
 pub (crate) mod dijkstra;
 pub (crate) mod random;

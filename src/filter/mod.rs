@@ -8,17 +8,15 @@
 //! 
 //! Example
 //! ```
-//! use mapgen::{
-//!     map_builder::{
-//!         MapModifier, MapBuilder,
-//!         cellular_automata::CellularAutomataGen,
-//!         starting_point::{AreaStartingPosition, XStart, YStart}
-//!     },
-//!     map::{Map, TileType},
-//!     geometry::Point,
+//! use mapgen::{MapFilter, MapBuilder, Map, TileType};
+//! use mapgen::filter::{
+//!     CellularAutomata,
+//!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
+//! use mapgen::geometry::Point;
 //! 
-//! let map = MapBuilder::new(CellularAutomataGen::new())
+//! let map = MapBuilder::new()
+//!             .with(CellularAutomata::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
 //!             .build_map(80, 50);
 //! 
@@ -38,39 +36,41 @@ pub mod simple_rooms;
 pub mod rooms_corridors_nearest;
 pub mod starting_point;
 
+pub use bsp_interior::BspInterior;
+pub use bsp_rooms::BspRooms;
+pub use cellular_automata::CellularAutomata;
+pub use cull_unreachable::CullUnreachable;
+pub use distant_exit::DistantExit;
+pub use drunkard::DrunkardsWalk;
+pub use simple_rooms::SimpleRooms;
+pub use rooms_corridors_nearest::NearestCorridors;
+pub use starting_point::AreaStartingPosition;
+
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
 use crate::map::Map;
 
 
-/// Trait which should be implemented by any map generator which want to be used
-/// by MapBuilder
-pub trait MapGenerator {
-    fn generate_map(&self, width: usize, height: usize, rng: &mut StdRng) -> Map;
-}
-
 /// Trait which should be implemented by map modifier. 
 /// Modifier takes initiall map and apply changes to it.
-pub trait MapModifier {
+pub trait MapFilter {
     fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map;
 }
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
 pub struct MapBuilder {
-    generator: Box<dyn MapGenerator>,
-    modifiers: Vec<Box<dyn MapModifier>>,
+    modifiers: Vec<Box<dyn MapFilter>>,
 }
 
 impl MapBuilder {
     /// Create Map Builder with initial map generator
-    pub fn new(generator : Box<dyn MapGenerator>) -> MapBuilder {
+    pub fn new() -> MapBuilder {
         MapBuilder { 
-            generator, 
             modifiers: Vec::new(),
         }
     }
 
-    pub fn with(&mut self, modifier : Box<dyn MapModifier>) -> &mut MapBuilder {
+    pub fn with(&mut self, modifier : Box<dyn MapFilter>) -> &mut MapBuilder {
         self.modifiers.push(modifier);
         self
     }
@@ -84,7 +84,7 @@ impl MapBuilder {
 
     /// Build map using provided random number generator
     pub fn build_map_with_rng(&mut self, width: usize, height: usize, rng: &mut StdRng) -> Map {
-        let mut map = self.generator.generate_map(width, height, rng);
+        let mut map = Map::new(width, height);
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
@@ -102,12 +102,13 @@ impl MapBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cellular_automata::CellularAutomataGen;
+    use cellular_automata::CellularAutomata;
     use starting_point::{AreaStartingPosition, XStart, YStart};
 
     #[test]
     fn test_ca_map() {
-        let map = MapBuilder::new(CellularAutomataGen::new())
+        let map = MapBuilder::new()
+            .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .build_map(80, 50);
 

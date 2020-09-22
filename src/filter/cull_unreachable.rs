@@ -5,7 +5,7 @@
 //! 
 
 use rand::prelude::StdRng;
-use super::MapModifier;
+use super::MapFilter;
 use crate::map::{Map, TileType};
 use crate::dijkstra::DijkstraMap;
 
@@ -13,7 +13,7 @@ use crate::dijkstra::DijkstraMap;
 /// Remove unreachable areas from the map.
 pub struct CullUnreachable {}
 
-impl MapModifier for CullUnreachable {
+impl MapFilter for CullUnreachable {
     fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
         self.build(map)
     }
@@ -49,7 +49,7 @@ impl CullUnreachable {
 mod tests {
     use rand::prelude::*;
     use super::*;
-    use super::MapModifier;
+    use super::MapFilter;
     use crate::geometry::Point;
     use crate::map::Map;
 

@@ -6,14 +6,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::map_builder::{
-//!     MapGenerator,
-//!     bsp_rooms::BspRoomsGen
-//! };
+//! use mapgen::{Map, MapFilter};
+//! use mapgen::filter::BspRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspRoomsGen::new();
-//! let map = gen.generate_map(80, 50, &mut rng);
+//! let gen = BspRooms::new();
+//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -21,34 +19,34 @@
 //! 
 
 use rand::prelude::*;
-use super::MapGenerator;
+use super::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
 use crate::map::{Map, TileType};
 
 
-pub struct BspRoomsGen {
+pub struct BspRooms {
     max_split: usize,
 }
 
-impl MapGenerator for BspRoomsGen {
-    fn generate_map(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
-        self.build_rooms(width, height, rng)
+impl MapFilter for BspRooms {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+        self.build_rooms(map, rng)
     }
 }
 
-impl BspRoomsGen {
-    pub fn new() -> Box<BspRoomsGen> {
-        Box::new(BspRoomsGen {
+impl BspRooms {
+    pub fn new() -> Box<BspRooms> {
+        Box::new(BspRooms {
             max_split: 240,
         })
     }
 
-    fn build_rooms(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
-        let mut map = Map::new(width, height);
+    fn build_rooms(&self, map: &Map, rng : &mut StdRng) -> Map {
+        let mut new_map = map.clone();
         let mut rects: Vec<Rect> = Vec::new();
         // Start with a single map-sized rectangle
-        rects.push( Rect::new(2, 2, width-5, height-5) ); 
+        rects.push( Rect::new(2, 2, new_map.width-5, new_map.height-5) ); 
         let first_room = rects[0];
         rects.append(&mut self.split_into_subrects(first_room)); // Divide the first room
 
@@ -59,14 +57,14 @@ impl BspRoomsGen {
             let rect = self.get_random_rect(rng, &rects);
             let candidate = self.get_random_sub_rect(rect, rng);
 
-            if self.is_possible(candidate, &map) {
-                map.add_room(candidate);
+            if self.is_possible(candidate, &new_map) {
+                new_map.add_room(candidate);
                 rects.append(&mut self.split_into_subrects(rect));
             }
             n_rooms += 1;
         }
 
-        map
+        new_map
     }
 
     fn split_into_subrects(&self, rect: Rect) -> Vec<Rect> {

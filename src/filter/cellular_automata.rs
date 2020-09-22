@@ -9,14 +9,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::map_builder::{
-//!     MapGenerator,
-//!     cellular_automata::CellularAutomataGen
-//! };
+//! use mapgen::{Map, MapFilter};
+//! use mapgen::filter::CellularAutomata;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = CellularAutomataGen::new();
-//! let map = gen.generate_map(80, 50, &mut rng);
+//! let gen = CellularAutomata::new();
+//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -24,53 +22,46 @@
 //! 
 
 use rand::prelude::*;
-use super::{MapGenerator, MapModifier};
+use super::MapFilter;
 use crate::map::{Map, TileType};
 
 
 /// Map generator and modifier
-pub struct CellularAutomataGen {}
+pub struct CellularAutomata {}
 
-impl MapGenerator for CellularAutomataGen {
-    fn generate_map(&self, width: usize, height: usize, rng : &mut StdRng) -> Map {
-        self.build(width, height, rng)
+impl MapFilter for CellularAutomata {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+        self.build(map, rng)
     }
 }
 
-impl CellularAutomataGen {
+impl CellularAutomata {
     /// Create generator which will create map with the given dimension.
-    pub fn new() -> Box<CellularAutomataGen> {
-        Box::new(CellularAutomataGen {})
+    pub fn new() -> Box<CellularAutomata> {
+        Box::new(CellularAutomata {})
     }
 
     /// Generate map
-    fn build(&self, width: usize, height: usize, rng: &mut StdRng) -> Map {
-        let mut map = Map::new(width, height);
+    fn build(&self, map: &Map, rng: &mut StdRng) -> Map {
+        let mut new_map = map.clone();
         // First we completely randomize the map, setting 55% of it to be floor.
-        for y in 1..height-1 {
-            for x in 1..width-1 {
+        for y in 1..new_map.height-1 {
+            for x in 1..new_map.width-1 {
                 let roll = rng.next_u32() % 100;
-                if roll > 55 { map.set_tile(x, y, TileType::Floor) } 
-                else { map.set_tile(x, y, TileType::Wall) }
+                if roll > 55 { new_map.set_tile(x, y, TileType::Floor) } 
+                else { new_map.set_tile(x, y, TileType::Wall) }
             }
         }
 
         // Now we iteratively apply cellular automata rules
         for _ in 0..15 {
-            map = apply_iteration(&map);
+            new_map = apply_iteration(&new_map);
         }
 
-        map
+        new_map
     }
 
 }
-
-impl MapModifier for CellularAutomataGen {
-    fn modify_map(&self, _rng: &mut StdRng, map : &Map) -> Map {
-        apply_iteration(map)
-    }
-}
-
 
 fn apply_iteration(map: &Map) -> Map {
     let mut new_map = map.clone();
