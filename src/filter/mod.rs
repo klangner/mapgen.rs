@@ -10,12 +10,14 @@
 //! ```
 //! use mapgen::{MapFilter, MapBuilder, Map, TileType};
 //! use mapgen::filter::{
+//!     NoiseGenerator,
 //!     CellularAutomata,
 //!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
 //! use mapgen::geometry::Point;
 //! 
 //! let map = MapBuilder::new()
+//!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
 //!             .build_map(80, 50);
@@ -32,6 +34,7 @@ pub mod cellular_automata;
 pub mod cull_unreachable;
 pub mod distant_exit;
 pub mod drunkard;
+pub mod noise_generator;
 pub mod simple_rooms;
 pub mod rooms_corridors_nearest;
 pub mod starting_point;
@@ -42,6 +45,7 @@ pub use cellular_automata::CellularAutomata;
 pub use cull_unreachable::CullUnreachable;
 pub use distant_exit::DistantExit;
 pub use drunkard::DrunkardsWalk;
+pub use noise_generator::NoiseGenerator;
 pub use simple_rooms::SimpleRooms;
 pub use rooms_corridors_nearest::NearestCorridors;
 pub use starting_point::{AreaStartingPosition, XStart, YStart};

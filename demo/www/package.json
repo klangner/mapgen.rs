@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server",
+    "server": "webpack-dev-server",
     "deploy": "gh-pages -d dist"
   },
   "repository": {

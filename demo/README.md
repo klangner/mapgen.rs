@@ -5,7 +5,13 @@
 ```
 wasm-pack build
 cd www
-npm run start
+npm run server
+```
+
+Deply application
+```
+cd www
+npm run deploy
 ```
 
 This app uses:

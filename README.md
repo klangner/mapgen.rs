@@ -7,28 +7,27 @@
 Generate procedural maps for games. [Try it in the browser](https://klangner.github.io/mapgen.rs/) using WebAssembly.
 
 
-## Features
+## Map filters
 
-### Dungeons
+This library consists of different map filters which can be combined to create custom map generator.
 
-  * Map generators
-    * [x] BSP Interior
-    * [x] BSP Rooms
-    * [x] Cellular automata
-    * [ ] Diffusion-Limited Aggregation (DLA)
-    * [x] Drunkard's walk
-    * [ ] Maze
-    * [ ] Prefabs
-    * [x] Simple rooms
-    * [ ] Voronoi hive
-    * [ ] Wave Function Collapse
-  * Map modifiers (filters)
-    * [x] Area exit point
-    * [x] Area starting point
-    * [x] Cellular automata
-    * [x] Cull unreachable areas
-    * [x] Room corridors nearest
-    * [ ] Voronoi spawning
+### Implemented filters
+
+  * [x] Area exit point
+  * [x] Area starting point
+  * [x] BSP Interior
+  * [x] BSP Rooms
+  * [x] Cellular automata
+  * [x] Cull unreachable areas
+  * [ ] Diffusion-Limited Aggregation (DLA)
+  * [x] Drunkard's walk
+  * [ ] Maze
+  * [x] Noise generator
+  * [ ] Prefabs
+  * [x] Room corridors nearest
+  * [x] Simple rooms
+  * [ ] Voronoi hive
+  * [ ] Wave Function Collapse
 
 
 ## Usage

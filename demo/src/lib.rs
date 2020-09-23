@@ -2,16 +2,7 @@ use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
 use mapgen::{MapBuilder, TileType};
-use mapgen::filter::{
-    CellularAutomata,
-    SimpleRooms,
-    BspInterior,
-    {AreaStartingPosition, XStart, YStart},
-    CullUnreachable,
-    DistantExit,
-    NearestCorridors,
-    DrunkardsWalk,
-};
+use mapgen::filter::*;
 
 
 #[wasm_bindgen]
@@ -36,6 +27,7 @@ impl World {
         World::print_map_info(format!("Cellular Automata with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
         let map = MapBuilder::new()
+            .with(NoiseGenerator::uniform())
             .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())

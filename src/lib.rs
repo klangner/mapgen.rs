@@ -10,12 +10,14 @@
 //! ```
 //! use mapgen::{MapFilter, MapBuilder, Map, TileType};
 //! use mapgen::filter::{
+//!     NoiseGenerator,
 //!     CellularAutomata,
 //!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
 //! use mapgen::geometry::Point;
 //! 
 //! let map = MapBuilder::new()
+//!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
 //!             .build_map(80, 50);
@@ -31,6 +33,7 @@ pub mod geometry;
 pub mod map;
 
 pub use map::{Map, Symmetry, TileType};
+pub use filter::*;
 
 pub (crate) mod dijkstra;
 pub (crate) mod random;
@@ -90,12 +93,16 @@ impl MapBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use filter::CellularAutomata;
-    use filter::{AreaStartingPosition, XStart, YStart};
+    use filter::{
+        CellularAutomata,
+        NoiseGenerator,
+        {AreaStartingPosition, XStart, YStart},
+    };
 
     #[test]
     fn test_ca_map() {
         let map = MapBuilder::new()
+            .with(NoiseGenerator::new(0.55))
             .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .build_map(80, 50);

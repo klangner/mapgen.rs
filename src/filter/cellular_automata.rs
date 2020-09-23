@@ -1,12 +1,12 @@
-//! Cellular automata map generator and modifier.
+//! Cellular automata map filter.
 //! 
 //! Check this [article](http://www.roguebasin.com/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels)
 //! for more information about the algorithm behind this generator.
 //! 
-//! Since this algorithm works in interations it is possible to take existing map 
-//! and apply single interaction to it. This is the idea behind MapModifier implementation.
+//! This algorithm requires that map first is filtered with some noise.
+//! For example `UniformNoise`. It can also be apply to any other non empty map.
 //! 
-//! Example generator usage:
+//! Example usage:
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{Map, MapFilter};
@@ -26,35 +26,27 @@ use crate::MapFilter;
 use crate::{Map, TileType};
 
 
-/// Map generator and modifier
-pub struct CellularAutomata {}
+/// Map filter
+pub struct CellularAutomata {
+    num_iteraction: u32,
+}
 
 impl MapFilter for CellularAutomata {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
-        self.build(map, rng)
+    fn modify_map(&self, _rng: &mut StdRng, map: &Map)  -> Map {
+        self.build(map)
     }
 }
 
 impl CellularAutomata {
     /// Create generator which will create map with the given dimension.
     pub fn new() -> Box<CellularAutomata> {
-        Box::new(CellularAutomata {})
+        Box::new(CellularAutomata { num_iteraction: 15})
     }
 
     /// Generate map
-    fn build(&self, map: &Map, rng: &mut StdRng) -> Map {
+    fn build(&self, map: &Map) -> Map {
         let mut new_map = map.clone();
-        // First we completely randomize the map, setting 55% of it to be floor.
-        for y in 1..new_map.height-1 {
-            for x in 1..new_map.width-1 {
-                let roll = rng.next_u32() % 100;
-                if roll > 55 { new_map.set_tile(x, y, TileType::Floor) } 
-                else { new_map.set_tile(x, y, TileType::Wall) }
-            }
-        }
-
-        // Now we iteratively apply cellular automata rules
-        for _ in 0..15 {
+        for _ in 0..self.num_iteraction {
             new_map = apply_iteration(&new_map);
         }
 
