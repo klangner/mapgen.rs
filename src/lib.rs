@@ -16,11 +16,11 @@
 //! };
 //! use mapgen::geometry::Point;
 //! 
-//! let map = MapBuilder::new()
+//! let map = MapBuilder::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-//!             .build_map(80, 50);
+//!             .build();
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -50,13 +50,17 @@ pub trait MapFilter {
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
 pub struct MapBuilder {
+    width: usize,
+    height: usize,
     modifiers: Vec<Box<dyn MapFilter>>,
 }
 
 impl MapBuilder {
     /// Create Map Builder with initial map generator
-    pub fn new() -> MapBuilder {
+    pub fn new(width: usize, height: usize) -> MapBuilder {
         MapBuilder { 
+            width,
+            height,
             modifiers: Vec::new(),
         }
     }
@@ -67,15 +71,15 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build_map(&mut self, width: usize, height: usize) -> Map {
+    pub fn build(&mut self) -> Map {
         let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
-        self.build_map_with_rng(width, height, &mut rng)
+        self.build_with_rng(&mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_map_with_rng(&mut self, width: usize, height: usize, rng: &mut StdRng) -> Map {
-        let mut map = Map::new(width, height);
+    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> Map {
+        let mut map = Map::new(self.width, self.height);
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
@@ -101,11 +105,11 @@ mod tests {
 
     #[test]
     fn test_ca_map() {
-        let map = MapBuilder::new()
+        let map = MapBuilder::new(80, 50)
             .with(NoiseGenerator::new(0.55))
             .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-            .build_map(80, 50);
+            .build();
 
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);
