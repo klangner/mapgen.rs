@@ -19,34 +19,41 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext('2d');
 
+function get_seed() {
+    var seed_text = document.getElementById("seed").value;
+    if( seed_text.length > 0) {
+        return Number(seed_text);
+    } 
+    return Date.now();
+}
+
 // Map generators
 function newCellularAutomata() {
-    var seed = Date.now();
-    world = World.new_cellular_automata(width, height, seed);
+    world = World.new_cellular_automata(width, height, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newSimpleRooms() {
     var seed = Date.now();
-    world = World.new_simple_rooms(width, height, seed);
+    world = World.new_simple_rooms(width, height, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newBspInterior() {
     var seed = Date.now();
-    world = World.new_bsp_interior(width, height, seed);
+    world = World.new_bsp_interior(width, height, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newDrunkard() {
     var seed = Date.now();
-    world = World.new_drunkard(width, height, seed);
+    world = World.new_drunkard(width, height, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newRandomGen() {
     var seed = Date.now();
-    world = World.new_random(width, height, seed);
+    world = World.new_random(width, height, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
