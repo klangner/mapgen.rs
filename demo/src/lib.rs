@@ -78,6 +78,8 @@ impl World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
         let map = MapBuilder::new(80, 50)
             .with(DrunkardsWalk::open_halls())
+            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .with(CullUnreachable::new())
             .build_with_rng(&mut rng);
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
