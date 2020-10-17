@@ -34,7 +34,7 @@ This library consists of different map filters which can be combined to create c
 
 Add dependency to your project
 ```
-mapgen = "0.3"
+mapgen = "0.4"
 ```
 
 Using single map generator:
