@@ -18,7 +18,7 @@ canvas.height = CELL_SIZE * height;
 canvas.width = CELL_SIZE * width;
 // Load tiles bitmap
 let tiles_image = new Image();
-tiles_image.src = '/assets/tiles.png';
+tiles_image.src = 'assets/tiles.png';
 
 const ctx = canvas.getContext('2d');
 
