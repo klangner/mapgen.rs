@@ -108,13 +108,12 @@ impl DrunkardsWalk {
             while drunk_life > 0 {
                 new_map.set_tile(drunk_x, drunk_y, TileType::Wall); 
                 new_map.paint(self.symmetry, self.brush_size, drunk_x, drunk_y);
-                // map.exit_point = Some(Point::new(drunk_x, drunk_y));
 
                 let stagger_direction = rng.roll_dice(1, 4);
                 match stagger_direction {
-                    1 => { if drunk_x > 2 { drunk_x -= 1; } }
+                    1 => { if drunk_x > 1 { drunk_x -= 1; } }
                     2 => { if drunk_x < new_map.width-2 { drunk_x += 1; } }
-                    3 => { if drunk_y > 2 { drunk_y -=1; } }
+                    3 => { if drunk_y > 1 { drunk_y -=1; } }
                     _ => { if drunk_y < new_map.height-2 { drunk_y += 1; } }
                 }
 
