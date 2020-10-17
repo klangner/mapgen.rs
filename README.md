@@ -41,31 +41,33 @@ Using single map generator:
 
 ```rust
 use rand::prelude::*;
-use mapgen::dungeon::{
-    MapGenerator,
-    cellular_automata::CellularAutomataGen
-};
+use mapgen::{Map, MapFilter};
+use mapgen::filter::CellularAutomata;
 
 let mut rng = StdRng::seed_from_u64(100);
-let gen = CellularAutomataGen::new(80, 50);
-let map = gen.generate_map(&mut rng)
+let gen = CellularAutomata::new();
+let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 ```
 
 Use MapBuilder for chaining map generator and modifiers
 
 ```rust
-use mapgen::dungeon::{
+use mapgen::{
     MapBuilder,
-    map::{Map, Point, TileType},
-    cellular_automata::CellularAutomataGen,
-    starting_point::{AreaStartingPosition, XStart, YStart},
-    cull_unreachable::CullUnreachable,
+    filter::{
+        NoiseGenerator, 
+        CellularAutomata,
+        AreaStartingPosition,
+        XStart, 
+        YStart,
+    },
 };
 
-let map = MapBuilder::new(CellularAutomataGen::new(80, 50))
-            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-            .with(CullUnreachable::new())
-            .build_map();
+let map = MapBuilder::new(80, 50)
+        .with(NoiseGenerator::uniform())
+        .with(CellularAutomata::new())
+        .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+        .build();
 ```
 
 For more information check the [doc](https://docs.rs/mapgen)
