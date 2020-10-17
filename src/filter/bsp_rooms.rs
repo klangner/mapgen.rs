@@ -52,8 +52,7 @@ impl BspRooms {
 
         // Up to max_split times, we get a random rectangle and divide it. If its possible to squeeze a
         // room in there, we place it and add it to the rooms list.
-        let mut n_rooms = 0;
-        while n_rooms < self.max_split {
+        for _ in 0..self.max_split {
             let rect = self.get_random_rect(rng, &rects);
             let candidate = self.get_random_sub_rect(rect, rng);
 
@@ -61,7 +60,6 @@ impl BspRooms {
                 new_map.add_room(candidate);
                 rects.append(&mut self.split_into_subrects(rect));
             }
-            n_rooms += 1;
         }
 
         new_map
