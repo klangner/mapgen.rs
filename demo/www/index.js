@@ -93,10 +93,14 @@ const getIndex = (row, column) => {
 };
 
 const is_inner_wall = (tiles, col, row) => {
-    if (col > 0 && tiles[getIndex(row, col-1)] == Cell.Floor) {return false}
-    if (row > 0 && tiles[getIndex(row-1, col)] == Cell.Floor) {return false}
-    if (col < width-1 && tiles[getIndex(row, col+1)] == Cell.Floor) {return false}
-    if (row < height-1 && tiles[getIndex(row+1, col)] == Cell.Floor) {return false}
+
+    for (let c = Math.max(col-1, 0); c < Math.min(col+2, width); c++) {
+        for (let r = Math.max(row-1, 0); r < Math.min(row+2, height); r++) {
+            if ((c != col || r != row) && tiles[getIndex(r, c)] == Cell.Floor) {
+                return false;
+            }
+        }
+    }
 
     return true;
 }
