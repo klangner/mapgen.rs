@@ -1,7 +1,7 @@
 import {Cell, World} from "mapgen-demo";
 import { memory } from "mapgen-demo/mapgen_demo_bg";
 
-const CELL_SIZE = 12;
+const CELL_SIZE = 15;
 const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
@@ -14,8 +14,11 @@ const infoDiv = document.getElementById('map-info');
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
 const canvas = document.getElementById("mapgen-canvas");
-canvas.height = (CELL_SIZE + 1) * height + 1;
-canvas.width = (CELL_SIZE + 1) * width + 1;
+canvas.height = CELL_SIZE * height;
+canvas.width = CELL_SIZE * width;
+// Load tiles bitmap
+let tiles_image = new Image();
+tiles_image.src = '/assets/tiles.png';
 
 const ctx = canvas.getContext('2d');
 
@@ -60,10 +63,10 @@ function newRandomGen() {
 const renderLoop = () => {
     // universe.tick();
 
-    drawGrid();
+    // drawGrid();
     drawCells();
 
-    // requestAnimationFrame(renderLoop);
+    requestAnimationFrame(renderLoop);
 };
 
 const drawGrid = () => {
@@ -89,9 +92,19 @@ const getIndex = (row, column) => {
     return row * width + column;
 };
 
+const is_inner_wall = (tiles, col, row) => {
+    if (col > 0 && tiles[getIndex(row, col-1)] == Cell.Floor) {return false}
+    if (row > 0 && tiles[getIndex(row-1, col)] == Cell.Floor) {return false}
+    if (col < width-1 && tiles[getIndex(row, col+1)] == Cell.Floor) {return false}
+    if (row < height-1 && tiles[getIndex(row+1, col)] == Cell.Floor) {return false}
+
+    return true;
+}
+
 const drawCells = () => {
     const tilesPtr = world.tiles();
     const tiles = new Uint8Array(memory.buffer, tilesPtr, width * height);
+    const tile_size = 39;
 
     ctx.beginPath();
 
@@ -99,16 +112,28 @@ const drawCells = () => {
         for (let col = 0; col < width; col++) {
             const idx = getIndex(row, col);
 
-            ctx.fillStyle = tiles[idx] == Cell.Floor
-                ? DEAD_COLOR
-                : ALIVE_COLOR;
-
-            ctx.fillRect(
-                col * (CELL_SIZE + 1) + 1,
-                row * (CELL_SIZE + 1) + 1,
+            var tile_x = 0;
+            var tile_y = 0;
+            if (tiles[idx] == Cell.Floor) {
+                tile_x = 3;
+                tile_y = 2;
+            } else if (is_inner_wall(tiles, col, row)){
+                tile_x = 18;
+                tile_y = 0;
+            } else {
+                tile_x = 0;
+                tile_y = 3;
+            }
+            ctx.drawImage(
+                tiles_image, 
+                tile_x * tile_size+3, 
+                tile_y * tile_size+3, 
+                tile_size-3, 
+                tile_size-3, 
+                col * CELL_SIZE,
+                row * CELL_SIZE,
                 CELL_SIZE,
-                CELL_SIZE
-            );
+                CELL_SIZE);
         }
     }
 
