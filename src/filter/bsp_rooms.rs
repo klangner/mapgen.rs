@@ -132,3 +132,28 @@ impl BspRooms {
         can_build
     }
 }
+
+/// ------------------------------------------------------------------------------------------------
+/// Module unit tests
+/// ------------------------------------------------------------------------------------------------
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::map::Map;
+
+    #[test]
+    fn no_corridors_on_borders() {
+         let mut rng = StdRng::seed_from_u64(907647352);
+        let gen = BspRooms::new();
+        let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+        for i in 0..80 {
+            assert_eq!(map.at(i, 0), TileType::Wall);
+            assert_eq!(map.at(i, 49), TileType::Wall);
+        } 
+        for j in 0..50 {
+            assert_eq!(map.at(0, j), TileType::Wall);
+            assert_eq!(map.at(79, j), TileType::Wall);
+        } 
+    }
+
+}
