@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
-use mapgen::{MapBuilder, TileType};
+use mapgen::{Map, MapBuilder, TileType};
 use mapgen::filter::*;
 
 
@@ -22,6 +22,13 @@ pub struct World {
 
 #[wasm_bindgen]
 impl World {
+    
+    fn new(width: u32, height: u32, map: &Map) -> World {
+        let tiles = (0..map.tiles.len())
+            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .collect();
+        World { width, height, tiles }
+    }
 
     pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Cellular Automata with the seed: {}", seed));
@@ -33,13 +40,7 @@ impl World {
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
-        let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
-            .collect();
-        World { 
-            width,
-            height,
-            tiles }
+        World::new(width, height, &map)
     }
 
     pub fn new_simple_rooms(width: u32, height: u32, seed: u32) -> World {
@@ -49,13 +50,7 @@ impl World {
             .with(SimpleRooms::new())
             .with(NearestCorridors::new())
             .build_with_rng(&mut rng);
-        let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
-            .collect();
-        World { 
-            width,
-            height,
-            tiles }
+        World::new(width, height, &map)
     }
 
     pub fn new_bsp_interior(width: u32, height: u32, seed: u32) -> World {
@@ -64,13 +59,7 @@ impl World {
         let map = MapBuilder::new(80, 50)
             .with(BspInterior::new())
             .build_with_rng(&mut rng);
-        let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
-            .collect();
-        World { 
-            width,
-            height,
-            tiles }
+        World::new(width, height, &map)
     }
 
     pub fn new_drunkard(width: u32, height: u32, seed: u32) -> World {
@@ -81,13 +70,7 @@ impl World {
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
             .build_with_rng(&mut rng);
-        let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
-            .collect();
-        World { 
-            width,
-            height,
-            tiles }
+        World::new(width, height, &map)
     }
 
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
