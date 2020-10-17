@@ -28,7 +28,7 @@ impl Point {
 }
 
 /// Rectangle region on the map
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Rect {
     pub x1 : usize,
     pub x2 : usize,

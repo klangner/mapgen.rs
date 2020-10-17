@@ -63,10 +63,10 @@ impl BspInterior {
         for i in 0..new_map.rooms.len()-1 {
             let room = new_map.rooms[i];
             let next_room = new_map.rooms[i+1];
-            let start_x = room.x1 + rng.random_range(1, room.width());
-            let start_y = room.y1 + rng.random_range(1, room.height());
-            let end_x = next_room.x1 + (rng.random_range(1, next_room.width()));
-            let end_y = next_room.y1 + (rng.random_range(1, next_room.width()));
+            let start_x = rng.random_range(room.x1, room.x2);
+            let start_y = rng.random_range(room.y1, room.y2);
+            let end_x = rng.random_range(next_room.x1, next_room.x2);
+            let end_y = rng.random_range(next_room.y1, next_room.y2);
             new_map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
         }
 
