@@ -11,7 +11,7 @@ npm run server
 Deply application
 ```
 cd www
-npm run deploy
+npm run build
 ```
 
 This app uses:
