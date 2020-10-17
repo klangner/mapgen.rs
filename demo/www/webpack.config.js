@@ -9,6 +9,6 @@ module.exports = {
   },
   mode: "development",
   plugins: [
-    new CopyWebpackPlugin(['index.html', 'assets'])
+    new CopyWebpackPlugin(['index.html', { from: 'assets', to: 'assets' }])
   ],
 };
