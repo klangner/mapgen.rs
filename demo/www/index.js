@@ -5,6 +5,7 @@ const CELL_SIZE = 15;
 const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
+const TILE_SIZE = 39;
 
 var world = null;
 const width = 80;
@@ -63,29 +64,9 @@ function newRandomGen() {
 const renderLoop = () => {
     // universe.tick();
 
-    // drawGrid();
     drawCells();
 
     requestAnimationFrame(renderLoop);
-};
-
-const drawGrid = () => {
-    ctx.beginPath();
-    ctx.strokeStyle = GRID_COLOR;
-
-    // Vertical lines.
-    for (let i = 0; i <= width; i++) {
-        ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-        ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-    }
-
-    // Horizontal lines.
-    for (let j = 0; j <= height; j++) {
-        ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-        ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-    }
-
-    ctx.stroke();
 };
 
 const getIndex = (row, column) => {
@@ -93,7 +74,6 @@ const getIndex = (row, column) => {
 };
 
 const is_inner_wall = (tiles, col, row) => {
-
     for (let c = Math.max(col-1, 0); c < Math.min(col+2, width); c++) {
         for (let r = Math.max(row-1, 0); r < Math.min(row+2, height); r++) {
             if ((c != col || r != row) && tiles[getIndex(r, c)] == Cell.Floor) {
@@ -105,39 +85,48 @@ const is_inner_wall = (tiles, col, row) => {
     return true;
 }
 
+const draw_tile = (ctx, row, col, tile_type) => {
+    var tile_x = 0;
+    var tile_y = 0;
+    if (tile_type == "floor") {
+        tile_x = 3;
+        tile_y = 2;
+    } else if (tile_type == "inner_wall") {
+        tile_x = 18;
+        tile_y = 0;
+    } else {
+        tile_x = 0;
+        tile_y = 3;
+    }
+    ctx.drawImage(
+        tiles_image,
+        tile_x * TILE_SIZE + 3,
+        tile_y * TILE_SIZE + 3,
+        TILE_SIZE - 3,
+        TILE_SIZE - 3,
+        col * CELL_SIZE,
+        row * CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE);
+
+}
+
 const drawCells = () => {
     const tilesPtr = world.tiles();
     const tiles = new Uint8Array(memory.buffer, tilesPtr, width * height);
-    const tile_size = 39;
 
     ctx.beginPath();
 
     for (let row = 0; row < height; row++) {
         for (let col = 0; col < width; col++) {
             const idx = getIndex(row, col);
-
-            var tile_x = 0;
-            var tile_y = 0;
             if (tiles[idx] == Cell.Floor) {
-                tile_x = 3;
-                tile_y = 2;
+                draw_tile(ctx, row, col, "floor");
             } else if (is_inner_wall(tiles, col, row)){
-                tile_x = 18;
-                tile_y = 0;
+                draw_tile(ctx, row, col, "inner-wall");
             } else {
-                tile_x = 0;
-                tile_y = 3;
+                draw_tile(ctx, row, col, "wall");
             }
-            ctx.drawImage(
-                tiles_image, 
-                tile_x * tile_size+3, 
-                tile_y * tile_size+3, 
-                tile_size-3, 
-                tile_size-3, 
-                col * CELL_SIZE,
-                row * CELL_SIZE,
-                CELL_SIZE,
-                CELL_SIZE);
         }
     }
 
