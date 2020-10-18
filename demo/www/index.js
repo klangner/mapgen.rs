@@ -2,27 +2,25 @@ import {Cell, World} from "mapgen-demo";
 import { memory } from "mapgen-demo/mapgen_demo_bg";
 
 const CELL_SIZE = 15;
-const GRID_COLOR = "#CCCCCC";
-const DEAD_COLOR = "#FFFFFF";
-const ALIVE_COLOR = "#000000";
 const TILE_SIZE = 39;
 
 var world = null;
-const width = 80;
-const height = 50;
+const GRID_COLS = 80;
+const GRID_ROWS = 50;
 
 const infoDiv = document.getElementById('map-info');
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
 const canvas = document.getElementById("mapgen-canvas");
-canvas.height = CELL_SIZE * height;
-canvas.width = CELL_SIZE * width;
+canvas.height = CELL_SIZE * GRID_ROWS;
+canvas.width = CELL_SIZE * GRID_COLS;
+const ctx = canvas.getContext('2d');
+
 // Load tiles bitmap
 let tiles_image = new Image();
 tiles_image.src = 'assets/tiles.png';
 
-const ctx = canvas.getContext('2d');
-
+// Take provided seed or generate new one
 function get_seed() {
     var seed_text = document.getElementById("seed").value;
     if( seed_text.length > 0) {
@@ -33,49 +31,47 @@ function get_seed() {
 
 // Map generators
 function newCellularAutomata() {
-    world = World.new_cellular_automata(width, height, get_seed());
+    world = World.new_cellular_automata(GRID_COLS, GRID_ROWS, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newSimpleRooms() {
     var seed = Date.now();
-    world = World.new_simple_rooms(width, height, get_seed());
+    world = World.new_simple_rooms(GRID_COLS, GRID_ROWS, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newBspInterior() {
     var seed = Date.now();
-    world = World.new_bsp_interior(width, height, get_seed());
+    world = World.new_bsp_interior(GRID_COLS, GRID_ROWS, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newDrunkard() {
     var seed = Date.now();
-    world = World.new_drunkard(width, height, get_seed());
+    world = World.new_drunkard(GRID_COLS, GRID_ROWS, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 function newRandomGen() {
     var seed = Date.now();
-    world = World.new_random(width, height, get_seed());
+    world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
     requestAnimationFrame(renderLoop);
 }
 
 const renderLoop = () => {
     // universe.tick();
-
     drawCells();
-
     requestAnimationFrame(renderLoop);
 };
 
 const getIndex = (row, column) => {
-    return row * width + column;
+    return row * GRID_COLS + column;
 };
 
 const is_inner_wall = (tiles, col, row) => {
-    for (let c = Math.max(col-1, 0); c < Math.min(col+2, width); c++) {
-        for (let r = Math.max(row-1, 0); r < Math.min(row+2, height); r++) {
+    for (let c = Math.max(col - 1, 0); c < Math.min(col + 2, GRID_COLS); c++) {
+        for (let r = Math.max(row - 1, 0); r < Math.min(row + 2, GRID_ROWS); r++) {
             if ((c != col || r != row) && tiles[getIndex(r, c)] == Cell.Floor) {
                 return false;
             }
@@ -113,12 +109,12 @@ const draw_tile = (ctx, row, col, tile_type) => {
 
 const drawCells = () => {
     const tilesPtr = world.tiles();
-    const tiles = new Uint8Array(memory.buffer, tilesPtr, width * height);
+    const tiles = new Uint8Array(memory.buffer, tilesPtr, GRID_COLS * GRID_ROWS);
 
     ctx.beginPath();
 
-    for (let row = 0; row < height; row++) {
-        for (let col = 0; col < width; col++) {
+    for (let row = 0; row < GRID_ROWS; row++) {
+        for (let col = 0; col < GRID_COLS; col++) {
             const idx = getIndex(row, col);
             if (tiles[idx] == Cell.Floor) {
                 draw_tile(ctx, row, col, "floor");
