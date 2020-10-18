@@ -87,13 +87,20 @@ const draw_tile = (ctx, row, col, tile_type) => {
     if (tile_type == "floor") {
         tile_x = 3;
         tile_y = 2;
-    } else if (tile_type == "inner_wall") {
-        tile_x = 18;
-        tile_y = 0;
-    } else {
+    } else if (tile_type == "wall") {
         tile_x = 0;
         tile_y = 3;
+    } else if (tile_type == "player") {
+        tile_x = 0;
+        tile_y = 8;
+    } else if (tile_type == "exit") {
+        tile_x = 10;
+        tile_y = 1;
+    } else {
+        tile_x = 18;
+        tile_y = 0;
     }
+
     ctx.drawImage(
         tiles_image,
         tile_x * TILE_SIZE + 3,
@@ -111,8 +118,7 @@ const drawCells = () => {
     const tilesPtr = world.tiles();
     const tiles = new Uint8Array(memory.buffer, tilesPtr, GRID_COLS * GRID_ROWS);
 
-    ctx.beginPath();
-
+    // tiles
     for (let row = 0; row < GRID_ROWS; row++) {
         for (let col = 0; col < GRID_COLS; col++) {
             const idx = getIndex(row, col);
@@ -126,7 +132,13 @@ const drawCells = () => {
         }
     }
 
-    ctx.stroke();
+    // Player position
+    let player = world.player_pos();
+    draw_tile(ctx, player.row(), player.col(), "player");
+
+    // Exit position
+    let exit = world.exit_pos();
+    draw_tile(ctx, exit.row(), exit.col(), "exit");
 };
 
 newRandomGen();
