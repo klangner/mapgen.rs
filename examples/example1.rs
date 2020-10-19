@@ -3,6 +3,7 @@ use mapgen::{
     filter::{
         NoiseGenerator, 
         CellularAutomata,
+        CullUnreachable,
         AreaStartingPosition,
         XStart, 
         YStart,
@@ -11,10 +12,11 @@ use mapgen::{
 
 
 fn main() {
-    let map = MapBuilder::new(80, 50)
+    let map = MapBuilder::new(20, 20)
         .with(NoiseGenerator::uniform())
         .with(CellularAutomata::new())
         .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+        .with(CullUnreachable::new())
         .build();  
     
         println!("{:}", &map);
