@@ -1,20 +1,21 @@
 import {Cell, World} from "mapgen-demo";
 import { memory } from "mapgen-demo/mapgen_demo_bg";
 
-const CELL_SIZE = 15;
-const TILE_SIZE = 39;
-
-var world = null;
+const CANVAS_SIZE = 750;
 const GRID_COLS = 80;
 const GRID_ROWS = 50;
+const CELL_SIZE = CANVAS_SIZE/GRID_ROWS;
+const TILE_SIZE = 39;
 
-const infoDiv = document.getElementById('map-info');
-// Give the canvas room for all of our cells and a 1px border
-// around each of them.
+// Init canvas
 const canvas = document.getElementById("mapgen-canvas");
 canvas.height = CELL_SIZE * GRID_ROWS;
 canvas.width = CELL_SIZE * GRID_COLS;
 const ctx = canvas.getContext('2d');
+// Info box
+const infoDiv = document.getElementById('map-info');
+// API to the WASM
+let world = null;
 
 // Load tiles bitmap
 let tiles_image = new Image();
