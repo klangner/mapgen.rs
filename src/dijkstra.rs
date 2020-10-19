@@ -42,8 +42,7 @@ pub struct DijkstraMap {
 }
 
 impl DijkstraMap {
-    /// Construct a new Dijkstra map, ready to run. You must specify the map size, and link to an implementation
-    /// of a BaseMap trait that can generate exits lists. It then builds the map, giving you a result.
+    //! Construct a new Dijkstra map, ready to run. 
     pub fn new(map: &Map) -> DijkstraMap {
         let len =  map.width * map.height;
         let tiles = vec![MAX; len];
