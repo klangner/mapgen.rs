@@ -41,7 +41,7 @@ impl World {
     pub fn new_cellular_automata(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Cellular Automata with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(80, 50)
+        let map = MapBuilder::new(width as usize, height as usize)
             .with(NoiseGenerator::uniform())
             .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
@@ -54,7 +54,7 @@ impl World {
     pub fn new_simple_rooms(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Simple Rooms with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(80, 50)
+        let map = MapBuilder::new(width as usize, height as usize)
             .with(SimpleRooms::new())
             .with(NearestCorridors::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
@@ -66,7 +66,7 @@ impl World {
     pub fn new_bsp_interior(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("BSP Interior with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(80, 50)
+        let map = MapBuilder::new(width as usize, height as usize)
             .with(BspInterior::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
@@ -78,7 +78,7 @@ impl World {
     pub fn new_drunkard(width: u32, height: u32, seed: u32) -> World {
         World::print_map_info(format!("Drunkard with the seed: {}", seed));
         let mut rng = StdRng::seed_from_u64(seed as u64);
-        let map = MapBuilder::new(80, 50)
+        let map = MapBuilder::new(width as usize, height as usize)
             .with(DrunkardsWalk::open_halls())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .with(CullUnreachable::new())
