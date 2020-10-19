@@ -62,8 +62,7 @@ impl DijkstraMap {
     /// depth is further than the current depth.
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
-    /// Automatically branches to a parallel version if you provide more than 4 starting points
-    fn build(self: &mut DijkstraMap, map: &Map) {
+    fn build(&mut self, map: &Map) {
         let mapsize: usize = (self.size_x * self.size_y) as usize;
         let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
 
