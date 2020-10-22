@@ -57,7 +57,19 @@ impl World {
         let map = MapBuilder::new(width as usize, height as usize)
             .with(SimpleRooms::new())
             .with(NearestCorridors::new())
-            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
+            .with(DistantExit::new())
+            .build_with_rng(&mut rng);
+        World::new(width, height, map)
+    }
+
+    pub fn new_bsp_rooms(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("BSP Rooms with the seed: {}", seed));
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(width as usize, height as usize)
+            .with(BspRooms::new())
+            .with(NearestCorridors::new())
+            .with(AreaStartingPosition::new(XStart::LEFT, YStart::BOTTOM))
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
         World::new(width, height, map)
@@ -80,7 +92,7 @@ impl World {
         let mut rng = StdRng::seed_from_u64(seed as u64);
         let map = MapBuilder::new(width as usize, height as usize)
             .with(DrunkardsWalk::open_halls())
-            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
+            .with(AreaStartingPosition::new(XStart::RIGHT, YStart::BOTTOM))
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
@@ -90,12 +102,14 @@ impl World {
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
         let mut rng = rand::thread_rng();
         let px = rng.gen::<f32>();
-        if px < 0.25 {
+        if px < 0.2 {
             World::new_cellular_automata(width, height, seed)
-        } else if px < 0.5 {
+        } else if px < 0.4 {
             World::new_simple_rooms(width, height, seed)
-        } else if px < 0.75 {
+        } else if px < 0.6 {
             World::new_drunkard(width, height, seed)
+        } else if px < 0.8 {
+            World::new_bsp_rooms(width, height, seed)
         } else {
             World::new_bsp_interior(width, height, seed)
         }

@@ -54,6 +54,12 @@ function newDrunkard() {
     requestAnimationFrame(renderLoop);
 }
 
+function newBspRooms() {
+    var seed = Date.now();
+    world = World.new_bsp_rooms(GRID_COLS, GRID_ROWS, get_seed());
+    requestAnimationFrame(renderLoop);
+}
+
 function newRandomGen() {
     var seed = Date.now();
     world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
@@ -147,6 +153,7 @@ newRandomGen();
 // Connect UI element
 document.getElementById('cellular-automata-option').addEventListener('click', newCellularAutomata);
 document.getElementById('simple-rooms-option').addEventListener('click', newSimpleRooms);
-document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
+document.getElementById('bsp-rooms-option').addEventListener('click', newBspRooms);
 document.getElementById('drunkard-option').addEventListener('click', newDrunkard);
+document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
 document.getElementById('random-option').addEventListener('click', newRandomGen);
