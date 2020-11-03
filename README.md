@@ -21,7 +21,7 @@ This library consists of different map filters which can be combined to create c
   * [x] Cull unreachable areas
   * [ ] Diffusion-Limited Aggregation (DLA)
   * [x] Drunkard's walk
-  * [ ] Maze
+  * [x] Maze
   * [x] Noise generator
   * [ ] Prefabs
   * [x] Room corridors nearest

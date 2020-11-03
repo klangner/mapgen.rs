@@ -99,19 +99,32 @@ impl World {
         World::new(width, height, map)
     }
 
+    pub fn new_maze(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("Maze with the seed: {}", seed));
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(width as usize, height as usize)
+            .with(MazeBuilder::new())
+            .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
+            .with(DistantExit::new())
+            .build_with_rng(&mut rng);
+        World::new(width, height, map)
+    }
+
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
         let mut rng = rand::thread_rng();
         let px = rng.gen::<f32>();
-        if px < 0.2 {
+        if px < 1.0/6.0 {
             World::new_cellular_automata(width, height, seed)
-        } else if px < 0.4 {
+        } else if px < 2.0/6.0 {
             World::new_simple_rooms(width, height, seed)
-        } else if px < 0.6 {
+        } else if px < 3.0/6.0 {
             World::new_drunkard(width, height, seed)
-        } else if px < 0.8 {
+        } else if px < 4.0/6.0 {
+            World::new_bsp_rooms(width, height, seed)
+        } else if px < 5.0/6.0 {
             World::new_bsp_rooms(width, height, seed)
         } else {
-            World::new_bsp_interior(width, height, seed)
+            World::new_maze(width, height, seed)
         }
     }
 

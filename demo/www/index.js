@@ -60,6 +60,12 @@ function newBspRooms() {
     requestAnimationFrame(renderLoop);
 }
 
+function newMaze() {
+    var seed = Date.now();
+    world = World.new_maze(GRID_COLS, GRID_ROWS, get_seed());
+    requestAnimationFrame(renderLoop);
+}
+
 function newRandomGen() {
     var seed = Date.now();
     world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
@@ -156,4 +162,5 @@ document.getElementById('simple-rooms-option').addEventListener('click', newSimp
 document.getElementById('bsp-rooms-option').addEventListener('click', newBspRooms);
 document.getElementById('drunkard-option').addEventListener('click', newDrunkard);
 document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
+document.getElementById('maze-option').addEventListener('click', newMaze);
 document.getElementById('random-option').addEventListener('click', newRandomGen);
