@@ -66,6 +66,12 @@ function newMaze() {
     requestAnimationFrame(renderLoop);
 }
 
+function newVoronoi() {
+    var seed = Date.now();
+    world = World.new_voronoi(GRID_COLS, GRID_ROWS, get_seed());
+    requestAnimationFrame(renderLoop);
+}
+
 function newRandomGen() {
     var seed = Date.now();
     world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
@@ -163,4 +169,5 @@ document.getElementById('bsp-rooms-option').addEventListener('click', newBspRoom
 document.getElementById('drunkard-option').addEventListener('click', newDrunkard);
 document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
 document.getElementById('maze-option').addEventListener('click', newMaze);
+document.getElementById('voronoi-option').addEventListener('click', newVoronoi);
 document.getElementById('random-option').addEventListener('click', newRandomGen);

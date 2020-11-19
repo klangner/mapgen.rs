@@ -110,6 +110,17 @@ impl World {
         World::new(width, height, map)
     }
 
+    pub fn new_voronoi(width: u32, height: u32, seed: u32) -> World {
+        World::print_map_info(format!("Voronoi Hive with the seed: {}", seed));
+        let mut rng = StdRng::seed_from_u64(seed as u64);
+        let map = MapBuilder::new(width as usize, height as usize)
+            .with(VoronoiHive::new())
+            .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
+            .with(DistantExit::new())
+            .build_with_rng(&mut rng);
+        World::new(width, height, map)
+    }
+
     pub fn new_random(width: u32, height: u32, seed: u32) -> World {
         let mut rng = rand::thread_rng();
         let px = rng.gen::<f32>();
