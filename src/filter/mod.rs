@@ -12,6 +12,7 @@ pub mod noise_generator;
 pub mod simple_rooms;
 pub mod rooms_corridors_nearest;
 pub mod starting_point;
+pub mod voronoi;
 
 pub use bsp_interior::BspInterior;
 pub use bsp_rooms::BspRooms;
@@ -24,4 +25,5 @@ pub use noise_generator::NoiseGenerator;
 pub use simple_rooms::SimpleRooms;
 pub use rooms_corridors_nearest::NearestCorridors;
 pub use starting_point::{AreaStartingPosition, XStart, YStart};
+pub use voronoi::VoronoiHive;
 

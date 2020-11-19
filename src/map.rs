@@ -106,9 +106,13 @@ impl Map {
     /// Modify tile at the given location
     pub fn set_tile(&mut self, x: usize, y: usize, tile: TileType) {
         if x < self.width && y < self.height {
-            let idx = (y as usize) * self.width + (x as usize);
+            let idx = self.xy_idx(x as usize, y as usize);
             self.tiles[idx] = tile;
         }
+    }
+
+    pub fn xy_idx(&self, x: usize, y: usize) -> usize {
+        y * self.width + x        
     }
     
     /// Create room on the map at given location

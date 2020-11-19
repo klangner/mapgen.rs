@@ -26,7 +26,7 @@ This library consists of different map filters which can be combined to create c
   * [ ] Prefabs
   * [x] Room corridors nearest
   * [x] Simple rooms
-  * [ ] Voronoi hive
+  * [x] Voronoi hive
   * [ ] Wave Function Collapse
 
 
