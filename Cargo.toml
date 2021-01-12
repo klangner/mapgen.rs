@@ -11,4 +11,4 @@ documentation = "https://docs.rs/mapgen"
 edition = "2018"
 
 [dependencies]
-rand = "0.7"
+rand = "0.8"
