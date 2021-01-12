@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn test_range_average() {
-        let num_op = 1000;
+        let num_op = 10000;
         let mut rng = StdRng::seed_from_u64(1000);
         let xs: Vec<usize> = (0..num_op).map(|_| rng.random_range(5, 10)).collect();
         let mean = xs.iter().sum::<usize>() / num_op;
