@@ -31,6 +31,7 @@
 pub mod filter;
 pub mod geometry;
 pub mod map;
+pub mod metric;
 
 pub use map::{Map, Symmetry, TileType};
 pub use filter::*;

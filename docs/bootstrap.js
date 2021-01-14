@@ -58,32 +58,29 @@
 /******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_object_drop_ref"](p0i32);
 /******/ 					},
-/******/ 					"__wbg_getRandomValues_3ac1b33c90b52596": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getRandomValues_3ac1b33c90b52596"](p0i32,p1i32,p2i32);
+/******/ 					"__wbg_getRandomValues_c73f06b5ed8b878d": function(p0i32,p1i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getRandomValues_c73f06b5ed8b878d"](p0i32,p1i32);
 /******/ 					},
-/******/ 					"__wbg_randomFillSync_6f956029658662ec": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_randomFillSync_6f956029658662ec"](p0i32,p1i32,p2i32);
+/******/ 					"__wbg_randomFillSync_5fa0a72035c7bfd9": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_randomFillSync_5fa0a72035c7bfd9"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbg_self_1c83eb4471d9eb9b": function() {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_self_1c83eb4471d9eb9b"]();
+/******/ 					"__wbg_self_23b14d60c8dbf9da": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_self_23b14d60c8dbf9da"]();
 /******/ 					},
-/******/ 					"__wbg_static_accessor_MODULE_abf5ae284bffdf45": function() {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_static_accessor_MODULE_abf5ae284bffdf45"]();
+/******/ 					"__wbg_static_accessor_MODULE_ff1e47f7076e0ee1": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_static_accessor_MODULE_ff1e47f7076e0ee1"]();
 /******/ 					},
-/******/ 					"__wbg_require_5b2b5b594d809d9f": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_require_5b2b5b594d809d9f"](p0i32,p1i32,p2i32);
+/******/ 					"__wbg_require_1dab18ea211c4fa1": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_require_1dab18ea211c4fa1"](p0i32,p1i32,p2i32);
 /******/ 					},
-/******/ 					"__wbg_crypto_c12f14e810edcaa2": function(p0i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_crypto_c12f14e810edcaa2"](p0i32);
+/******/ 					"__wbg_crypto_df96f3577c8a9bae": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_crypto_df96f3577c8a9bae"](p0i32);
 /******/ 					},
-/******/ 					"__wbg_msCrypto_679be765111ba775": function(p0i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_msCrypto_679be765111ba775"](p0i32);
+/******/ 					"__wbg_msCrypto_331efcdb9be40d7c": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_msCrypto_331efcdb9be40d7c"](p0i32);
 /******/ 					},
 /******/ 					"__wbindgen_is_undefined": function(p0i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_is_undefined"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_getRandomValues_05a60bf171bfc2be": function(p0i32) {
-/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_getRandomValues_05a60bf171bfc2be"](p0i32);
 /******/ 					},
 /******/ 					"__wbg_instanceof_Window_adf3196bdc02b386": function(p0i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_instanceof_Window_adf3196bdc02b386"](p0i32);
@@ -118,8 +115,29 @@
 /******/ 					"__wbg_global_e16303fe83e1d57f": function() {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_global_e16303fe83e1d57f"]();
 /******/ 					},
+/******/ 					"__wbg_buffer_49131c283a06686f": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_buffer_49131c283a06686f"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_length_2b13641a9d906653": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_length_2b13641a9d906653"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_new_9b295d24cf1d706f": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_new_9b295d24cf1d706f"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_set_3bb960a9975f3cd2": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_set_3bb960a9975f3cd2"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_newwithlength_3c570aeea9a95954": function(p0i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_newwithlength_3c570aeea9a95954"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_subarray_4eaeb3de00cf1955": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbg_subarray_4eaeb3de00cf1955"](p0i32,p1i32,p2i32);
+/******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_throw"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbindgen_memory": function() {
+/******/ 						return installedModules["../pkg/mapgen_demo_bg.js"].exports["__wbindgen_memory"]();
 /******/ 					}
 /******/ 				}
 /******/ 			};
@@ -222,7 +240,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"f22182091a16774e383e"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"../pkg/mapgen_demo_bg.wasm":"98c7bb1ad7a2b17fcade"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {

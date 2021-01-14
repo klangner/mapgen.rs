@@ -3,6 +3,7 @@ use web_sys;
 use rand::prelude::*;
 use mapgen::{Map, MapBuilder, TileType, geometry::Point};
 use mapgen::filter::*;
+use mapgen::metric;
 
 
 #[wasm_bindgen]
@@ -48,6 +49,7 @@ impl World {
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -60,6 +62,7 @@ impl World {
             .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -72,6 +75,7 @@ impl World {
             .with(AreaStartingPosition::new(XStart::LEFT, YStart::BOTTOM))
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -84,6 +88,7 @@ impl World {
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -96,6 +101,7 @@ impl World {
             .with(CullUnreachable::new())
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -107,6 +113,7 @@ impl World {
             .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -118,6 +125,7 @@ impl World {
             .with(AreaStartingPosition::new(XStart::LEFT, YStart::TOP))
             .with(DistantExit::new())
             .build_with_rng(&mut rng);
+        World::print_map_metrics(&map);
         World::new(width, height, map)
     }
 
@@ -165,6 +173,16 @@ impl World {
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");
         let div = document.get_element_by_id("map-info").expect("Need div with id: map-info");
+        div.set_inner_html(&info);
+    }
+    
+    fn print_map_metrics(map: &Map) {
+        let window = web_sys::window().expect("no global `window` exists");
+        let document = window.document().expect("should have a document on window");
+        let div = document.get_element_by_id("map-metrics").expect("Need div with id: map-metrics");
+        let density = metric::density(map);
+        let path_length = metric::path_length(map);
+        let info = format!("Metrics: density: {}, path length: {}", density, path_length);
         div.set_inner_html(&info);
     }
 }
