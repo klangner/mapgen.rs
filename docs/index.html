@@ -28,14 +28,15 @@
         <span class="navbar-toggler-icon"></span>
       </button>
     
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+      <div class="mx-auto" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <span class="navbar-text mr-2">Generator</span>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              Select generator
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <button class="btn btn-secondary dropdown-toggle mr-2" type="button" id="generatorDropdown" 
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Random
+            </button>
+            <div class="dropdown-menu" aria-labelledby="generatorDropdown">
               <a class="dropdown-item" id="cellular-automata-option">Cellular Automata</a>
               <a class="dropdown-item" id="simple-rooms-option">Simple Rooms</a>
               <a class="dropdown-item" id="bsp-rooms-option">BSP Rooms</a>
@@ -43,10 +44,12 @@
               <a class="dropdown-item" id="drunkard-option">Drunkard Walk</a>
               <a class="dropdown-item" id="maze-option">Maze</a>
               <a class="dropdown-item" id="voronoi-option">Voronoi Hive</a>
-              <a class="dropdown-item" id="random-option">Random Generator</a>
+              <a class="dropdown-item" id="random-option">Random</a>
             </div>
           </li>
-          <input class="form-control mr-sm-2" id="seed" type="search" placeholder="Seed" aria-label="Seed">
+          <span class="navbar-text mr-2">Seed</span>
+          <input class="form-control mr-sm-2 w-25" id="seed" type="search" placeholder="random" aria-label="Seed">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="refresh">Refresh</button>
         </ul>
       </div>
       <a class="github-button" href="https://github.com/klangner/mapgen.rs" data-icon="octicon-star"
