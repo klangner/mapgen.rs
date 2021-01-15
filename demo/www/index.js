@@ -30,55 +30,53 @@ function get_seed() {
     return Date.now();
 }
 
+
+function setGenerator(e) {
+    document.getElementById("generatorDropdown").innerHTML = e.target.innerText;
+}
+
 // Map generators
-function newCellularAutomata() {
-    world = World.new_cellular_automata(GRID_COLS, GRID_ROWS, get_seed());
+function refreshMap() {
+    var generator_name = document.getElementById("generatorDropdown").innerHTML;
+
+    switch(generator_name){
+        case "Cellular Automata":
+            world = World.new_cellular_automata(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "Simple Rooms":
+            world = World.new_simple_rooms(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "BSP Rooms":
+            world = World.new_bsp_rooms(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "BSP Interior":
+            world = World.new_bsp_interior(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "Drunkard Walk":
+            world = World.new_drunkard(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "Maze":
+            world = World.new_maze(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        case "Voronoi Hive":
+            world = World.new_voronoi(GRID_COLS, GRID_ROWS, get_seed());
+            break;
+        
+        default:
+            world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
+    }
+
     requestAnimationFrame(renderLoop);
 }
 
-function newSimpleRooms() {
-    var seed = Date.now();
-    world = World.new_simple_rooms(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newBspInterior() {
-    var seed = Date.now();
-    world = World.new_bsp_interior(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newDrunkard() {
-    var seed = Date.now();
-    world = World.new_drunkard(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newBspRooms() {
-    var seed = Date.now();
-    world = World.new_bsp_rooms(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newMaze() {
-    var seed = Date.now();
-    world = World.new_maze(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newVoronoi() {
-    var seed = Date.now();
-    world = World.new_voronoi(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-function newRandomGen() {
-    var seed = Date.now();
-    world = World.new_random(GRID_COLS, GRID_ROWS, get_seed());
-    requestAnimationFrame(renderLoop);
-}
-
-const renderLoop = () => {
+// Main loop
+function renderLoop() {
     // universe.tick();
     drawCells();
     requestAnimationFrame(renderLoop);
@@ -160,14 +158,16 @@ const drawCells = () => {
     draw_tile(ctx, exit.row(), exit.col(), "exit");
 };
 
-newRandomGen();
-
 // Connect UI element
-document.getElementById('cellular-automata-option').addEventListener('click', newCellularAutomata);
-document.getElementById('simple-rooms-option').addEventListener('click', newSimpleRooms);
-document.getElementById('bsp-rooms-option').addEventListener('click', newBspRooms);
-document.getElementById('drunkard-option').addEventListener('click', newDrunkard);
-document.getElementById('bsp-interior-option').addEventListener('click', newBspInterior);
-document.getElementById('maze-option').addEventListener('click', newMaze);
-document.getElementById('voronoi-option').addEventListener('click', newVoronoi);
-document.getElementById('random-option').addEventListener('click', newRandomGen);
+document.getElementById('cellular-automata-option').addEventListener('click', setGenerator);
+document.getElementById('simple-rooms-option').addEventListener('click', setGenerator);
+document.getElementById('bsp-rooms-option').addEventListener('click', setGenerator);
+document.getElementById('drunkard-option').addEventListener('click', setGenerator);
+document.getElementById('bsp-interior-option').addEventListener('click', setGenerator);
+document.getElementById('maze-option').addEventListener('click', setGenerator);
+document.getElementById('voronoi-option').addEventListener('click', setGenerator);
+document.getElementById('random-option').addEventListener('click', setGenerator);
+
+document.getElementById('refresh').addEventListener('click', refreshMap);
+
+refreshMap();
