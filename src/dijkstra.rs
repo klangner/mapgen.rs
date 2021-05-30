@@ -17,7 +17,7 @@
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let mut map = Map::new(80, 50);
-//! map.set_tile(10, 10, TileType::Floor);
+//! map.set_tile(10, 10, TileType::Unblocked(0));
 //! let modifier = AreaStartingPosition::new(XStart::LEFT, YStart::TOP);
 //! let new_map = modifier.modify_map(&mut rng, &map);
 //! 

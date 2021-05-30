@@ -30,11 +30,11 @@ impl CullUnreachable {
 
         let dijkstra_map = DijkstraMap::new(map);
         for (i, tile) in new_map.tiles.iter_mut().enumerate() {
-            if *tile == TileType::Floor {
+            if *tile == TileType::Unblocked(0) {
                 let distance_to_start = dijkstra_map.tiles[i];
                 // We can't get to this tile - so we'll make it a wall
                 if distance_to_start == std::f32::MAX {
-                    *tile = TileType::Wall;
+                    *tile = TileType::Blocked(0);
                 }
             }
         }

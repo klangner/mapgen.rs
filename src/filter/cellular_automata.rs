@@ -65,14 +65,14 @@ fn apply_iteration(map: &Map) -> Map {
                 (x-1, y), (x+1, y), 
                 (x-1, y+1), (x, y+1), (x+1, y+1)];
             let neighbors = idxs.iter()
-                .filter(|(x, y)| map.at(*x, *y) == TileType::Wall)
+                .filter(|(x, y)| map.at(*x, *y) == TileType::Blocked(0))
                 .count();
             
             if neighbors > 4 || neighbors == 0 {
-                new_map.set_tile(x, y, TileType::Wall)
+                new_map.set_tile(x, y, TileType::Blocked(0))
             }
             else {
-                new_map.set_tile(x, y, TileType::Floor);
+                new_map.set_tile(x, y, TileType::Unblocked(0));
             }
         }
     }
@@ -91,7 +91,7 @@ mod tests {
     fn test_iteration_wal() {
         let map = Map::new(3, 3);
         let new_map = apply_iteration(&map);
-        assert_eq!(new_map.at(1, 1), TileType::Wall);
+        assert_eq!(new_map.at(1, 1), TileType::Blocked(0));
     }
 
 
@@ -100,11 +100,11 @@ mod tests {
         let mut map = Map::new(3, 3);
         for i in 0..3 {
             for j in 0..2 {
-                map.set_tile(i, j, TileType::Floor);
+                map.set_tile(i, j, TileType::Unblocked(0));
             }
         }
         let new_map = apply_iteration(&map);
-        assert_eq!(new_map.at(1, 1), TileType::Floor);
+        assert_eq!(new_map.at(1, 1), TileType::Unblocked(0));
     }
 
 }

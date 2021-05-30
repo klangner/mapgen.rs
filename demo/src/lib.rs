@@ -34,7 +34,7 @@ impl World {
     
     fn new(width: u32, height: u32, map: Map) -> World {
         let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i] == TileType::Floor {Cell::Floor} else {Cell::Wall})
+            .map(|i| if map.tiles[i] == TileType::Unblocked(0) {Cell::Floor} else {Cell::Wall})
             .collect();
         World { width, height, tiles, map }
     }

@@ -201,17 +201,17 @@ impl<'a> Grid<'a> {
 
     fn copy_to_map(&self, map: &mut Map) {
         // Clear the map
-        for i in map.tiles.iter_mut() { *i = TileType::Wall; }
+        for i in map.tiles.iter_mut() { *i = TileType::Blocked(0); }
 
         for cell in self.cells.iter() {
             let x = (cell.column as usize + 1) * 2;
             let y = (cell.row as usize + 1) * 2;
 
-            map.set_tile(x, y, TileType::Floor);
-            if !cell.walls[TOP] { map.set_tile(x, y-1, TileType::Floor) }
-            if !cell.walls[RIGHT] { map.set_tile(x+1, y, TileType::Floor) }
-            if !cell.walls[BOTTOM] { map.set_tile(x, y+1, TileType::Floor) }
-            if !cell.walls[LEFT] { map.set_tile(x-1, y, TileType::Floor) }
+            map.set_tile(x, y, TileType::Unblocked(0));
+            if !cell.walls[TOP] { map.set_tile(x, y-1, TileType::Unblocked(0)) }
+            if !cell.walls[RIGHT] { map.set_tile(x+1, y, TileType::Unblocked(0)) }
+            if !cell.walls[BOTTOM] { map.set_tile(x, y+1, TileType::Unblocked(0)) }
+            if !cell.walls[LEFT] { map.set_tile(x-1, y, TileType::Unblocked(0)) }
         }
     }
 }

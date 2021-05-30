@@ -71,7 +71,7 @@ impl VoronoiHive {
                 if voronoi_membership[new_map.xy_idx(x, y+1)] != my_seed { neighbors += 1; }
 
                 if neighbors < 2 {
-                    new_map.set_tile(x, y, TileType::Floor);
+                    new_map.set_tile(x, y, TileType::Unblocked(0));
                 }
             }
         }

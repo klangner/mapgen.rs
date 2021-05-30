@@ -122,7 +122,7 @@ impl BspRooms {
                 if x < 1 { can_build = false; }
                 if y < 1 { can_build = false; }
                 if can_build {
-                    if map.at(x as usize, y as usize) != TileType::Wall {
+                    if map.at(x as usize, y as usize) != TileType::Blocked(0) {
                         can_build = false;
                     }
                 }
@@ -147,12 +147,12 @@ mod tests {
         let gen = BspRooms::new();
         let map = gen.modify_map(&mut rng, &Map::new(80, 50));
         for i in 0..80 {
-            assert_eq!(map.at(i, 0), TileType::Wall);
-            assert_eq!(map.at(i, 49), TileType::Wall);
+            assert_eq!(map.at(i, 0), TileType::Blocked(0));
+            assert_eq!(map.at(i, 49), TileType::Blocked(0));
         } 
         for j in 0..50 {
-            assert_eq!(map.at(0, j), TileType::Wall);
-            assert_eq!(map.at(79, j), TileType::Wall);
+            assert_eq!(map.at(0, j), TileType::Blocked(0));
+            assert_eq!(map.at(79, j), TileType::Blocked(0));
         } 
     }
 
