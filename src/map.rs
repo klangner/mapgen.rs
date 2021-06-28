@@ -14,6 +14,7 @@ use super::geometry::{Point, Rect, usize_abs};
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Tile {
     is_blocked: bool,
+    index: usize,
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -33,12 +34,16 @@ pub struct Map {
 }
 
 impl Tile {
+    pub fn new(is_blocked: bool, index: usize) -> Tile {
+        Tile { is_blocked, index}
+    }
+
     pub fn wall() -> Tile {
-        Tile { is_blocked: true }
+        Tile::new(true, 0)
     }
     
     pub fn floor() -> Tile {
-        Tile { is_blocked: false }
+        Tile::new(false, 0)
     }
 
     pub fn is_walkable(&self) -> bool {
