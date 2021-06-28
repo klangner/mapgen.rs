@@ -4,7 +4,7 @@
 //! and the provide generator score as an average.
 //! 
 
-use super::map::{Map, TileType};
+use super::map::Map;
 use super::dijkstra::DijkstraMap;
 
 
@@ -13,7 +13,7 @@ use super::dijkstra::DijkstraMap;
 /// is probably to degenerated and shouldn't be used
 pub fn density(map: &Map) -> f32 {
     let floor_count = map.tiles.iter()
-        .filter(|&t| *t == TileType::Floor)
+        .filter(|&t| t.is_walkable())
         .count();
     floor_count as f32 / map.tiles.len() as f32
 }

@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map::{Map, Symmetry, TileType},
+    map::{Map, Symmetry, Tile},
     geometry::Point,
     random::Rng
 };
@@ -79,11 +79,11 @@ impl DrunkardsWalk {
         let mut new_map = map.clone();
         // Set a central starting point
         let starting_position = Point::new( new_map.width / 2, new_map.height / 2 );
-        new_map.set_tile(starting_position.x, starting_position.y, TileType::Floor);
+        new_map.set_tile(starting_position.x, starting_position.y, Tile::floor());
 
         let total_tiles = new_map.width * new_map.height;
         let desired_floor_tiles = (self.floor_percent * total_tiles as f32) as usize;
-        let mut floor_tile_count = new_map.tiles.iter().filter(|a| **a == TileType::Floor).count();
+        let mut floor_tile_count = new_map.tiles.iter().filter(|a| a.is_walkable()).count();
         let mut digger_count = 0;
         while floor_tile_count  < desired_floor_tiles {
             let mut drunk_x;
@@ -106,7 +106,7 @@ impl DrunkardsWalk {
             let mut drunk_life = self.drunken_lifetime;
 
             while drunk_life > 0 {
-                new_map.set_tile(drunk_x, drunk_y, TileType::Wall); 
+                new_map.set_tile(drunk_x, drunk_y, Tile::wall()); 
                 new_map.paint(self.symmetry, self.brush_size, drunk_x, drunk_y);
 
                 let stagger_direction = rng.roll_dice(1, 4);
@@ -121,7 +121,7 @@ impl DrunkardsWalk {
             }
 
             digger_count += 1;
-            floor_tile_count = new_map.tiles.iter().filter(|a| **a == TileType::Floor).count();
+            floor_tile_count = new_map.tiles.iter().filter(|a| a.is_walkable()).count();
         }
 
         new_map

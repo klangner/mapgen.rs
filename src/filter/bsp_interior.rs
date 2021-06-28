@@ -114,7 +114,7 @@ impl BspInterior {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{TileType, Map};
+    use crate::{Map};
 
     #[test]
     fn no_corridors_on_borders() {
@@ -122,12 +122,12 @@ mod tests {
         let gen = BspInterior::new();
         let map = gen.modify_map(&mut rng, &Map::new(80, 50));
         for i in 0..80 {
-            assert_eq!(map.at(i, 0), TileType::Wall);
-            assert_eq!(map.at(i, 49), TileType::Wall);
+            assert!(map.at(i, 0).is_blocked());
+            assert!(map.at(i, 49).is_blocked());
         } 
         for j in 0..50 {
-            assert_eq!(map.at(0, j), TileType::Wall);
-            assert_eq!(map.at(79, j), TileType::Wall);
+            assert!(map.at(0, j).is_blocked());
+            assert!(map.at(79, j).is_blocked());
         } 
     }
 

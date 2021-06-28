@@ -22,7 +22,7 @@ use rand::prelude::*;
 use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use crate::{Map, TileType};
+use crate::Map;
 
 
 pub struct BspRooms {
@@ -122,7 +122,7 @@ impl BspRooms {
                 if x < 1 { can_build = false; }
                 if y < 1 { can_build = false; }
                 if can_build {
-                    if map.at(x as usize, y as usize) != TileType::Wall {
+                    if map.at(x as usize, y as usize).is_walkable() {
                         can_build = false;
                     }
                 }
@@ -147,12 +147,12 @@ mod tests {
         let gen = BspRooms::new();
         let map = gen.modify_map(&mut rng, &Map::new(80, 50));
         for i in 0..80 {
-            assert_eq!(map.at(i, 0), TileType::Wall);
-            assert_eq!(map.at(i, 49), TileType::Wall);
+            assert!(map.at(i, 0).is_blocked());
+            assert!(map.at(i, 49).is_blocked());
         } 
         for j in 0..50 {
-            assert_eq!(map.at(0, j), TileType::Wall);
-            assert_eq!(map.at(79, j), TileType::Wall);
+            assert!(map.at(0, j).is_blocked());
+            assert!(map.at(79, j).is_blocked());
         } 
     }
 

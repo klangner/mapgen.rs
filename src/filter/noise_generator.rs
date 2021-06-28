@@ -18,7 +18,7 @@
 
 use rand::prelude::*;
 use crate::MapFilter;
-use crate::{Map, TileType};
+use crate::{Map, Tile};
 
 
 /// Map noise generator
@@ -54,8 +54,8 @@ impl NoiseGenerator {
         for y in 1..new_map.height-1 {
             for x in 1..new_map.width-1 {
                 let roll = rng.next_u32() % 100;
-                if roll > p { new_map.set_tile(x, y, TileType::Floor) } 
-                else { new_map.set_tile(x, y, TileType::Wall) }
+                if roll > p { new_map.set_tile(x, y, Tile::floor()) } 
+                else { new_map.set_tile(x, y, Tile::wall()) }
             }
         }
 

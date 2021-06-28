@@ -6,13 +6,13 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapFilter, Map, TileType};
+//! use mapgen::{MapFilter, Map, Tile};
 //! use mapgen::filter::starting_point::{AreaStartingPosition, XStart, YStart};
 //! use mapgen::geometry::Point;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let mut map = Map::new(80, 50);
-//! map.set_tile(10, 10, TileType::Floor);
+//! map.set_tile(10, 10, Tile::floor());
 //! let modifier = AreaStartingPosition::new(XStart::LEFT, YStart::TOP);
 //! let new_map = modifier.modify_map(&mut rng, &map);
 //! 
@@ -23,7 +23,7 @@
 use rand::prelude::StdRng;
 use crate::MapFilter;
 use crate::geometry::Point;
-use crate::{Map, TileType};
+use crate::Map;
 
 
 /// Initial x region position
@@ -67,7 +67,7 @@ impl AreaStartingPosition {
 
         let mut available_floors : Vec<(usize, f32)> = Vec::new();
         for (idx, tiletype) in map.tiles.iter().enumerate() {
-            if *tiletype == TileType::Floor {
+            if tiletype.is_walkable() {
                 available_floors.push(
                     (
                         idx,

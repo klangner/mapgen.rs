@@ -6,7 +6,7 @@
 
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::{Map, TileType};
+use crate::{Map, Tile};
 use crate::dijkstra::DijkstraMap;
 
 
@@ -30,11 +30,11 @@ impl CullUnreachable {
 
         let dijkstra_map = DijkstraMap::new(map);
         for (i, tile) in new_map.tiles.iter_mut().enumerate() {
-            if *tile == TileType::Floor {
+            if tile.is_walkable() {
                 let distance_to_start = dijkstra_map.tiles[i];
                 // We can't get to this tile - so we'll make it a wall
                 if distance_to_start == std::f32::MAX {
-                    *tile = TileType::Wall;
+                    *tile = Tile::wall();
                 }
             }
         }

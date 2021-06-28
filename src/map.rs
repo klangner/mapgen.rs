@@ -12,8 +12,8 @@ use super::geometry::{Point, Rect, usize_abs};
 
 
 #[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
-pub enum TileType {
-    Wall, Floor
+pub struct Tile {
+    is_blocked: bool,
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -23,7 +23,7 @@ pub enum Symmetry { None, Horizontal, Vertical, Both }
 /// Map data
 #[derive(Default, Clone)]
 pub struct Map {
-    pub tiles : Vec<TileType>,
+    pub tiles : Vec<Tile>,
     pub width : usize,
     pub height : usize,
     pub starting_point: Option<Point>,
@@ -32,13 +32,31 @@ pub struct Map {
     pub corridors: Vec<Vec<Point>>,
 }
 
+impl Tile {
+    pub fn wall() -> Tile {
+        Tile { is_blocked: true }
+    }
+    
+    pub fn floor() -> Tile {
+        Tile { is_blocked: false }
+    }
+
+    pub fn is_walkable(&self) -> bool {
+        !self.is_blocked
+    }
+
+    pub fn is_blocked(&self) -> bool {
+        self.is_blocked
+    }
+}
+
 impl Map {
 
     /// Generates an empty map, consisting entirely of solid walls
     pub fn new(width: usize, height: usize) -> Map {
         let map_tile_count = width*height;
         Map{
-            tiles : vec![TileType::Wall; map_tile_count],
+            tiles : vec![Tile::wall(); map_tile_count],
             width,
             height,
             starting_point: None,
@@ -62,7 +80,7 @@ impl Map {
             let line = lines[i].as_bytes();
             for j in 0..line.len() {
                 if line[j] as char == ' ' {
-                    map.set_tile(j, i, TileType::Floor);
+                    map.set_tile(j, i, Tile::floor());
                 }
             }
         }
@@ -70,9 +88,9 @@ impl Map {
     }
 
     /// Get TileType at the given location
-    pub fn at(&self, x: usize, y: usize) -> TileType {
+    pub fn at(&self, x: usize, y: usize) -> Tile {
         if x >= self.width || y >= self.height {
-            TileType::Wall
+            Tile::wall()
         } else {
             let idx = (y as usize) * self.width + (x as usize);
             self.tiles[idx]
@@ -100,11 +118,11 @@ impl Map {
  
     // Check if given tile can be accessed
     fn is_exit_valid(&self, x:usize, y:usize) -> bool {
-        self.at(x, y) == TileType::Floor
+        self.at(x, y).is_blocked == false
     }
 
     /// Modify tile at the given location
-    pub fn set_tile(&mut self, x: usize, y: usize, tile: TileType) {
+    pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
         if x < self.width && y < self.height {
             let idx = self.xy_idx(x as usize, y as usize);
             self.tiles[idx] = tile;
@@ -120,7 +138,7 @@ impl Map {
     pub fn add_room(&mut self, rect: Rect) {
         for x in rect.x1..rect.x2 {
             for y in rect.y1..rect.y2 {
-                self.set_tile(x as usize, y as usize, TileType::Floor);
+                self.set_tile(x as usize, y as usize, Tile::floor());
             }
         }
         self.rooms.push(rect);
@@ -142,9 +160,9 @@ impl Map {
                 y -= 1;
             }
 
-            if self.at(x, y) != TileType::Floor {
+            if self.at(x, y).is_blocked {
                 corridor.push(Point::new(x, y));
-                self.set_tile(x, y, TileType::Floor);
+                self.set_tile(x, y, Tile::floor());
             }
         }
     }
@@ -192,14 +210,14 @@ impl Map {
     fn apply_paint(&mut self, brush_size: usize, x: usize, y: usize) {
         match brush_size {
             1 => {
-                self.set_tile(x, y, TileType::Floor);
+                self.set_tile(x, y, Tile::floor());
             }
             _ => {
                 let half_brush_size = brush_size / 2;
                 for brush_y in y-half_brush_size .. y+half_brush_size {
                     for brush_x in x-half_brush_size .. x+half_brush_size {
                         if brush_x > 1 && brush_x < self.width-1 && brush_y > 1 && brush_y < self.height-1 {
-                            self.set_tile(brush_x, brush_y, TileType::Floor);
+                            self.set_tile(brush_x, brush_y, Tile::floor());
                         }
                     }
                 }
@@ -212,7 +230,7 @@ impl fmt::Display for Map {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
-                .map(|x| if self.at(x, y) == TileType::Wall {'#'} else {' '} as u8)
+                .map(|x| if self.at(x, y).is_blocked {'#'} else {' '} as u8)
                 .collect();
             let line = String::from_utf8(bytes).expect("Can't convert map to string");
             let _ = write!(f, "{}\n", line);
@@ -233,7 +251,7 @@ mod tests {
         let map = Map::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
-                assert_eq!(map.at(i, j), TileType::Wall);
+                assert!(map.at(i, j).is_blocked);
             }
         }
     }
@@ -250,12 +268,12 @@ mod tests {
         assert_eq!(map.width, 10);
         assert_eq!(map.height, 3);
         for i in 0..10 {
-            assert_eq!(map.at(i, 0), TileType::Wall);
-            assert_eq!(map.at(i, 2), TileType::Wall);
+            assert!(map.at(i, 0).is_blocked);
+            assert!(map.at(i, 2).is_blocked);
             if i == 0 || i == 9 {
-                assert_eq!(map.at(i, 1), TileType::Wall);
+                assert!(map.at(i, 1).is_blocked);
             } else {
-                assert_eq!(map.at(i, 1), TileType::Floor);
+                assert!(map.at(i, 1).is_blocked == false);
             }
         }
     }
@@ -281,9 +299,9 @@ mod tests {
         for x in 0..map.width {
             for y in 0..map.height {
                 if x == 0 || y == 0 || x == 4 || y == 4 {
-                    assert_eq!(map.at(x, y), TileType::Wall);
+                    assert!(map.at(x, y).is_blocked);
                 } else {
-                    assert_eq!(map.at(x, y), TileType::Floor);
+                    assert!(map.at(x, y).is_blocked == false);
                 }
             }
         }
