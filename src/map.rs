@@ -347,6 +347,6 @@ mod tests {
         let map = Map::from_string(map_str);
         let exists = map.get_available_exits(0, 0);
 
-        assert_eq!(exists.len(), 0);
+        assert_eq!(exists.len(), 1);
     }
 }
