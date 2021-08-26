@@ -111,15 +111,15 @@ impl Map {
         let mut exits = Vec::new();
 
         // Cardinal directions
-        if self.is_exit_valid(x-1, y) { exits.push((x-1, y, 1.0)) };
+        if x > 0 && self.is_exit_valid(x-1, y) { exits.push((x-1, y, 1.0)) };
         if self.is_exit_valid(x+1, y) { exits.push((x+1, y, 1.0)) };
-        if self.is_exit_valid(x, y-1) { exits.push((x, y-1, 1.0)) };
+        if y > 0 && self.is_exit_valid(x, y-1) { exits.push((x, y-1, 1.0)) };
         if self.is_exit_valid(x, y+1) { exits.push((x, y+1, 1.0)) };
 
         // Diagonals
-        if self.is_exit_valid(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
-        if self.is_exit_valid(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
-        if self.is_exit_valid(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
+        if x > 0 && y > 0 && self.is_exit_valid(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
+        if y > 0 && self.is_exit_valid(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
+        if x > 0 && self.is_exit_valid(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
         if self.is_exit_valid(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
 
         exits
