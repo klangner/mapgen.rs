@@ -4,3 +4,4 @@ Cargo.lock
 .vscode/
 pkg/
 package-lock.json
+.DS_Store
