@@ -47,7 +47,7 @@ impl DijkstraMap {
         let len =  map.width * map.height;
         let tiles = vec![MAX; len];
         let mut d = DijkstraMap {
-            tiles: tiles,
+            tiles,
             size_x: map.width,
             size_y: map.height,
             max_depth: len as f32,
