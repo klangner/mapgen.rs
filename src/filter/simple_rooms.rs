@@ -6,11 +6,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapFilter, Map};
+//! use mapgen::{MapFilter, Map, NoData};
 //! use mapgen::filter::SimpleRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = SimpleRooms::new();
+//! let gen = SimpleRooms::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -18,36 +18,41 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
+use crate::BuilderData;
 use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
 use crate::Map;
 
 
-pub struct SimpleRooms {
+pub struct SimpleRooms<D: BuilderData> {
     max_rooms: usize,
     min_room_size: usize,
     max_room_size: usize,
+    phantom: PhantomData<D>,
 }
 
-impl MapFilter for SimpleRooms {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for SimpleRooms<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build_rooms(map, rng)
     }
 }
 
 
-impl SimpleRooms {
-    pub fn new() -> Box<SimpleRooms> {
+impl<D: BuilderData> SimpleRooms<D> {
+    pub fn new() -> Box<SimpleRooms<D>> {
         Box::new(SimpleRooms{
             max_rooms: 30,
             min_room_size: 6,
-            max_room_size: 10
+            max_room_size: 10,
+            phantom: PhantomData,
         })
     }
 
-    fn build_rooms(&self, map: &Map, rng : &mut StdRng) -> Map {
+    fn build_rooms(&self, map: &Map<D>, rng : &mut StdRng) -> Map<D> {
         let mut new_map = map.clone();
 
         // Create room dimensions

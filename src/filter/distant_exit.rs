@@ -5,7 +5,9 @@
 //! 
 
 use std::f32;
+use std::marker::PhantomData;
 use rand::prelude::StdRng;
+use crate::BuilderData;
 use crate::geometry::Point;
 use crate::MapFilter;
 use crate::Map;
@@ -13,21 +15,25 @@ use crate::dijkstra::DijkstraMap;
 
 
 /// Add exist position to the map based on the distance from the start point.
-pub struct DistantExit {} 
+pub struct DistantExit<D: BuilderData> {
+    phantom: PhantomData<D>,
+}
 
-impl MapFilter for DistantExit {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for DistantExit<D> {
+    fn modify_map(&self, _: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(map)
     }
 }
 
-impl DistantExit {
+impl<D: BuilderData> DistantExit<D> {
     #[allow(dead_code)]
-    pub fn new() -> Box<DistantExit> {
-        Box::new(DistantExit{})
+    pub fn new() -> Box<DistantExit<D>> {
+        Box::new(DistantExit {
+            phantom: PhantomData,
+        })
     }
 
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
 
         let mut best_idx = 0;
@@ -55,7 +61,7 @@ mod tests {
     use super::*;
     use super::MapFilter;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map::{Map, NoData};
 
     #[test]
     fn test_exit() {
@@ -65,7 +71,7 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(9, 2));
 
         let modifier = DistantExit::new();

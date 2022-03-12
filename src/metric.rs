@@ -4,6 +4,7 @@
 //! and the provide generator score as an average.
 //! 
 
+use super::BuilderData;
 use super::map::Map;
 use super::dijkstra::DijkstraMap;
 
@@ -11,7 +12,7 @@ use super::dijkstra::DijkstraMap;
 /// This metric calculates the percentage of walkable cells (Floor).
 /// If this number is very low (like < 10%) then it means that the map 
 /// is probably to degenerated and shouldn't be used
-pub fn density(map: &Map) -> f32 {
+pub fn density<D>(map: &Map<D>) -> f32 {
     let floor_count = map.tiles.iter()
         .filter(|&t| t.is_walkable())
         .count();
@@ -22,7 +23,7 @@ pub fn density(map: &Map) -> f32 {
 /// Calculate the length of the shortes path from the starting point
 /// to the exit.
 /// If this path is very short, then the map is probably degenerated.
-pub fn path_length(map: &Map) -> f32 {
+pub fn path_length<D: BuilderData>(map: &Map<D>) -> f32 {
     if map.starting_point.is_none() {
         return 0.0
     }
@@ -43,12 +44,12 @@ pub fn path_length(map: &Map) -> f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::geometry::Point;
+    use crate::{geometry::Point, map::NoData};
 
 
     #[test]
     fn test_density_no_floor() {
-        let map = Map::new(10, 10);
+        let map = Map::<NoData>::new(10, 10);
         let score = density(&map);
         assert_eq!(score, 0.0);
     }
@@ -60,7 +61,7 @@ mod tests {
             #   ##   #
             ##########
             ";
-        let map = Map::from_string(map_str);
+        let map = Map::<NoData>::from_string(map_str);
         let score = density(&map);
         assert_eq!(score, 0.2);
     }
@@ -72,7 +73,7 @@ mod tests {
             #   ##   #
             ##########
             ";
-        let map = Map::from_string(map_str);
+        let map = Map::<NoData>::from_string(map_str);
         let score = path_length(&map);
         assert_eq!(score, 0.0);
     }
@@ -85,7 +86,7 @@ mod tests {
             #        #
             ##########
             ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(1,1));
         map.exit_point = Some(Point::new(8,1));
 

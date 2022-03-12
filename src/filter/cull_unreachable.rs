@@ -4,28 +4,34 @@
 //! It will add wall on every tile which is not accessible from the starting point.
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::{Map, Tile};
+use crate::{BuilderData, Map, Tile};
 use crate::dijkstra::DijkstraMap;
 
 
 /// Remove unreachable areas from the map.
-pub struct CullUnreachable {}
+pub struct CullUnreachable<D: BuilderData> {
+    phantom: PhantomData<D>,
+}
 
-impl MapFilter for CullUnreachable {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for CullUnreachable<D> {
+    fn modify_map(&self, _: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(map)
     }
 }
 
-impl CullUnreachable {
+impl<D: BuilderData> CullUnreachable<D> {
     #[allow(dead_code)]
-    pub fn new() -> Box<CullUnreachable> {
-        Box::new(CullUnreachable{})
+    pub fn new() -> Box<CullUnreachable<D>> {
+        Box::new(CullUnreachable {
+            phantom: PhantomData,
+        })
     }
 
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
 
         let dijkstra_map = DijkstraMap::new(map);
@@ -51,7 +57,7 @@ mod tests {
     use super::*;
     use super::MapFilter;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map::{Map, NoData};
 
     #[test]
     fn test_culling() {
@@ -60,14 +66,14 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(9, 1));
         let expected_map_str = "
         ##########
         ####     #
         ##########
         ";
-        let expected_map = Map::from_string(expected_map_str);
+        let expected_map = Map::<NoData>::from_string(expected_map_str);
 
 
         let modifier = CullUnreachable::new();

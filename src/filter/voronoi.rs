@@ -1,11 +1,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::VoronoiHive;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = VoronoiHive::new();
+//! let gen = VoronoiHive::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -13,34 +13,38 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map::{Map, Tile},
+    map::{BuilderData, Map, Tile},
     random::Rng,
     geometry::Point,
 };
 
 
-pub struct VoronoiHive {
+pub struct VoronoiHive<D: BuilderData> {
     n_seeds: usize,
+    phantom: PhantomData<D>,
 }
 
 
-impl MapFilter for VoronoiHive {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for VoronoiHive<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(rng, map)
     }
 }
 
-impl VoronoiHive {
-    pub fn new() -> Box<VoronoiHive> {
+impl<D: BuilderData> VoronoiHive<D> {
+    pub fn new() -> Box<VoronoiHive<D>> {
         Box::new(VoronoiHive{
             n_seeds: 64,
+            phantom: PhantomData,
         })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
         let seeds = self.generate_seeds(rng, map.width, map.height);
 

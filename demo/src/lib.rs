@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
-use mapgen::{Map, MapBuilder, geometry::Point};
+use mapgen::{Map, MapBuilder, NoData, geometry::Point};
 use mapgen::filter::*;
 use mapgen::metric;
 
@@ -19,7 +19,7 @@ pub struct World {
     width: u32,
     height: u32,
     tiles: Vec<Cell>,
-    map: Map,
+    map: Map<NoData>,
 }
 
 #[wasm_bindgen]
@@ -32,7 +32,7 @@ pub struct Position {
 #[wasm_bindgen]
 impl World {
     
-    fn new(width: u32, height: u32, map: Map) -> World {
+    fn new(width: u32, height: u32, map: Map<NoData>) -> World {
         let tiles = (0..map.tiles.len())
             .map(|i| if map.tiles[i].is_walkable() {Cell::Floor} else {Cell::Wall})
             .collect();
@@ -176,7 +176,7 @@ impl World {
         div.set_inner_html(&info);
     }
     
-    fn print_map_metrics(map: &Map) {
+    fn print_map_metrics(map: &Map<NoData>) {
         let window = web_sys::window().expect("no global `window` exists");
         let document = window.document().expect("should have a document on window");
         let div = document.get_element_by_id("map-metrics").expect("Need div with id: map-metrics");

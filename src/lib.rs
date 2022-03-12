@@ -8,7 +8,7 @@
 //! 
 //! Example
 //! ```
-//! use mapgen::{MapFilter, MapBuilder, Map, Tile};
+//! use mapgen::{MapFilter, MapBuilder, Map, NoData, Tile};
 //! use mapgen::filter::{
 //!     NoiseGenerator,
 //!     CellularAutomata,
@@ -16,7 +16,7 @@
 //! };
 //! use mapgen::geometry::Point;
 //! 
-//! let map = MapBuilder::new(80, 50)
+//! let map = MapBuilder::<NoData>::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
 //!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
@@ -33,7 +33,7 @@ pub mod geometry;
 pub mod map;
 pub mod metric;
 
-pub use map::{Map, Symmetry, Tile};
+pub use map::{BuilderData, Map, NoData, Symmetry, Tile};
 pub use filter::*;
 
 pub (crate) mod dijkstra;
@@ -45,20 +45,20 @@ use rand::prelude::*;
 
 /// Trait which should be implemented by map modifier. 
 /// Modifier takes initiall map and apply changes to it.
-pub trait MapFilter {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map;
+pub trait MapFilter<D: BuilderData> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D>;
 }
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
-pub struct MapBuilder {
+pub struct MapBuilder<D> {
     width: usize,
     height: usize,
-    modifiers: Vec<Box<dyn MapFilter>>,
+    modifiers: Vec<Box<dyn MapFilter<D>>>,
 }
 
-impl MapBuilder {
+impl<D: BuilderData> MapBuilder<D> {
     /// Create Map Builder with initial map generator
-    pub fn new(width: usize, height: usize) -> MapBuilder {
+    pub fn new(width: usize, height: usize) -> MapBuilder<D> {
         MapBuilder { 
             width,
             height,
@@ -66,20 +66,20 @@ impl MapBuilder {
         }
     }
 
-    pub fn with(&mut self, modifier : Box<dyn MapFilter>) -> &mut MapBuilder {
+    pub fn with(&mut self, modifier : Box<dyn MapFilter<D>>) -> &mut MapBuilder<D> {
         self.modifiers.push(modifier);
         self
     }
 
     /// Build map using random number seeded with system time
-    pub fn build(&mut self) -> Map {
+    pub fn build(&mut self) -> Map<D> {
         let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
         self.build_with_rng(&mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> Map {
+    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> Map<D> {
         let mut map = Map::new(self.width, self.height);
         
         // Build additional layers in turn
@@ -97,6 +97,8 @@ impl MapBuilder {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
+    use crate::map::NoData;
+
     use super::*;
     use filter::{
         CellularAutomata,
@@ -106,7 +108,7 @@ mod tests {
 
     #[test]
     fn test_ca_map() {
-        let map = MapBuilder::new(80, 50)
+        let map = MapBuilder::<NoData>::new(80, 50)
             .with(NoiseGenerator::new(0.55))
             .with(CellularAutomata::new())
             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))

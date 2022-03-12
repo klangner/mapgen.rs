@@ -1,11 +1,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::DrunkardsWalk;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = DrunkardsWalk::open_area();
+//! let gen = DrunkardsWalk::<NoData>::open_area();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -13,9 +13,12 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
+    BuilderData,
     map::{Map, Symmetry, Tile},
     geometry::Point,
     random::Rng
@@ -25,57 +28,59 @@ use crate::{
 #[derive(PartialEq, Copy, Clone)]
 pub enum DrunkSpawnMode { StartingPoint, Random }
 
-pub struct DrunkardsWalk {
+pub struct DrunkardsWalk<D: BuilderData> {
     spawn_mode : DrunkSpawnMode,
     drunken_lifetime : i32,
     floor_percent: f32,
     brush_size: usize,
-    symmetry: Symmetry
+    symmetry: Symmetry,
+    phantom: PhantomData<D>,
 }
 
-impl MapFilter for DrunkardsWalk {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for DrunkardsWalk<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(rng, map)
     }
 }
 
-impl DrunkardsWalk {
+impl<D: BuilderData> DrunkardsWalk<D> {
     pub fn new( spawn_mode: DrunkSpawnMode, 
                 drunken_lifetime: i32, 
                 floor_percent: f32,
                 brush_size: usize, 
-                symmetry: Symmetry) -> Box<DrunkardsWalk>
+                symmetry: Symmetry) -> Box<DrunkardsWalk<D>>
     {
         Box::new(DrunkardsWalk{
             spawn_mode,
             drunken_lifetime,
             floor_percent,
             brush_size,
-            symmetry
+            symmetry,
+            phantom: PhantomData,
         })
     }
 
-    pub fn open_area() -> Box<DrunkardsWalk> {
+    pub fn open_area() -> Box<DrunkardsWalk<D>> {
         Self::new(DrunkSpawnMode::StartingPoint, 400, 0.5, 1, Symmetry::None)
     }
 
-    pub fn open_halls() -> Box<DrunkardsWalk> {
+    pub fn open_halls() -> Box<DrunkardsWalk<D>> {
         Self::new(DrunkSpawnMode::Random, 400, 0.5, 1, Symmetry::None)
     }
 
-    pub fn winding_passages() -> Box<DrunkardsWalk> {
+    pub fn winding_passages() -> Box<DrunkardsWalk<D>> {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 1, Symmetry::None)
     }
 
-    pub fn fat_passages() -> Box<DrunkardsWalk> {
+    pub fn fat_passages() -> Box<DrunkardsWalk<D>> {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 2, Symmetry::None)
     }
 
-    pub fn fearful_symmetry() -> Box<DrunkardsWalk> {
+    pub fn fearful_symmetry() -> Box<DrunkardsWalk<D>> {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 1, Symmetry::Both)
     }
     
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
         // Set a central starting point
         let starting_position = Point::new( new_map.width / 2, new_map.height / 2 );

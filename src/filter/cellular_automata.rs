@@ -9,11 +9,11 @@
 //! Example usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::CellularAutomata;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = CellularAutomata::new();
+//! let gen = CellularAutomata::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -21,30 +21,37 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
+use crate::BuilderData;
 use crate::MapFilter;
 use crate::{Map, Tile};
 
 
 /// Map filter
-pub struct CellularAutomata {
+pub struct CellularAutomata<D: BuilderData> {
     num_iteraction: u32,
+    phantom: PhantomData<D>,
 }
 
-impl MapFilter for CellularAutomata {
-    fn modify_map(&self, _rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for CellularAutomata<D> {
+    fn modify_map(&self, _rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(map)
     }
 }
 
-impl CellularAutomata {
+impl<D: BuilderData> CellularAutomata<D> {
     /// Create generator which will create map with the given dimension.
-    pub fn new() -> Box<CellularAutomata> {
-        Box::new(CellularAutomata { num_iteraction: 15})
+    pub fn new() -> Box<CellularAutomata<D>> {
+        Box::new(CellularAutomata {
+            num_iteraction: 15,
+            phantom: PhantomData,
+        })
     }
 
     /// Generate map
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
         for _ in 0..self.num_iteraction {
             new_map = apply_iteration(&new_map);
@@ -55,7 +62,7 @@ impl CellularAutomata {
 
 }
 
-fn apply_iteration(map: &Map) -> Map {
+fn apply_iteration<D: BuilderData>(map: &Map<D>) -> Map<D> {
     let mut new_map = map.clone();
 
     for y in 1..map.height-1 {
@@ -85,11 +92,13 @@ fn apply_iteration(map: &Map) -> Map {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
+    use crate::map::NoData;
+
     use super::*;
 
     #[test]
     fn test_iteration_wal() {
-        let map = Map::new(3, 3);
+        let map = Map::<NoData>::new(3, 3);
         let new_map = apply_iteration(&map);
         assert!(new_map.at(1, 1).is_blocked());
     }
@@ -97,7 +106,7 @@ mod tests {
 
     #[test]
     fn test_iteration_floor() {
-        let mut map = Map::new(3, 3);
+        let mut map = Map::<NoData>::new(3, 3);
         for i in 0..3 {
             for j in 0..2 {
                 map.set_tile(i, j, Tile::floor());

@@ -25,25 +25,26 @@
 //! ---
 //! 
 
-use std::collections::VecDeque;
+use std::{collections::VecDeque, marker::PhantomData};
 use std::f32::MAX;
-use super::map::Map;
+use super::map::{BuilderData, Map};
 
 
 /// Representation of a Dijkstra flow map.
 /// map is a vector of floats, having a size equal to size_x * size_y (one per tile).
 /// size_x and size_y are stored for overflow avoidance.
 /// max_depth is the maximum number of iterations this search shall support.
-pub struct DijkstraMap {
+pub struct DijkstraMap<D> {
     pub tiles: Vec<f32>,
     size_x: usize,
     size_y: usize,
     max_depth: f32,
+    phantom: PhantomData<D>,
 }
 
-impl DijkstraMap {
+impl<D: BuilderData> DijkstraMap<D> {
     //! Construct a new Dijkstra map, ready to run. 
-    pub fn new(map: &Map) -> DijkstraMap {
+    pub fn new(map: &Map<D>) -> DijkstraMap<D> {
         let len =  map.width * map.height;
         let tiles = vec![MAX; len];
         let mut d = DijkstraMap {
@@ -51,6 +52,7 @@ impl DijkstraMap {
             size_x: map.width,
             size_y: map.height,
             max_depth: len as f32,
+            phantom: PhantomData,
         };
         d.build(map);
         d
@@ -61,7 +63,7 @@ impl DijkstraMap {
     /// depth is further than the current depth.
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
-    fn build(&mut self, map: &Map) {
+    fn build(&mut self, map: &Map<D>) {
         let mapsize: usize = (self.size_x * self.size_y) as usize;
         let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
 
@@ -97,7 +99,7 @@ impl DijkstraMap {
 mod tests {
     use super::*;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map::{Map, NoData};
 
     #[test]
     fn test_culling() {
@@ -106,7 +108,7 @@ mod tests {
         # #      #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(8, 1));
         let dm = DijkstraMap::new(&map);
 
@@ -134,7 +136,7 @@ mod tests {
         #  #
         ####
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(2, 2));
         let dm = DijkstraMap::new(&map);
         let expected = [MAX, MAX, MAX, MAX,
@@ -153,7 +155,7 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         map.starting_point = Some(Point::new(8, 2));
         let dm = DijkstraMap::new(&map);
         let expected = [MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 

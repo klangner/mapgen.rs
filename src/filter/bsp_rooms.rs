@@ -6,11 +6,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::BspRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspRooms::new();
+//! let gen = BspRooms::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -18,31 +18,36 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
+use crate::BuilderData;
 use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
 use crate::Map;
 
 
-pub struct BspRooms {
+pub struct BspRooms<D: BuilderData> {
     max_split: usize,
+    phantom: PhantomData<D>,
 }
 
-impl MapFilter for BspRooms {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for BspRooms<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build_rooms(map, rng)
     }
 }
 
-impl BspRooms {
-    pub fn new() -> Box<BspRooms> {
+impl<D: BuilderData> BspRooms<D> {
+    pub fn new() -> Box<BspRooms<D>> {
         Box::new(BspRooms {
             max_split: 240,
+            phantom: PhantomData,
         })
     }
 
-    fn build_rooms(&self, map: &Map, rng : &mut StdRng) -> Map {
+    fn build_rooms(&self, map: &Map<D>, rng : &mut StdRng) -> Map<D> {
         let mut new_map = map.clone();
         let mut rects: Vec<Rect> = Vec::new();
         // Start with a single map-sized rectangle
@@ -102,7 +107,7 @@ impl BspRooms {
         result
     }
 
-    fn is_possible(&self, rect: Rect, map: &Map) -> bool {
+    fn is_possible(&self, rect: Rect, map: &Map<D>) -> bool {
         let mut expanded = rect;
         expanded.x1 -= 2;
         expanded.x2 += 2;
@@ -139,12 +144,12 @@ impl BspRooms {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::map::Map;
+    use crate::map::{Map, NoData};
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
-        let gen = BspRooms::new();
+        let gen = BspRooms::<NoData>::new();
         let map = gen.modify_map(&mut rng, &Map::new(80, 50));
         for i in 0..80 {
             assert!(map.at(i, 0).is_blocked());

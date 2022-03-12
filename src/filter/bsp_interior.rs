@@ -6,13 +6,13 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::{
 //!     BspInterior
 //! };
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspInterior::new();
+//! let gen = BspInterior::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -20,32 +20,36 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
-use crate::MapFilter;
+use crate::{BuilderData, MapFilter};
 use crate::geometry::{Point, Rect};
 use crate::random::Rng;
 use crate::Map;
 
 
-pub struct BspInterior {
+pub struct BspInterior<D: BuilderData> {
     min_room_size: usize,
+    phantom: PhantomData<D>,
 }
 
-impl MapFilter for BspInterior {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map {
+impl<D: BuilderData> MapFilter<D> for BspInterior<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D> {
         self.build(rng, map)
     }
 }
 
-impl BspInterior {
+impl<D: BuilderData> BspInterior<D> {
 
-    pub fn new() -> Box<BspInterior> {
+    pub fn new() -> Box<BspInterior<D>> {
         Box::new(BspInterior{
             min_room_size: 8,
+            phantom: PhantomData,
         })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
         let mut rects: Vec<Rect> = Vec::new();
         rects.push( Rect::new(1, 1, new_map.width-2, new_map.height-2) ); 
@@ -114,12 +118,12 @@ impl BspInterior {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Map};
+    use crate::{Map, map::NoData};
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
-        let gen = BspInterior::new();
+        let gen = BspInterior::<NoData>::new();
         let map = gen.modify_map(&mut rng, &Map::new(80, 50));
         for i in 0..80 {
             assert!(map.at(i, 0).is_blocked());

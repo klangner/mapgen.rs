@@ -1,5 +1,6 @@
 use mapgen::{
     MapBuilder,
+    NoData,
     filter::{
         NoiseGenerator, 
         CellularAutomata,
@@ -12,7 +13,7 @@ use mapgen::{
 
 
 fn main() {
-    let map = MapBuilder::new(20, 20)
+    let map = MapBuilder::<NoData>::new(20, 20)
         .with(NoiseGenerator::uniform())
         .with(CellularAutomata::new())
         .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))

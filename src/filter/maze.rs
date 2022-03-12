@@ -1,11 +1,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{Map, MapFilter, NoData};
 //! use mapgen::filter::MazeBuilder;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = MazeBuilder::new();
+//! let gen = MazeBuilder::<NoData>::new();
 //! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
@@ -13,29 +13,35 @@
 //! ```
 //! 
 
+use std::marker::PhantomData;
+
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map::{Map, Tile},
+    map::{BuilderData, Map, Tile},
     random::Rng
 };
 
 
-pub struct MazeBuilder {}
+pub struct MazeBuilder<D: BuilderData> {
+    phantom: PhantomData<D>,
+}
 
-impl MapFilter for MazeBuilder {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+impl<D: BuilderData> MapFilter<D> for MazeBuilder<D> {
+    fn modify_map(&self, rng: &mut StdRng, map: &Map<D>)  -> Map<D> {
         self.build(rng, map)
     }
 }
 
-impl MazeBuilder {
-    pub fn new() -> Box<MazeBuilder> {
-        Box::new(MazeBuilder{})
+impl<D: BuilderData> MazeBuilder<D> {
+    pub fn new() -> Box<MazeBuilder<D>> {
+        Box::new(MazeBuilder {
+            phantom: PhantomData,
+        })
     }
 
     #[allow(clippy::map_entry)]
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &Map<D>) -> Map<D> {
         let mut new_map = map.clone();
         let mut maze = Grid::new((map.width as i32/ 2)-2, (map.height as i32/ 2)-2, rng);
         maze.generate_maze(&mut new_map);
@@ -91,24 +97,26 @@ impl Cell {
     }
 }
 
-struct Grid<'a> {
+struct Grid<'a, D: BuilderData> {
     width: i32,
     height: i32,
     cells: Vec<Cell>,
     backtrace: Vec<usize>,
     current: usize,
-    rng : &'a mut StdRng
+    rng : &'a mut StdRng,
+    phantom: PhantomData<D>,
 }
 
-impl<'a> Grid<'a> {
-    fn new(width: i32, height:i32, rng: &mut StdRng) -> Grid {
+impl<'a, D: BuilderData> Grid<'a, D> {
+    fn new(width: i32, height:i32, rng: &mut StdRng) -> Grid<D> {
         let mut grid = Grid{
             width,
             height,
             cells: Vec::new(),
             backtrace: Vec::new(),
             current: 0,
-            rng
+            rng,
+            phantom: PhantomData,
         };
 
         for row in 0..height {
@@ -162,7 +170,7 @@ impl<'a> Grid<'a> {
         None
     }
 
-    fn generate_maze(&mut self, map: &mut Map) {
+    fn generate_maze(&mut self, map: &mut Map<D>) {
         let mut i = 0;
         loop {
             self.cells[self.current].visited = true;
@@ -199,7 +207,7 @@ impl<'a> Grid<'a> {
         }
     }
 
-    fn copy_to_map(&self, map: &mut Map) {
+    fn copy_to_map(&self, map: &mut Map<D>) {
         // Clear the map
         for i in map.tiles.iter_mut() { *i = Tile::wall(); }
 

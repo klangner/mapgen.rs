@@ -21,9 +21,18 @@ pub struct Tile {
 pub enum Symmetry { None, Horizontal, Vertical, Both }
 
 
+/// Arbitrary data associated with each map
+pub trait BuilderData: Clone + Default {}
+
+/// No build data
+#[derive(Clone, Debug, Default)]
+pub struct NoData;
+
+impl BuilderData for NoData {}
+
 /// Map data
 #[derive(Default, Clone)]
-pub struct Map {
+pub struct Map<D> {
     pub tiles : Vec<Tile>,
     pub width : usize,
     pub height : usize,
@@ -31,6 +40,7 @@ pub struct Map {
     pub exit_point: Option<Point>,
     pub rooms: Vec<Rect>,
     pub corridors: Vec<Vec<Point>>,
+    pub data: D,
 }
 
 impl Tile {
@@ -59,10 +69,10 @@ impl Tile {
     }
 }
 
-impl Map {
+impl<D: BuilderData> Map<D> {
 
     /// Generates an empty map, consisting entirely of solid walls
-    pub fn new(width: usize, height: usize) -> Map {
+    pub fn new(width: usize, height: usize) -> Map<D> {
         let map_tile_count = width*height;
         Map{
             tiles : vec![Tile::wall(); map_tile_count],
@@ -71,12 +81,13 @@ impl Map {
             starting_point: None,
             exit_point: None,
             rooms: Vec::new(),
-            corridors: Vec::new()
+            corridors: Vec::new(),
+            data: Default::default()
         }
     }
 
     /// Create map from given string
-    pub fn from_string(map_string: &str) -> Map {
+    pub fn from_string(map_string: &str) -> Map<D> {
         let lines: Vec<&str> = map_string.split("\n")
             .map(|l| l.trim())
             .filter(|l| l.len() > 0)
@@ -235,7 +246,7 @@ impl Map {
     }
 }
 
-impl fmt::Display for Map {
+impl<D: BuilderData> fmt::Display for Map<D> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
@@ -257,7 +268,7 @@ mod tests {
 
     #[test]
     fn test_new_map() {
-        let map = Map::new(10, 10);
+        let map = Map::<NoData>::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
                 assert!(map.at(i, j).is_blocked);
@@ -272,7 +283,7 @@ mod tests {
         #        #
         ##########
         ";
-        let map = Map::from_string(map_str);
+        let map = Map::<NoData>::from_string(map_str);
 
         assert_eq!(map.width, 10);
         assert_eq!(map.height, 3);
@@ -295,7 +306,7 @@ mod tests {
         #        #
         ##########
         ";
-        let map = Map::from_string(map_str);
+        let map = Map::<NoData>::from_string(map_str);
         let exists = map.get_available_exits(1, 1);
         let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
         assert_eq!(exists, expected_exists);
@@ -303,7 +314,7 @@ mod tests {
 
         #[test]
     fn test_create_room() {
-        let mut map = Map::new(5, 5);
+        let mut map = Map::<NoData>::new(5, 5);
         map.add_room(Rect::new(1, 1, 3, 3));
         for x in 0..map.width {
             for y in 0..map.height {
@@ -323,13 +334,13 @@ mod tests {
         #    #   #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = Map::<NoData>::from_string(map_str);
         let expected_map_str = "
         ##########
         #        #
         ##########
         ";
-        let expected_map = Map::from_string(expected_map_str);
+        let expected_map = Map::<NoData>::from_string(expected_map_str);
 
         map.add_corridor(Point::new(1, 1), Point::new(8, 1));
 
@@ -344,7 +355,7 @@ mod tests {
         #    #   #
         ##########
         ";
-        let map = Map::from_string(map_str);
+        let map = Map::<NoData>::from_string(map_str);
         let exists = map.get_available_exits(0, 0);
 
         assert_eq!(exists.len(), 1);
