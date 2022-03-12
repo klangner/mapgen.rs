@@ -47,8 +47,7 @@ impl BspInterior {
 
     fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
         let mut new_map = map.clone();
-        let mut rects: Vec<Rect> = Vec::new();
-        rects.push( Rect::new(1, 1, new_map.width-2, new_map.height-2) ); 
+        let mut rects = vec![Rect::new(1, 1, new_map.width-2, new_map.height-2)];
         let first_room = rects[0];
         // Divide the first room
         self.add_subrects(first_room, rng, &mut rects); 

@@ -27,7 +27,7 @@
 //! assert_eq!(map.starting_point.is_some(), true);
 //! ```
 //!  
- 
+
 pub mod filter;
 pub mod geometry;
 pub mod map;
@@ -114,7 +114,7 @@ mod tests {
 
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);
-        assert_eq!(map.starting_point.is_some(), true);
+        assert!(map.starting_point.is_some());
     }
 
 }
