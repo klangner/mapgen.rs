@@ -31,17 +31,15 @@
 pub mod filter;
 pub mod geometry;
 pub mod metric;
-pub mod world_map;
+pub mod map_buffer;
 
 pub (crate) mod dijkstra;
 pub (crate) mod random;
-pub (crate) mod map_buffer;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
 
 pub use map_buffer::{MapBuffer, Symmetry};
-pub use world_map::WorldMap;
 pub use filter::*;
 
 
@@ -74,14 +72,14 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build(&mut self) -> WorldMap {
+    pub fn build(&mut self) -> MapBuffer {
         let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
         self.build_with_rng(&mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> WorldMap {
+    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> MapBuffer {
         let mut map = MapBuffer::new(self.width, self.height);
         
         // Build additional layers in turn
@@ -89,7 +87,7 @@ impl MapBuilder {
             map = modifier.modify_map(rng, &map);
         }
 
-        WorldMap::new(self.width, self.height, map.walkables, map.tile_types, map.starting_point, map.exit_point)
+        map
     }
 
 }
