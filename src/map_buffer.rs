@@ -17,7 +17,7 @@ pub enum Symmetry { None, Horizontal, Vertical, Both }
 
 /// Map data
 #[derive(Default, Clone)]
-pub struct MapInfo {
+pub struct MapBuffer {
     // Defines tiles which are walkable by player
     pub walkables : Vec<bool>,
     // Tile type is mostly defined for visual purposes. It could be specifi wall
@@ -31,12 +31,12 @@ pub struct MapInfo {
     pub corridors: Vec<Vec<Point>>,
 }
 
-impl MapInfo {
+impl MapBuffer {
 
     /// Generates an empty map, consisting entirely of solid walls
-    pub fn new(width: usize, height: usize) -> MapInfo {
+    pub fn new(width: usize, height: usize) -> MapBuffer {
         let map_tile_count = width*height;
-        MapInfo{
+        MapBuffer{
             walkables : vec![false; map_tile_count],
             tile_types : vec![0; map_tile_count],
             width,
@@ -50,14 +50,14 @@ impl MapInfo {
 
     /// Create map from given string
     #[allow(clippy::needless_range_loop)]
-    pub fn from_string(map_string: &str) -> MapInfo {
+    pub fn from_string(map_string: &str) -> MapBuffer {
         let lines: Vec<&str> = map_string.split('\n')
             .map(|l| l.trim())
             .filter(|l| !l.is_empty())
             .collect();
         let cols = lines.iter().map(|l| l.len()).max().get_or_insert(1).to_owned();
         let rows = lines.len();
-        let mut map = MapInfo::new(cols, rows);
+        let mut map = MapBuffer::new(cols, rows);
 
         for i in 0..rows {
             let line = lines[i].as_bytes();
@@ -113,6 +113,24 @@ impl MapInfo {
         if x < self.width && y < self.height {
             let idx = self.xy_idx(x as usize, y as usize);
             self.walkables[idx] = set;
+        }
+    }
+
+    // Get type type
+    pub fn tile_type(&self, x: usize, y: usize) -> usize {
+        if x >= self.width || y >= self.height {
+            0
+        } else {
+            let idx = (y as usize) * self.width + (x as usize);
+            self.tile_types[idx]
+        }
+    }
+
+    /// Modify tile at the given location
+    pub fn set_tile(&mut self, x: usize, y: usize, id: usize) {
+        if x < self.width && y < self.height {
+            let idx = self.xy_idx(x as usize, y as usize);
+            self.tile_types[idx] = id;
         }
     }
 
@@ -213,7 +231,7 @@ impl MapInfo {
     }
 }
 
-impl fmt::Display for MapInfo {
+impl fmt::Display for MapBuffer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
@@ -235,7 +253,7 @@ mod tests {
 
     #[test]
     fn test_new_map() {
-        let map = MapInfo::new(10, 10);
+        let map = MapBuffer::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
                 assert!(map.is_blocked(i, j));
@@ -250,7 +268,7 @@ mod tests {
         #        #
         ##########
         ";
-        let map = MapInfo::from_string(map_str);
+        let map = MapBuffer::from_string(map_str);
 
         assert_eq!(map.width, 10);
         assert_eq!(map.height, 3);
@@ -273,7 +291,7 @@ mod tests {
         #        #
         ##########
         ";
-        let map = MapInfo::from_string(map_str);
+        let map = MapBuffer::from_string(map_str);
         let exists = map.get_available_exits(1, 1);
         let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
         assert_eq!(exists, expected_exists);
@@ -281,7 +299,7 @@ mod tests {
 
         #[test]
     fn test_create_room() {
-        let mut map = MapInfo::new(5, 5);
+        let mut map = MapBuffer::new(5, 5);
         map.add_room(Rect::new(1, 1, 3, 3));
         for x in 0..map.width {
             for y in 0..map.height {
@@ -301,13 +319,13 @@ mod tests {
         #    #   #
         ##########
         ";
-        let mut map = MapInfo::from_string(map_str);
+        let mut map = MapBuffer::from_string(map_str);
         let expected_map_str = "
         ##########
         #        #
         ##########
         ";
-        let expected_map = MapInfo::from_string(expected_map_str);
+        let expected_map = MapBuffer::from_string(expected_map_str);
 
         map.add_corridor(Point::new(1, 1), Point::new(8, 1));
 
@@ -322,7 +340,7 @@ mod tests {
         #    #   #
         ##########
         ";
-        let map = MapInfo::from_string(map_str);
+        let map = MapBuffer::from_string(map_str);
         let exists = map.get_available_exits(0, 0);
 
         assert_eq!(exists.len(), 1);

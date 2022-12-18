@@ -6,12 +6,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapFilter, MapInfo};
+//! use mapgen::{MapFilter, MapBuffer};
 //! use mapgen::filter::SimpleRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = SimpleRooms::new();
-//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -22,7 +22,7 @@ use rand::prelude::*;
 use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use crate::MapInfo;
+use crate::MapBuffer;
 
 
 pub struct SimpleRooms {
@@ -32,7 +32,7 @@ pub struct SimpleRooms {
 }
 
 impl MapFilter for SimpleRooms {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer)  -> MapBuffer {
         self.build_rooms(map, rng)
     }
 }
@@ -47,7 +47,7 @@ impl SimpleRooms {
         })
     }
 
-    fn build_rooms(&self, map: &MapInfo, rng : &mut StdRng) -> MapInfo {
+    fn build_rooms(&self, map: &MapBuffer, rng : &mut StdRng) -> MapBuffer {
         let mut new_map = map.clone();
 
         // Create room dimensions

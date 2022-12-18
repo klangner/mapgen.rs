@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapInfo, MapFilter};
+//! use mapgen::{MapBuffer, MapFilter};
 //! use mapgen::filter::DrunkardsWalk;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = DrunkardsWalk::open_area();
-//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map_info::{MapInfo, Symmetry},
+    map_buffer::{MapBuffer, Symmetry},
     geometry::Point,
     random::Rng
 };
@@ -34,7 +34,7 @@ pub struct DrunkardsWalk {
 }
 
 impl MapFilter for DrunkardsWalk {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer)  -> MapBuffer {
         self.build(rng, map)
     }
 }
@@ -75,7 +75,7 @@ impl DrunkardsWalk {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 1, Symmetry::Both)
     }
     
-    fn build(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo {
+    fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
         let mut new_map = map.clone();
         // Set a central starting point
         let starting_position = Point::new( new_map.width / 2, new_map.height / 2 );

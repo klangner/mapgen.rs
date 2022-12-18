@@ -4,14 +4,14 @@
 //! and the provide generator score as an average.
 //! 
 
-use super::map_info::MapInfo;
+use super::map_buffer::MapBuffer;
 use super::dijkstra::DijkstraMap;
 
 
 /// This metric calculates the percentage of walkable cells (Floor).
 /// If this number is very low (like < 10%) then it means that the map 
 /// is probably to degenerated and shouldn't be used
-pub fn density(map: &MapInfo) -> f32 {
+pub fn density(map: &MapBuffer) -> f32 {
     let floor_count = map.walkables.iter()
         .filter(|&&x| x)
         .count();
@@ -22,7 +22,7 @@ pub fn density(map: &MapInfo) -> f32 {
 /// Calculate the length of the shortes path from the starting point
 /// to the exit.
 /// If this path is very short, then the map is probably degenerated.
-pub fn path_length(map: &MapInfo) -> f32 {
+pub fn path_length(map: &MapBuffer) -> f32 {
     if map.starting_point.is_none() {
         return 0.0
     }
@@ -48,7 +48,7 @@ mod tests {
 
     #[test]
     fn test_density_no_floor() {
-        let map = MapInfo::new(10, 10);
+        let map = MapBuffer::new(10, 10);
         let score = density(&map);
         assert_eq!(score, 0.0);
     }
@@ -60,7 +60,7 @@ mod tests {
             #   ##   #
             ##########
             ";
-        let map = MapInfo::from_string(map_str);
+        let map = MapBuffer::from_string(map_str);
         let score = density(&map);
         assert_eq!(score, 0.2);
     }
@@ -72,7 +72,7 @@ mod tests {
             #   ##   #
             ##########
             ";
-        let map = MapInfo::from_string(map_str);
+        let map = MapBuffer::from_string(map_str);
         let score = path_length(&map);
         assert_eq!(score, 0.0);
     }
@@ -85,7 +85,7 @@ mod tests {
             #        #
             ##########
             ";
-        let mut map = MapInfo::from_string(map_str);
+        let mut map = MapBuffer::from_string(map_str);
         map.starting_point = Some(Point::new(1,1));
         map.exit_point = Some(Point::new(8,1));
 

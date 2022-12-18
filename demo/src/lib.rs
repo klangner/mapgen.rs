@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys;
 use rand::prelude::*;
-use mapgen::{MapInfo, MapBuilder, geometry::Point};
+use mapgen::{MapInfo, WorldMap, MapBuilder, geometry::Point};
 use mapgen::filter::*;
 use mapgen::metric;
 
@@ -19,7 +19,7 @@ pub struct World {
     width: u32,
     height: u32,
     tiles: Vec<Cell>,
-    map: MapInfo,
+    map: WorldMap,
 }
 
 #[wasm_bindgen]
@@ -32,7 +32,7 @@ pub struct Position {
 #[wasm_bindgen]
 impl World {
     
-    fn new(width: u32, height: u32, map: MapInfo) -> World {
+    fn new(width: u32, height: u32, map: WorldMap) -> World {
         let tiles = (0..map.walkables.len())
             .map(|i| if map.walkables[i] {Cell::Floor} else {Cell::Wall})
             .collect();
