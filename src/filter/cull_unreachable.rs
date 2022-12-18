@@ -6,7 +6,7 @@
 
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::{Map, Tile};
+use crate::{MapInfo, Tile};
 use crate::dijkstra::DijkstraMap;
 
 
@@ -14,7 +14,7 @@ use crate::dijkstra::DijkstraMap;
 pub struct CullUnreachable {}
 
 impl MapFilter for CullUnreachable {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, _: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(map)
     }
 }
@@ -25,7 +25,7 @@ impl CullUnreachable {
         Box::new(CullUnreachable{})
     }
 
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
 
         let dijkstra_map = DijkstraMap::new(map);
@@ -51,7 +51,7 @@ mod tests {
     use super::*;
     use super::MapFilter;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map_info::MapInfo;
 
     #[test]
     fn test_culling() {
@@ -60,14 +60,14 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(9, 1));
         let expected_map_str = "
         ##########
         ####     #
         ##########
         ";
-        let expected_map = Map::from_string(expected_map_str);
+        let expected_map = MapInfo::from_string(expected_map_str);
 
 
         let modifier = CullUnreachable::new();

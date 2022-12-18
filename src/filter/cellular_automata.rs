@@ -9,12 +9,12 @@
 //! Example usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{MapInfo, MapFilter};
 //! use mapgen::filter::CellularAutomata;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = CellularAutomata::new();
-//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -23,7 +23,7 @@
 
 use rand::prelude::*;
 use crate::MapFilter;
-use crate::{Map, Tile};
+use crate::{MapInfo, Tile};
 
 
 /// Map filter
@@ -32,7 +32,7 @@ pub struct CellularAutomata {
 }
 
 impl MapFilter for CellularAutomata {
-    fn modify_map(&self, _rng: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, _rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(map)
     }
 }
@@ -44,7 +44,7 @@ impl CellularAutomata {
     }
 
     /// Generate map
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
         for _ in 0..self.num_iteraction {
             new_map = apply_iteration(&new_map);
@@ -55,7 +55,7 @@ impl CellularAutomata {
 
 }
 
-fn apply_iteration(map: &Map) -> Map {
+fn apply_iteration(map: &MapInfo) -> MapInfo {
     let mut new_map = map.clone();
 
     for y in 1..map.height-1 {
@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_iteration_wal() {
-        let map = Map::new(3, 3);
+        let map = MapInfo::new(3, 3);
         let new_map = apply_iteration(&map);
         assert!(new_map.at(1, 1).is_blocked());
     }
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_iteration_floor() {
-        let mut map = Map::new(3, 3);
+        let mut map = MapInfo::new(3, 3);
         for i in 0..3 {
             for j in 0..2 {
                 map.set_tile(i, j, Tile::floor());

@@ -6,14 +6,14 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{MapInfo, MapFilter};
 //! use mapgen::filter::{
 //!     BspInterior
 //! };
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = BspInterior::new();
-//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -24,7 +24,7 @@ use rand::prelude::*;
 use crate::MapFilter;
 use crate::geometry::{Point, Rect};
 use crate::random::Rng;
-use crate::Map;
+use crate::MapInfo;
 
 
 pub struct BspInterior {
@@ -32,7 +32,7 @@ pub struct BspInterior {
 }
 
 impl MapFilter for BspInterior {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo {
         self.build(rng, map)
     }
 }
@@ -45,7 +45,7 @@ impl BspInterior {
         })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
         let mut rects = vec![Rect::new(1, 1, new_map.width-2, new_map.height-2)];
         let first_room = rects[0];
@@ -113,13 +113,13 @@ impl BspInterior {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Map};
+    use crate::{MapInfo};
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
         let gen = BspInterior::new();
-        let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+        let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
         for i in 0..80 {
             assert!(map.at(i, 0).is_blocked());
             assert!(map.at(i, 49).is_blocked());

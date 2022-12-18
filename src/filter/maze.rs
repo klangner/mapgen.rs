@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{MapInfo, MapFilter};
 //! use mapgen::filter::MazeBuilder;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = MazeBuilder::new();
-//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map::{Map, Tile},
+    map_info::{MapInfo, Tile},
     random::Rng
 };
 
@@ -24,7 +24,7 @@ use crate::{
 pub struct MazeBuilder {}
 
 impl MapFilter for MazeBuilder {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(rng, map)
     }
 }
@@ -35,7 +35,7 @@ impl MazeBuilder {
     }
 
     #[allow(clippy::map_entry)]
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
         let mut maze = Grid::new((map.width as i32/ 2)-2, (map.height as i32/ 2)-2, rng);
         maze.generate_maze(&mut new_map);
@@ -162,7 +162,7 @@ impl<'a> Grid<'a> {
         None
     }
 
-    fn generate_maze(&mut self, map: &mut Map) {
+    fn generate_maze(&mut self, map: &mut MapInfo) {
         let mut i = 0;
         loop {
             self.cells[self.current].visited = true;
@@ -199,7 +199,7 @@ impl<'a> Grid<'a> {
         }
     }
 
-    fn copy_to_map(&self, map: &mut Map) {
+    fn copy_to_map(&self, map: &mut MapInfo) {
         // Clear the map
         for i in map.tiles.iter_mut() { *i = Tile::wall(); }
 

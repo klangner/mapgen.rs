@@ -8,7 +8,7 @@ use std::f32;
 use rand::prelude::StdRng;
 use crate::geometry::Point;
 use crate::MapFilter;
-use crate::Map;
+use crate::MapInfo;
 use crate::dijkstra::DijkstraMap;
 
 
@@ -16,7 +16,7 @@ use crate::dijkstra::DijkstraMap;
 pub struct DistantExit {} 
 
 impl MapFilter for DistantExit {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, _: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(map)
     }
 }
@@ -27,7 +27,7 @@ impl DistantExit {
         Box::new(DistantExit{})
     }
 
-    fn build(&self, map: &Map) -> Map {
+    fn build(&self, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
 
         let mut best_idx = 0;
@@ -55,7 +55,7 @@ mod tests {
     use super::*;
     use super::MapFilter;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map_info::MapInfo;
 
     #[test]
     fn test_exit() {
@@ -65,7 +65,7 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(9, 2));
 
         let modifier = DistantExit::new();

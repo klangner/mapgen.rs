@@ -6,12 +6,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{MapInfo, MapFilter};
 //! use mapgen::filter::BspRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = BspRooms::new();
-//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -22,7 +22,7 @@ use rand::prelude::*;
 use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use crate::Map;
+use crate::MapInfo;
 
 
 pub struct BspRooms {
@@ -30,7 +30,7 @@ pub struct BspRooms {
 }
 
 impl MapFilter for BspRooms {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build_rooms(map, rng)
     }
 }
@@ -42,7 +42,7 @@ impl BspRooms {
         })
     }
 
-    fn build_rooms(&self, map: &Map, rng : &mut StdRng) -> Map {
+    fn build_rooms(&self, map: &MapInfo, rng : &mut StdRng) -> MapInfo {
         let mut new_map = map.clone();
         // Start with a single map-sized rectangle
         let mut rects = vec![Rect::new(2, 2, new_map.width-5, new_map.height-5)];
@@ -101,7 +101,7 @@ impl BspRooms {
         result
     }
 
-    fn is_possible(&self, rect: Rect, map: &Map) -> bool {
+    fn is_possible(&self, rect: Rect, map: &MapInfo) -> bool {
         let mut expanded = rect;
         expanded.x1 -= 2;
         expanded.x2 += 2;
@@ -136,13 +136,13 @@ impl BspRooms {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::map::Map;
+    use crate::map_info::MapInfo;
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
         let gen = BspRooms::new();
-        let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+        let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
         for i in 0..80 {
             assert!(map.at(i, 0).is_blocked());
             assert!(map.at(i, 49).is_blocked());

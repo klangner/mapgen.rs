@@ -2,14 +2,14 @@
 //! 
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::Map;
+use crate::MapInfo;
 use std::collections::HashSet;
 
 
 pub struct NearestCorridors {}
 
 impl MapFilter for NearestCorridors {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, _: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.corridors(map)
     }
 }
@@ -20,7 +20,7 @@ impl NearestCorridors {
         Box::new(NearestCorridors{})
     }
 
-    fn corridors(&self, map: &Map) -> Map {
+    fn corridors(&self, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
 
         let mut connected : HashSet<usize> = HashSet::new();

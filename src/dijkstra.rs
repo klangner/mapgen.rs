@@ -27,7 +27,7 @@
 
 use std::collections::VecDeque;
 use std::f32::MAX;
-use super::map::Map;
+use super::map_info::MapInfo;
 
 
 /// Representation of a Dijkstra flow map.
@@ -43,7 +43,7 @@ pub struct DijkstraMap {
 
 impl DijkstraMap {
     //! Construct a new Dijkstra map, ready to run. 
-    pub fn new(map: &Map) -> DijkstraMap {
+    pub fn new(map: &MapInfo) -> DijkstraMap {
         let len =  map.width * map.height;
         let tiles = vec![MAX; len];
         let mut d = DijkstraMap {
@@ -61,7 +61,7 @@ impl DijkstraMap {
     /// depth is further than the current depth.
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
-    fn build(&mut self, map: &Map) {
+    fn build(&mut self, map: &MapInfo) {
         let mapsize: usize = (self.size_x * self.size_y) as usize;
         let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
 
@@ -97,7 +97,7 @@ impl DijkstraMap {
 mod tests {
     use super::*;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map_info::MapInfo;
 
     #[test]
     fn test_culling() {
@@ -106,7 +106,7 @@ mod tests {
         # #      #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(8, 1));
         let dm = DijkstraMap::new(&map);
 
@@ -134,7 +134,7 @@ mod tests {
         #  #
         ####
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(2, 2));
         let dm = DijkstraMap::new(&map);
         let expected = [MAX, MAX, MAX, MAX,
@@ -153,7 +153,7 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(8, 2));
         let dm = DijkstraMap::new(&map);
         let expected = [MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 

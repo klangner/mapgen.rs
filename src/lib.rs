@@ -8,7 +8,7 @@
 //! 
 //! Example
 //! ```
-//! use mapgen::{MapFilter, MapBuilder, Map, Tile};
+//! use mapgen::{MapFilter, MapBuilder, MapInfo, Tile};
 //! use mapgen::filter::{
 //!     NoiseGenerator,
 //!     CellularAutomata,
@@ -30,10 +30,10 @@
 
 pub mod filter;
 pub mod geometry;
-pub mod map;
+pub mod map_info;
 pub mod metric;
 
-pub use map::{Map, Symmetry, Tile};
+pub use map_info::{MapInfo, Symmetry, Tile};
 pub use filter::*;
 
 pub (crate) mod dijkstra;
@@ -46,7 +46,7 @@ use rand::prelude::*;
 /// Trait which should be implemented by map modifier. 
 /// Modifier takes initiall map and apply changes to it.
 pub trait MapFilter {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map) -> Map;
+    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo;
 }
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
@@ -72,15 +72,15 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build(&mut self) -> Map {
+    pub fn build(&mut self) -> MapInfo {
         let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
         self.build_with_rng(&mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> Map {
-        let mut map = Map::new(self.width, self.height);
+    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> MapInfo {
+        let mut map = MapInfo::new(self.width, self.height);
         
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {

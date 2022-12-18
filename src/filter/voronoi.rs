@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{Map, MapFilter};
+//! use mapgen::{MapInfo, MapFilter};
 //! use mapgen::filter::VoronoiHive;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = VoronoiHive::new();
-//! let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map::{Map, Tile},
+    map_info::{MapInfo, Tile},
     random::Rng,
     geometry::Point,
 };
@@ -28,7 +28,7 @@ pub struct VoronoiHive {
 
 
 impl MapFilter for VoronoiHive {
-    fn modify_map(&self, rng: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(rng, map)
     }
 }
@@ -40,7 +40,7 @@ impl VoronoiHive {
         })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &Map) -> Map {
+    fn build(&self, rng: &mut StdRng, map: &MapInfo) -> MapInfo {
         let mut new_map = map.clone();
         let seeds = self.generate_seeds(rng, map.width, map.height);
 

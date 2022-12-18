@@ -6,12 +6,12 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapFilter, Map, Tile};
+//! use mapgen::{MapFilter, MapInfo, Tile};
 //! use mapgen::filter::starting_point::{AreaStartingPosition, XStart, YStart};
 //! use mapgen::geometry::Point;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let mut map = Map::new(80, 50);
+//! let mut map = MapInfo::new(80, 50);
 //! map.set_tile(10, 10, Tile::floor());
 //! let modifier = AreaStartingPosition::new(XStart::LEFT, YStart::TOP);
 //! let new_map = modifier.modify_map(&mut rng, &map);
@@ -23,7 +23,7 @@
 use rand::prelude::StdRng;
 use crate::MapFilter;
 use crate::geometry::Point;
-use crate::Map;
+use crate::MapInfo;
 
 
 /// Initial x region position
@@ -39,7 +39,7 @@ pub struct AreaStartingPosition {
 }
 
 impl MapFilter for AreaStartingPosition {
-    fn modify_map(&self, _: &mut StdRng, map: &Map)  -> Map {
+    fn modify_map(&self, _: &mut StdRng, map: &MapInfo)  -> MapInfo {
         self.build(map)
     }
 }
@@ -52,7 +52,7 @@ impl AreaStartingPosition {
         })
     }
 
-    fn build(&self, map : &Map) -> Map {
+    fn build(&self, map : &MapInfo) -> MapInfo {
         let seed_x = match self.x {
             XStart::LEFT => 1,
             XStart::CENTER => map.width / 2,
@@ -101,7 +101,7 @@ mod tests {
     use super::*;
     use super::MapFilter;
     use crate::geometry::Point;
-    use crate::map::Map;
+    use crate::map_info::MapInfo;
 
     #[test]
     fn test_exit() {
@@ -111,7 +111,7 @@ mod tests {
         #  # #   #
         ##########
         ";
-        let mut map = Map::from_string(map_str);
+        let mut map = MapInfo::from_string(map_str);
         map.starting_point = Some(Point::new(9, 2));
 
         let modifier = AreaStartingPosition::new(XStart::CENTER, YStart::TOP);
