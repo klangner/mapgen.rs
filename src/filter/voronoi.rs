@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map_info::{MapInfo, Tile},
+    map_info::MapInfo,
     random::Rng,
     geometry::Point,
 };
@@ -71,7 +71,7 @@ impl VoronoiHive {
                 if voronoi_membership[new_map.xy_idx(x, y+1)] != my_seed { neighbors += 1; }
 
                 if neighbors < 2 {
-                    new_map.set_tile(x, y, Tile::floor());
+                    new_map.set_walkable(x, y, true);
                 }
             }
         }

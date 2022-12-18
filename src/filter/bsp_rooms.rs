@@ -120,7 +120,7 @@ impl BspRooms {
                 if y > map.height - 2 { can_build = false; }
                 if x < 1 { can_build = false; }
                 if y < 1 { can_build = false; }
-                if can_build && map.at(x as usize, y as usize).is_walkable() {
+                if can_build && map.is_walkable(x as usize, y as usize) {
                     can_build = false;
                 }
             }
@@ -144,12 +144,12 @@ mod tests {
         let gen = BspRooms::new();
         let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
         for i in 0..80 {
-            assert!(map.at(i, 0).is_blocked());
-            assert!(map.at(i, 49).is_blocked());
+            assert!(map.is_blocked(i, 0));
+            assert!(map.is_blocked(i, 49));
         } 
         for j in 0..50 {
-            assert!(map.at(0, j).is_blocked());
-            assert!(map.at(79, j).is_blocked());
+            assert!(map.is_blocked(0, j));
+            assert!(map.is_blocked(79, j));
         } 
     }
 

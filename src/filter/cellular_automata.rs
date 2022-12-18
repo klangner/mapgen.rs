@@ -23,7 +23,7 @@
 
 use rand::prelude::*;
 use crate::MapFilter;
-use crate::{MapInfo, Tile};
+use crate::MapInfo;
 
 
 /// Map filter
@@ -65,15 +65,11 @@ fn apply_iteration(map: &MapInfo) -> MapInfo {
                 (x-1, y), (x+1, y), 
                 (x-1, y+1), (x, y+1), (x+1, y+1)];
             let neighbors = idxs.iter()
-                .filter(|(x, y)| map.at(*x, *y).is_blocked())
+                .filter(|(x, y)| map.is_blocked(*x, *y))
                 .count();
             
-            if neighbors > 4 || neighbors == 0 {
-                new_map.set_tile(x, y, Tile::wall())
-            }
-            else {
-                new_map.set_tile(x, y, Tile::floor());
-            }
+            let walkable = neighbors < 5 && neighbors > 0;
+            new_map.set_walkable(x, y, walkable);
         }
     }
 
@@ -91,7 +87,7 @@ mod tests {
     fn test_iteration_wal() {
         let map = MapInfo::new(3, 3);
         let new_map = apply_iteration(&map);
-        assert!(new_map.at(1, 1).is_blocked());
+        assert!(new_map.is_blocked(1, 1));
     }
 
 
@@ -100,11 +96,11 @@ mod tests {
         let mut map = MapInfo::new(3, 3);
         for i in 0..3 {
             for j in 0..2 {
-                map.set_tile(i, j, Tile::floor());
+                map.set_walkable(i, j, true);
             }
         }
         let new_map = apply_iteration(&map);
-        assert!(new_map.at(1, 1).is_walkable());
+        assert!(new_map.is_walkable(1, 1));
     }
 
 }

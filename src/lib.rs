@@ -8,7 +8,7 @@
 //! 
 //! Example
 //! ```
-//! use mapgen::{MapFilter, MapBuilder, MapInfo, Tile};
+//! use mapgen::{MapFilter, MapBuilder, MapInfo};
 //! use mapgen::filter::{
 //!     NoiseGenerator,
 //!     CellularAutomata,
@@ -33,7 +33,7 @@ pub mod geometry;
 pub mod map_info;
 pub mod metric;
 
-pub use map_info::{MapInfo, Symmetry, Tile};
+pub use map_info::{MapInfo, Symmetry};
 pub use filter::*;
 
 pub (crate) mod dijkstra;

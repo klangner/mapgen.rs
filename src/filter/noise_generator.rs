@@ -18,7 +18,7 @@
 
 use rand::prelude::*;
 use crate::MapFilter;
-use crate::{MapInfo, Tile};
+use crate::MapInfo;
 
 
 /// Map noise generator
@@ -54,8 +54,8 @@ impl NoiseGenerator {
         for y in 1..new_map.height-1 {
             for x in 1..new_map.width-1 {
                 let roll = rng.next_u32() % 100;
-                if roll > p { new_map.set_tile(x, y, Tile::floor()) } 
-                else { new_map.set_tile(x, y, Tile::wall()) }
+                if roll > p { new_map.set_walkable(x, y, true) } 
+                else { new_map.set_walkable(x, y, false) }
             }
         }
 

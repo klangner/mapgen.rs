@@ -11,12 +11,6 @@ use std::fmt;
 use super::geometry::{Point, Rect, usize_abs};
 
 
-#[derive(PartialEq, Copy, Clone, Debug, Eq, Hash)]
-pub struct Tile {
-    is_blocked: bool,
-    index: usize,
-}
-
 #[derive(PartialEq, Copy, Clone)]
 pub enum Symmetry { None, Horizontal, Vertical, Both }
 
@@ -24,7 +18,11 @@ pub enum Symmetry { None, Horizontal, Vertical, Both }
 /// Map data
 #[derive(Default, Clone)]
 pub struct MapInfo {
-    pub tiles : Vec<Tile>,
+    // Defines tiles which are walkable by player
+    pub walkables : Vec<bool>,
+    // Tile type is mostly defined for visual purposes. It could be specifi wall
+    // type, or edge of the lake etc
+    pub tile_types : Vec<usize>,
     pub width : usize,
     pub height : usize,
     pub starting_point: Option<Point>,
@@ -33,39 +31,14 @@ pub struct MapInfo {
     pub corridors: Vec<Vec<Point>>,
 }
 
-impl Tile {
-    pub fn new(is_blocked: bool, index: usize) -> Tile {
-        Tile { is_blocked, index}
-    }
-
-    pub fn wall() -> Tile {
-        Tile::new(true, 0)
-    }
-    
-    pub fn floor() -> Tile {
-        Tile::new(false, 0)
-    }
-
-    pub fn is_walkable(&self) -> bool {
-        !self.is_blocked
-    }
-
-    pub fn is_blocked(&self) -> bool {
-        self.is_blocked
-    }
-
-    pub fn index(&self) -> usize {
-        self.index
-    }
-}
-
 impl MapInfo {
 
     /// Generates an empty map, consisting entirely of solid walls
     pub fn new(width: usize, height: usize) -> MapInfo {
         let map_tile_count = width*height;
         MapInfo{
-            tiles : vec![Tile::wall(); map_tile_count],
+            walkables : vec![false; map_tile_count],
+            tile_types : vec![0; map_tile_count],
             width,
             height,
             starting_point: None,
@@ -90,7 +63,7 @@ impl MapInfo {
             let line = lines[i].as_bytes();
             for j in 0..line.len() {
                 if line[j] as char == ' ' {
-                    map.set_tile(j, i, Tile::floor());
+                    map.set_walkable(j, i, true);
                 }
             }
         }
@@ -98,13 +71,17 @@ impl MapInfo {
     }
 
     /// Get TileType at the given location
-    pub fn at(&self, x: usize, y: usize) -> Tile {
+    pub fn is_walkable(&self, x: usize, y: usize) -> bool {
         if x >= self.width || y >= self.height {
-            Tile::wall()
+            false
         } else {
             let idx = (y as usize) * self.width + (x as usize);
-            self.tiles[idx]
+            self.walkables[idx]
         }
+    }
+
+    pub fn is_blocked(&self, x: usize, y: usize) -> bool {
+        !self.is_walkable(x, y)
     }
 
     /// Get available exists from the given tile
@@ -112,30 +89,30 @@ impl MapInfo {
         let mut exits = Vec::new();
 
         // Cardinal directions
-        if x > 0 && self.is_exit_valid(x-1, y) { exits.push((x-1, y, 1.0)) };
-        if self.is_exit_valid(x+1, y) { exits.push((x+1, y, 1.0)) };
-        if y > 0 && self.is_exit_valid(x, y-1) { exits.push((x, y-1, 1.0)) };
-        if self.is_exit_valid(x, y+1) { exits.push((x, y+1, 1.0)) };
+        if x > 0 && self.is_walkable(x-1, y) { exits.push((x-1, y, 1.0)) };
+        if self.is_walkable(x+1, y) { exits.push((x+1, y, 1.0)) };
+        if y > 0 && self.is_walkable(x, y-1) { exits.push((x, y-1, 1.0)) };
+        if self.is_walkable(x, y+1) { exits.push((x, y+1, 1.0)) };
 
         // Diagonals
-        if x > 0 && y > 0 && self.is_exit_valid(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
-        if y > 0 && self.is_exit_valid(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
-        if x > 0 && self.is_exit_valid(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
-        if self.is_exit_valid(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
+        if x > 0 && y > 0 && self.is_walkable(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
+        if y > 0 && self.is_walkable(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
+        if x > 0 && self.is_walkable(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
+        if self.is_walkable(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
 
         exits
     }    
  
     // Check if given tile can be accessed
-    fn is_exit_valid(&self, x:usize, y:usize) -> bool {
-        !self.at(x, y).is_blocked
-    }
+    // fn is_exit_valid(&self, x:usize, y:usize) -> bool {
+    //     !self.at(x, y).is_blocked
+    // }
 
     /// Modify tile at the given location
-    pub fn set_tile(&mut self, x: usize, y: usize, tile: Tile) {
+    pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
         if x < self.width && y < self.height {
             let idx = self.xy_idx(x as usize, y as usize);
-            self.tiles[idx] = tile;
+            self.walkables[idx] = set;
         }
     }
 
@@ -148,7 +125,7 @@ impl MapInfo {
     pub fn add_room(&mut self, rect: Rect) {
         for x in rect.x1..rect.x2 {
             for y in rect.y1..rect.y2 {
-                self.set_tile(x as usize, y as usize, Tile::floor());
+                self.set_walkable(x as usize, y as usize, true);
             }
         }
         self.rooms.push(rect);
@@ -170,9 +147,9 @@ impl MapInfo {
                 y -= 1;
             }
 
-            if self.at(x, y).is_blocked {
+            if self.is_blocked(x, y) {
                 corridor.push(Point::new(x, y));
-                self.set_tile(x, y, Tile::floor());
+                self.set_walkable(x, y, true);
             }
         }
     }
@@ -220,14 +197,14 @@ impl MapInfo {
     fn apply_paint(&mut self, brush_size: usize, x: usize, y: usize) {
         match brush_size {
             1 => {
-                self.set_tile(x, y, Tile::floor());
+                self.set_walkable(x, y, true);
             }
             _ => {
                 let half_brush_size = brush_size / 2;
                 for brush_y in y-half_brush_size .. y+half_brush_size {
                     for brush_x in x-half_brush_size .. x+half_brush_size {
                         if brush_x > 1 && brush_x < self.width-1 && brush_y > 1 && brush_y < self.height-1 {
-                            self.set_tile(brush_x, brush_y, Tile::floor());
+                            self.set_walkable(brush_x, brush_y, true);
                         }
                     }
                 }
@@ -240,7 +217,7 @@ impl fmt::Display for MapInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
-                .map(|x| if self.at(x, y).is_blocked {'#'} else {' '} as u8)
+                .map(|x| if self.is_blocked(x, y) {'#'} else {' '} as u8)
                 .collect();
             let line = String::from_utf8(bytes).expect("Can't convert map to string");
             let _ = writeln!(f, "{}", line);
@@ -261,7 +238,7 @@ mod tests {
         let map = MapInfo::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
-                assert!(map.at(i, j).is_blocked);
+                assert!(map.is_blocked(i, j));
             }
         }
     }
@@ -278,12 +255,12 @@ mod tests {
         assert_eq!(map.width, 10);
         assert_eq!(map.height, 3);
         for i in 0..10 {
-            assert!(map.at(i, 0).is_blocked);
-            assert!(map.at(i, 2).is_blocked);
+            assert!(map.is_blocked(i, 0));
+            assert!(map.is_blocked(i, 2));
             if i == 0 || i == 9 {
-                assert!(map.at(i, 1).is_blocked);
+                assert!(map.is_blocked(i, 1));
             } else {
-                assert!(map.at(i, 1).is_blocked == false);
+                assert!(map.is_walkable(i, 1));
             }
         }
     }
@@ -309,9 +286,9 @@ mod tests {
         for x in 0..map.width {
             for y in 0..map.height {
                 if x == 0 || y == 0 || x == 4 || y == 4 {
-                    assert!(map.at(x, y).is_blocked);
+                    assert!(map.is_blocked(x, y));
                 } else {
-                    assert!(map.at(x, y).is_blocked == false);
+                    assert!(map.is_blocked(x, y)== false);
                 }
             }
         }
@@ -334,7 +311,7 @@ mod tests {
 
         map.add_corridor(Point::new(1, 1), Point::new(8, 1));
 
-        assert_eq!(map.tiles, expected_map.tiles);
+        assert_eq!(map.walkables, expected_map.walkables);
     }
 
 

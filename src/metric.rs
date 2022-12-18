@@ -12,10 +12,10 @@ use super::dijkstra::DijkstraMap;
 /// If this number is very low (like < 10%) then it means that the map 
 /// is probably to degenerated and shouldn't be used
 pub fn density(map: &MapInfo) -> f32 {
-    let floor_count = map.tiles.iter()
-        .filter(|&t| t.is_walkable())
+    let floor_count = map.walkables.iter()
+        .filter(|&&x| x)
         .count();
-    floor_count as f32 / map.tiles.len() as f32
+    floor_count as f32 / map.walkables.len() as f32
 }
 
 

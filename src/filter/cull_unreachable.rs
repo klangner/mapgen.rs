@@ -6,7 +6,7 @@
 
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::{MapInfo, Tile};
+use crate::MapInfo;
 use crate::dijkstra::DijkstraMap;
 
 
@@ -29,12 +29,12 @@ impl CullUnreachable {
         let mut new_map = map.clone();
 
         let dijkstra_map = DijkstraMap::new(map);
-        for (i, tile) in new_map.tiles.iter_mut().enumerate() {
-            if tile.is_walkable() {
+        for i in 0..new_map.walkables.len() {
+            if new_map.walkables[i] {
                 let distance_to_start = dijkstra_map.tiles[i];
                 // We can't get to this tile - so we'll make it a wall
                 if distance_to_start == std::f32::MAX {
-                    *tile = Tile::wall();
+                    new_map.walkables[i] = false;
                 }
             }
         }
@@ -74,6 +74,6 @@ mod tests {
         let mut rng = StdRng::seed_from_u64(0);
         let new_map = modifier.modify_map(&mut rng, &map);
 
-        assert_eq!(new_map.tiles, expected_map.tiles);
+        assert_eq!(new_map.walkables, expected_map.walkables);
     }
 }

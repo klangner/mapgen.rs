@@ -16,7 +16,7 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map_info::{MapInfo, Tile},
+    map_info::MapInfo,
     random::Rng
 };
 
@@ -201,17 +201,17 @@ impl<'a> Grid<'a> {
 
     fn copy_to_map(&self, map: &mut MapInfo) {
         // Clear the map
-        for i in map.tiles.iter_mut() { *i = Tile::wall(); }
+        for i in map.walkables.iter_mut() { *i = false; }
 
         for cell in self.cells.iter() {
             let x = (cell.column as usize + 1) * 2;
             let y = (cell.row as usize + 1) * 2;
 
-            map.set_tile(x, y, Tile::floor());
-            if !cell.walls[TOP] { map.set_tile(x, y-1, Tile::floor()) }
-            if !cell.walls[RIGHT] { map.set_tile(x+1, y, Tile::floor()) }
-            if !cell.walls[BOTTOM] { map.set_tile(x, y+1, Tile::floor()) }
-            if !cell.walls[LEFT] { map.set_tile(x-1, y, Tile::floor()) }
+            map.set_walkable(x, y, true);
+            if !cell.walls[TOP] { map.set_walkable(x, y-1, true) }
+            if !cell.walls[RIGHT] { map.set_walkable(x+1, y, true) }
+            if !cell.walls[BOTTOM] { map.set_walkable(x, y+1, true) }
+            if !cell.walls[LEFT] { map.set_walkable(x-1, y, true) }
         }
     }
 }

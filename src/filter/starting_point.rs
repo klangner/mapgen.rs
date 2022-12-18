@@ -6,13 +6,13 @@
 //! Example modifier usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapFilter, MapInfo, Tile};
+//! use mapgen::{MapFilter, MapInfo};
 //! use mapgen::filter::starting_point::{AreaStartingPosition, XStart, YStart};
 //! use mapgen::geometry::Point;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let mut map = MapInfo::new(80, 50);
-//! map.set_tile(10, 10, Tile::floor());
+//! map.set_walkable(10, 10, true);
 //! let modifier = AreaStartingPosition::new(XStart::LEFT, YStart::TOP);
 //! let new_map = modifier.modify_map(&mut rng, &map);
 //! 
@@ -66,8 +66,8 @@ impl AreaStartingPosition {
         };
 
         let mut available_floors : Vec<(usize, f32)> = Vec::new();
-        for (idx, tiletype) in map.tiles.iter().enumerate() {
-            if tiletype.is_walkable() {
+        for (idx, &w) in map.walkables.iter().enumerate() {
+            if w {
                 available_floors.push(
                     (
                         idx,

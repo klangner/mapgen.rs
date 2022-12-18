@@ -121,12 +121,12 @@ mod tests {
         let gen = BspInterior::new();
         let map = gen.modify_map(&mut rng, &MapInfo::new(80, 50));
         for i in 0..80 {
-            assert!(map.at(i, 0).is_blocked());
-            assert!(map.at(i, 49).is_blocked());
+            assert!(map.is_blocked(i, 0));
+            assert!(map.is_blocked(i, 49));
         } 
         for j in 0..50 {
-            assert!(map.at(0, j).is_blocked());
-            assert!(map.at(79, j).is_blocked());
+            assert!(map.is_blocked(0, j));
+            assert!(map.is_blocked(79, j));
         } 
     }
 
