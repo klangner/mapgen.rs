@@ -8,7 +8,7 @@ cd www
 npm run server
 ```
 
-Deply application
+Deploy application
 ```
 cd www
 npm run build

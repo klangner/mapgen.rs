@@ -33,8 +33,8 @@ pub struct Position {
 impl World {
     
     fn new(width: u32, height: u32, map: MapInfo) -> World {
-        let tiles = (0..map.tiles.len())
-            .map(|i| if map.tiles[i].is_walkable() {Cell::Floor} else {Cell::Wall})
+        let tiles = (0..map.walkables.len())
+            .map(|i| if map.walkables[i] {Cell::Floor} else {Cell::Wall})
             .collect();
         World { width, height, tiles, map }
     }
