@@ -26,9 +26,9 @@ use crate::MapBuffer;
 
 
 pub struct SimpleRooms {
-    max_rooms: usize,
-    min_room_size: usize,
-    max_room_size: usize,
+    pub max_rooms: usize,
+    pub min_room_size: usize,
+    pub max_room_size: usize,
 }
 
 impl MapFilter for SimpleRooms {

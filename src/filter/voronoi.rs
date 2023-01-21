@@ -23,7 +23,7 @@ use crate::{
 
 
 pub struct VoronoiHive {
-    n_seeds: usize,
+    pub n_seeds: usize,
 }
 
 

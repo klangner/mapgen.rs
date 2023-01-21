@@ -28,7 +28,7 @@ use crate::MapBuffer;
 
 
 pub struct BspInterior {
-    min_room_size: usize,
+    pub min_room_size: usize,
 }
 
 impl MapFilter for BspInterior {

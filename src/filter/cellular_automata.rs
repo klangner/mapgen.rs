@@ -28,7 +28,7 @@ use crate::MapBuffer;
 
 /// Map filter
 pub struct CellularAutomata {
-    num_iteraction: u32,
+    pub num_iteraction: u32,
 }
 
 impl MapFilter for CellularAutomata {

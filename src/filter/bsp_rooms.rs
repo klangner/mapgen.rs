@@ -26,7 +26,7 @@ use crate::MapBuffer;
 
 
 pub struct BspRooms {
-    max_split: usize,
+    pub max_split: usize,
 }
 
 impl MapFilter for BspRooms {
