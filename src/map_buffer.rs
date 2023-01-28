@@ -138,6 +138,13 @@ impl MapBuffer {
         y * self.width + x        
     }
     
+    pub fn idx_point(&self, idx: usize) -> Point {
+        Point {
+            x: idx % self.width,
+            y: idx / self.width,
+        }
+    }
+
     /// Create room on the map at given location
     /// Room is created by setting all tiles in the room to the Floor
     pub fn add_room(&mut self, rect: Rect) {
@@ -235,7 +242,7 @@ impl fmt::Display for MapBuffer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
-                .map(|x| if self.is_blocked(x, y) {'#'} else {' '} as u8)
+                .map(|x| if self.is_blocked(x, y) { '#' } else { ' ' } as u8)
                 .collect();
             let line = String::from_utf8(bytes).expect("Can't convert map to string");
             let _ = writeln!(f, "{}", line);
@@ -297,7 +304,7 @@ mod tests {
         assert_eq!(exists, expected_exists);
     }
 
-        #[test]
+    #[test]
     fn test_create_room() {
         let mut map = MapBuffer::new(5, 5);
         map.add_room(Rect::new(1, 1, 3, 3));
@@ -306,7 +313,7 @@ mod tests {
                 if x == 0 || y == 0 || x == 4 || y == 4 {
                     assert!(map.is_blocked(x, y));
                 } else {
-                    assert!(map.is_blocked(x, y)== false);
+                    assert!(map.is_blocked(x, y) == false);
                 }
             }
         }
@@ -344,5 +351,20 @@ mod tests {
         let exists = map.get_available_exits(0, 0);
 
         assert_eq!(exists.len(), 1);
+    }
+
+    #[test]
+    fn convert_xy_idx() {
+        let x = 64;
+        let y = 45;
+
+        let map = MapBuffer::new(65, 65);
+
+        let idx = map.xy_idx(x, y);
+
+        let Point { x: x2, y: y2 } = map.idx_point(idx);
+
+        assert_eq!(x, x2);
+        assert_eq!(y, y2);
     }
 }
