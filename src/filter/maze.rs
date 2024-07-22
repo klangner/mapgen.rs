@@ -15,10 +15,9 @@
 
 use rand::prelude::*;
 use crate::MapFilter;
-use crate::{
-    map_buffer::MapBuffer,
-    random::Rng
-};
+use crate::random::Rng;
+
+use super::MapBuffer;
 
 
 pub struct MazeBuilder {}
@@ -201,7 +200,7 @@ impl<'a> Grid<'a> {
 
     fn copy_to_map(&self, map: &mut MapBuffer) {
         // Clear the map
-        for i in map.walkables.iter_mut() { *i = false; }
+        for i in map.walkable_layer.walkables.iter_mut() { *i = false; }
 
         for cell in self.cells.iter() {
             let x = (cell.column as usize + 1) * 2;

@@ -16,10 +16,12 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map_buffer::{MapBuffer, Symmetry},
-    geometry::Point,
+    geometry::Vec2u,
     random::Rng
 };
+
+use super::filter_based_map::Symmetry;
+use super::MapBuffer;
 
 
 #[derive(PartialEq, Copy, Clone)]
@@ -78,12 +80,12 @@ impl DrunkardsWalk {
     fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
         let mut new_map = map.clone();
         // Set a central starting point
-        let starting_position = Point::new( new_map.width / 2, new_map.height / 2 );
+        let starting_position = Vec2u::new( new_map.width / 2, new_map.height / 2 );
         new_map.set_walkable(starting_position.x, starting_position.y, true);
 
         let total_tiles = new_map.width * new_map.height;
         let desired_floor_tiles = (self.floor_percent * total_tiles as f32) as usize;
-        let mut floor_tile_count = new_map.walkables.iter().filter(|&&a| a).count();
+        let mut floor_tile_count = new_map.walkable_layer.walkables.iter().filter(|&&a| a).count();
         let mut digger_count = 0;
         while floor_tile_count  < desired_floor_tiles {
             let mut drunk_x;
@@ -121,7 +123,7 @@ impl DrunkardsWalk {
             }
 
             digger_count += 1;
-            floor_tile_count = new_map.walkables.iter().filter(|&&a| a).count();
+            floor_tile_count = new_map.walkable_layer.walkables.iter().filter(|&&a| a).count();
         }
 
         new_map

@@ -18,7 +18,7 @@
 //! 
 
 use rand::prelude::*;
-use crate::geometry::{Point, Rect};
+use crate::geometry::{Vec2u, Rect};
 use crate::random::Rng;
 
 use super::RoomBasedMap;
@@ -55,7 +55,7 @@ impl BspInterior {
             let start_y = rng.random_range(room.y1, room.y2);
             let end_x = rng.random_range(next_room.x1, next_room.x2);
             let end_y = rng.random_range(next_room.y1, next_room.y2);
-            map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
+            map.add_corridor(Vec2u::new(start_x, start_y), Vec2u::new(end_x, end_y));
         }
 
        map 

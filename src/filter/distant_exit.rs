@@ -6,7 +6,7 @@
 
 use std::f32;
 use rand::prelude::StdRng;
-use crate::geometry::Point;
+use crate::geometry::Vec2u;
 use crate::MapFilter;
 use crate::MapBuffer;
 use crate::dijkstra::DijkstraMap;
@@ -32,7 +32,8 @@ impl DistantExit {
 
         let mut best_idx = 0;
         let mut best_value = 0.0;
-        let dijkstra_map = DijkstraMap::new(map);
+        let starting_point = map.starting_point.unwrap_or(Vec2u::default());
+        let dijkstra_map = DijkstraMap::new(&map.walkable_layer, &starting_point);
         for (i, &value) in dijkstra_map.tiles.iter().enumerate() {
             if value < f32::MAX && value > best_value {
                 best_value = value;
@@ -41,7 +42,7 @@ impl DistantExit {
         }
         let x = best_idx % map.width;
         let y = best_idx / map.width;
-        new_map.exit_point = Some(Point::new(x, y));
+        new_map.exit_point = Some(Vec2u::new(x, y));
         new_map
     }
 }
@@ -54,8 +55,7 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapFilter;
-    use crate::geometry::Point;
-    use crate::map_buffer::MapBuffer;
+    use crate::geometry::Vec2u;
 
     #[test]
     fn test_exit() {
@@ -66,12 +66,12 @@ mod tests {
         ##########
         ";
         let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(9, 2));
+        map.starting_point = Some(Vec2u::new(9, 2));
 
         let modifier = DistantExit::new();
         let mut rng = StdRng::seed_from_u64(0);
         let new_map = modifier.modify_map(&mut rng, &map);
 
-        assert_eq!(new_map.exit_point, Some(Point::new(1, 2)));
+        assert_eq!(new_map.exit_point, Some(Vec2u::new(1, 2)));
     }
 }

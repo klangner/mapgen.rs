@@ -8,7 +8,7 @@
 //! 
 
 use std::fmt;
-use super::geometry::{Point, usize_abs};
+use crate::{geometry::{usize_abs, Vec2u}, layer::WalkableLayer};
 
 
 #[derive(PartialEq, Copy, Clone)]
@@ -18,20 +18,19 @@ pub enum Symmetry { None, Horizontal, Vertical, Both }
 /// Map data
 #[derive(Default, Clone)]
 pub struct MapBuffer {
-    pub walkables : Vec<bool>,
+    pub walkable_layer: WalkableLayer,
     pub width : usize,
     pub height : usize,
-    pub starting_point: Option<Point>,
-    pub exit_point: Option<Point>,
+    pub starting_point: Option<Vec2u>,
+    pub exit_point: Option<Vec2u>,
 }
 
 impl MapBuffer {
 
     /// Generates an empty map, consisting entirely of solid walls
     pub fn new(width: usize, height: usize) -> MapBuffer {
-        let map_tile_count = width*height;
         MapBuffer{
-            walkables : vec![false; map_tile_count],
+            walkable_layer : WalkableLayer::new(width, height),
             width,
             height,
             starting_point: None,
@@ -40,70 +39,30 @@ impl MapBuffer {
     }
 
     /// Create map from given string
-    #[allow(clippy::needless_range_loop)]
-    pub fn from_string(map_string: &str) -> MapBuffer {
-        let lines: Vec<&str> = map_string.split('\n')
-            .map(|l| l.trim())
-            .filter(|l| !l.is_empty())
-            .collect();
-        let cols = lines.iter().map(|l| l.len()).max().get_or_insert(1).to_owned();
-        let rows = lines.len();
-        let mut map = MapBuffer::new(cols, rows);
-
-        for i in 0..rows {
-            let line = lines[i].as_bytes();
-            for j in 0..line.len() {
-                if line[j] as char == ' ' {
-                    map.set_walkable(j, i, true);
-                }
-            }
+    pub fn from_string(map_string: &str) -> Self {
+        let walkable_layer = WalkableLayer::from_string(map_string); 
+        Self {
+            width: walkable_layer.width,
+            height: walkable_layer.height,
+            walkable_layer,
+            starting_point: None,
+            exit_point: None,
         }
-        map
     }
 
     /// Get TileType at the given location
     pub fn is_walkable(&self, x: usize, y: usize) -> bool {
-        if x >= self.width || y >= self.height {
-            false
-        } else {
-            let idx = (y as usize) * self.width + (x as usize);
-            self.walkables[idx]
-        }
+        self.walkable_layer.is_walkable(x, y)
     }
 
     pub fn is_blocked(&self, x: usize, y: usize) -> bool {
         !self.is_walkable(x, y)
     }
 
-    /// Get available exists from the given tile
-    pub fn get_available_exits(&self, x: usize, y: usize) -> Vec<(usize, usize, f32)> {
-        let mut exits = Vec::new();
-
-        // Cardinal directions
-        if x > 0 && self.is_walkable(x-1, y) { exits.push((x-1, y, 1.0)) };
-        if self.is_walkable(x+1, y) { exits.push((x+1, y, 1.0)) };
-        if y > 0 && self.is_walkable(x, y-1) { exits.push((x, y-1, 1.0)) };
-        if self.is_walkable(x, y+1) { exits.push((x, y+1, 1.0)) };
-
-        // Diagonals
-        if x > 0 && y > 0 && self.is_walkable(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
-        if y > 0 && self.is_walkable(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
-        if x > 0 && self.is_walkable(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
-        if self.is_walkable(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
-
-        exits
-    }    
- 
-    // Check if given tile can be accessed
-    // fn is_exit_valid(&self, x:usize, y:usize) -> bool {
-    //     !self.at(x, y).is_blocked
-    // }
-
     /// Modify tile at the given location
     pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
         if x < self.width && y < self.height {
-            let idx = self.xy_idx(x as usize, y as usize);
-            self.walkables[idx] = set;
+            self.walkable_layer.set_walkable(x, y, set);
         }
     }
 
@@ -111,8 +70,8 @@ impl MapBuffer {
         y * self.width + x        
     }
     
-    pub fn idx_point(&self, idx: usize) -> Point {
-        Point {
+    pub fn idx_point(&self, idx: usize) -> Vec2u {
+        Vec2u {
             x: idx % self.width,
             y: idx / self.width,
         }
@@ -230,33 +189,6 @@ mod tests {
     }
 
     #[test]
-    fn test_exists() {
-        let map_str = "
-        ##########
-        #        #
-        #        #
-        ##########
-        ";
-        let map = MapBuffer::from_string(map_str);
-        let exists = map.get_available_exits(1, 1);
-        let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
-        assert_eq!(exists, expected_exists);
-    }
-
-    #[test]
-    fn test_available_exists() {
-        let map_str = "
-         #########
-        #    #   #
-        ##########
-        ";
-        let map = MapBuffer::from_string(map_str);
-        let exists = map.get_available_exits(0, 0);
-
-        assert_eq!(exists.len(), 1);
-    }
-
-    #[test]
     fn convert_xy_idx() {
         let x = 64;
         let y = 45;
@@ -265,7 +197,7 @@ mod tests {
 
         let idx = map.xy_idx(x, y);
 
-        let Point { x: x2, y: y2 } = map.idx_point(idx);
+        let Vec2u { x: x2, y: y2 } = map.idx_point(idx);
 
         assert_eq!(x, x2);
         assert_eq!(y, y2);

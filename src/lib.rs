@@ -14,7 +14,6 @@
 //!     CellularAutomata,
 //!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
-//! use mapgen::geometry::Point;
 //! 
 //! let map = MapBuilder::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
@@ -32,7 +31,7 @@ pub mod filter;
 pub mod rooms;
 pub mod geometry;
 pub mod metric;
-pub mod map_buffer;
+pub mod layer;
 
 pub (crate) mod dijkstra;
 pub (crate) mod random;
@@ -40,7 +39,7 @@ pub (crate) mod random;
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
 
-pub use map_buffer::{MapBuffer, Symmetry};
+pub use filter_based_map::{MapBuffer, Symmetry};
 pub use filter::*;
 
 

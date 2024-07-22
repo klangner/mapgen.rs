@@ -27,7 +27,9 @@
 
 use std::collections::VecDeque;
 use std::f32::MAX;
-use super::map_buffer::MapBuffer;
+
+use crate::geometry::Vec2u;
+use crate::layer::WalkableLayer;
 
 
 /// Representation of a Dijkstra flow map.
@@ -43,7 +45,7 @@ pub struct DijkstraMap {
 
 impl DijkstraMap {
     //! Construct a new Dijkstra map, ready to run. 
-    pub fn new(map: &MapBuffer) -> DijkstraMap {
+    pub fn new(map: &WalkableLayer, starting_point: &Vec2u) -> DijkstraMap {
         let len =  map.width * map.height;
         let tiles = vec![MAX; len];
         let mut d = DijkstraMap {
@@ -52,7 +54,7 @@ impl DijkstraMap {
             size_y: map.height,
             max_depth: len as f32,
         };
-        d.build(map);
+        d.build(map, starting_point);
         d
     }
 
@@ -61,15 +63,13 @@ impl DijkstraMap {
     /// depth is further than the current depth.
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
-    fn build(&mut self, map: &MapBuffer) {
+    fn build(&mut self, map: &WalkableLayer, starting_point: &Vec2u) {
         let mapsize: usize = (self.size_x * self.size_y) as usize;
         let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
 
-        if let Some(pos) = map.starting_point {
-            open_list.push_back(((pos.x, pos.y), 0.0));
-            let idx = self.xy_idx(pos.x, pos.y);
-            self.tiles[idx] = 0.0;
-        }
+        open_list.push_back(((starting_point.x, starting_point.y), 0.0));
+        let idx = self.xy_idx(starting_point.x, starting_point.y);
+        self.tiles[idx] = 0.0;
 
         while let Some(((x, y), depth)) = open_list.pop_front() {
             let exits = map.get_available_exits(x, y);
@@ -96,8 +96,7 @@ impl DijkstraMap {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::geometry::Point;
-    use crate::map_buffer::MapBuffer;
+    use crate::geometry::Vec2u;
 
     #[test]
     fn test_culling() {
@@ -106,9 +105,8 @@ mod tests {
         # #      #
         ##########
         ";
-        let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(8, 1));
-        let dm = DijkstraMap::new(&map);
+        let map = WalkableLayer::from_string(map_str);
+        let dm = DijkstraMap::new(&map, &Vec2u::new(8, 1));
 
         println!("{:?}", &dm.tiles.iter().map(|&v| if v == f32::MAX {9.0} else {v}).collect::<Vec<f32>>());
 
@@ -134,9 +132,9 @@ mod tests {
         #  #
         ####
         ";
-        let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(2, 2));
-        let dm = DijkstraMap::new(&map);
+        let map = WalkableLayer::from_string(map_str);
+        let starting_point = Vec2u::new(2, 2);
+        let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [MAX, MAX, MAX, MAX,
                         MAX, 1.45, 1.0, MAX, 
                         MAX, 1.0, 0.0, MAX, 
@@ -153,9 +151,9 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(8, 2));
-        let dm = DijkstraMap::new(&map);
+        let map = WalkableLayer::from_string(map_str);
+        let starting_point = Vec2u::new(8, 2);
+        let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 
                         MAX, 7.45, 6.45, 5.45, 4.45, 3.45, 2.45, 1.45, 1.0, MAX, 
                         MAX, 7.9, 6.9, MAX, 4.0, 3.0, 2.0, 1.0, 0.0, MAX, 

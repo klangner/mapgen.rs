@@ -8,7 +8,7 @@
 //! use rand::prelude::*;
 //! use mapgen::{MapFilter, MapBuffer};
 //! use mapgen::filter::starting_point::{AreaStartingPosition, XStart, YStart};
-//! use mapgen::geometry::Point;
+//! use mapgen::geometry::Vec2u;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let mut map = MapBuffer::new(80, 50);
@@ -16,13 +16,13 @@
 //! let modifier = AreaStartingPosition::new(XStart::LEFT, YStart::TOP);
 //! let new_map = modifier.modify_map(&mut rng, &map);
 //! 
-//! assert_eq!(new_map.starting_point, Some(Point::new(10, 10)));
+//! assert_eq!(new_map.starting_point, Some(Vec2u::new(10, 10)));
 //! ```
 //! 
 
 use rand::prelude::StdRng;
 use crate::MapFilter;
-use crate::geometry::Point;
+use crate::geometry::Vec2u;
 use crate::MapBuffer;
 
 
@@ -66,13 +66,13 @@ impl AreaStartingPosition {
         };
 
         let mut available_floors : Vec<(usize, f32)> = Vec::new();
-        for (idx, &w) in map.walkables.iter().enumerate() {
+        for (idx, &w) in map.walkable_layer.walkables.iter().enumerate() {
             if w {
                 available_floors.push(
                     (
                         idx,
-                        Point::new(idx % map.width, idx / map.width)
-                            .distance_to(&Point::new(seed_x, seed_y))
+                        Vec2u::new(idx % map.width, idx / map.width)
+                            .distance_to(&Vec2u::new(seed_x, seed_y))
                     )
                 );
             }
@@ -87,7 +87,7 @@ impl AreaStartingPosition {
         let start_y = available_floors[0].0 / map.width;
 
         let mut new_map = map.clone();
-        new_map.starting_point = Some(Point::new(start_x, start_y));
+        new_map.starting_point = Some(Vec2u::new(start_x, start_y));
         new_map
     }
 }
@@ -100,8 +100,7 @@ mod tests {
     use rand::prelude::*;
     use super::*;
     use super::MapFilter;
-    use crate::geometry::Point;
-    use crate::map_buffer::MapBuffer;
+    use crate::geometry::Vec2u;
 
     #[test]
     fn test_exit() {
@@ -112,12 +111,12 @@ mod tests {
         ##########
         ";
         let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(9, 2));
+        map.starting_point = Some(Vec2u::new(9, 2));
 
         let modifier = AreaStartingPosition::new(XStart::CENTER, YStart::TOP);
         let mut rng = StdRng::seed_from_u64(0);
         let new_map = modifier.modify_map(&mut rng, &map);
 
-        assert_eq!(new_map.starting_point, Some(Point::new(6, 1)));
+        assert_eq!(new_map.starting_point, Some(Vec2u::new(6, 1)));
     }
 }
