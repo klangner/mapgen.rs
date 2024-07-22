@@ -6,14 +6,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::{
-//!     BspInterior
-//! };
+//! use mapgen::rooms::BspInterior;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspInterior::new();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let bsp = BspInterior::default();
+//! let map = bsp.generate_rooms(80, 50, &mut rng);
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -21,33 +18,25 @@
 //! 
 
 use rand::prelude::*;
-use crate::MapFilter;
 use crate::geometry::{Point, Rect};
 use crate::random::Rng;
-use crate::MapBuffer;
+
+use super::RoomBasedMap;
 
 
 pub struct BspInterior {
     min_room_size: usize,
 }
 
-impl MapFilter for BspInterior {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
-        self.build(rng, map)
-    }
-}
-
 impl BspInterior {
-
-    pub fn new() -> Box<BspInterior> {
-        Box::new(BspInterior{
-            min_room_size: 8,
-        })
+    pub fn new(min_room_size: usize) -> Self {
+        Self { min_room_size }
     }
 
-    fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
-        let mut new_map = map.clone();
-        let mut rects = vec![Rect::new(1, 1, new_map.width-2, new_map.height-2)];
+    pub fn generate_rooms(&self, map_width: usize, max_height: usize, rng : &mut StdRng) -> RoomBasedMap {
+        // Create room with dimensions
+        let mut map = RoomBasedMap::new(map_width, max_height);
+        let mut rects = vec![Rect::new(1, 1, map.width-2, map.height-2)];
         let first_room = rects[0];
         // Divide the first room
         self.add_subrects(first_room, rng, &mut rects); 
@@ -55,21 +44,21 @@ impl BspInterior {
         let rooms_copy = rects.clone();
         for r in rooms_copy.iter() {
             let room = *r;
-            new_map.add_room(room);
+            map.add_room(room);
         }
 
         // Now we want corridors
-        for i in 0..new_map.rooms.len()-1 {
-            let room = new_map.rooms[i];
-            let next_room = new_map.rooms[i+1];
+        for i in 0..map.rooms.len()-1 {
+            let room = map.rooms[i];
+            let next_room = map.rooms[i+1];
             let start_x = rng.random_range(room.x1, room.x2);
             let start_y = rng.random_range(room.y1, room.y2);
             let end_x = rng.random_range(next_room.x1, next_room.x2);
             let end_y = rng.random_range(next_room.y1, next_room.y2);
-            new_map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
+            map.add_corridor(Point::new(start_x, start_y), Point::new(end_x, end_y));
         }
 
-       new_map 
+       map 
     }
 
     fn add_subrects(&self, rect: Rect, rng: &mut StdRng, rects: &mut Vec<Rect>) {
@@ -106,6 +95,11 @@ impl BspInterior {
     }
 }
 
+impl Default for BspInterior {
+    fn default() -> Self {
+        Self { min_room_size: 8 }
+    }
+}
 
 /// ------------------------------------------------------------------------------------------------
 /// Module unit tests
@@ -113,13 +107,12 @@ impl BspInterior {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{MapBuffer};
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
-        let gen = BspInterior::new();
-        let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+        let bsp = BspInterior::default();
+        let map = bsp.generate_rooms(80, 50, &mut rng);
         for i in 0..80 {
             assert!(map.is_blocked(i, 0));
             assert!(map.is_blocked(i, 49));

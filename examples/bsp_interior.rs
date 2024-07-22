@@ -1,10 +1,10 @@
 use rand::prelude::*;
-use mapgen::*;
+use mapgen::rooms::BspInterior;
 
 
 fn main() {
     let mut rng = StdRng::seed_from_u64(907647352);
-    let gen = BspInterior::new();
-    let map = gen.modify_map(&mut rng, &MapBuffer::new(20, 10));
+    let bsp = BspInterior::default();
+    let map = bsp.generate_rooms(20, 10, &mut rng);
     println!("{:}", &map);
 }

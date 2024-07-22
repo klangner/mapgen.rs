@@ -8,7 +8,7 @@
 //! 
 
 use std::fmt;
-use super::geometry::{Point, Rect, usize_abs};
+use super::geometry::{Point, usize_abs};
 
 
 #[derive(PartialEq, Copy, Clone)]
@@ -18,17 +18,11 @@ pub enum Symmetry { None, Horizontal, Vertical, Both }
 /// Map data
 #[derive(Default, Clone)]
 pub struct MapBuffer {
-    // Defines tiles which are walkable by player
     pub walkables : Vec<bool>,
-    // Tile type is mostly defined for visual purposes. It could be specifi wall
-    // type, or edge of the lake etc
-    pub tile_types : Vec<usize>,
     pub width : usize,
     pub height : usize,
     pub starting_point: Option<Point>,
     pub exit_point: Option<Point>,
-    pub rooms: Vec<Rect>,
-    pub corridors: Vec<Vec<Point>>,
 }
 
 impl MapBuffer {
@@ -38,13 +32,10 @@ impl MapBuffer {
         let map_tile_count = width*height;
         MapBuffer{
             walkables : vec![false; map_tile_count],
-            tile_types : vec![0; map_tile_count],
             width,
             height,
             starting_point: None,
             exit_point: None,
-            rooms: Vec::new(),
-            corridors: Vec::new()
         }
     }
 
@@ -116,24 +107,6 @@ impl MapBuffer {
         }
     }
 
-    // Get type type
-    pub fn tile_type(&self, x: usize, y: usize) -> usize {
-        if x >= self.width || y >= self.height {
-            0
-        } else {
-            let idx = (y as usize) * self.width + (x as usize);
-            self.tile_types[idx]
-        }
-    }
-
-    /// Modify tile at the given location
-    pub fn set_tile(&mut self, x: usize, y: usize, id: usize) {
-        if x < self.width && y < self.height {
-            let idx = self.xy_idx(x as usize, y as usize);
-            self.tile_types[idx] = id;
-        }
-    }
-
     pub fn xy_idx(&self, x: usize, y: usize) -> usize {
         y * self.width + x        
     }
@@ -142,40 +115,6 @@ impl MapBuffer {
         Point {
             x: idx % self.width,
             y: idx / self.width,
-        }
-    }
-
-    /// Create room on the map at given location
-    /// Room is created by setting all tiles in the room to the Floor
-    pub fn add_room(&mut self, rect: Rect) {
-        for x in rect.x1..rect.x2 {
-            for y in rect.y1..rect.y2 {
-                self.set_walkable(x as usize, y as usize, true);
-            }
-        }
-        self.rooms.push(rect);
-    }
-
-    pub fn add_corridor(&mut self, from: Point, to:Point) {
-        let mut corridor = Vec::new();
-        let mut x = from.x;
-        let mut y = from.y;
-
-        while x != to.x || y != to.y {
-            if x < to.x {
-                x += 1;
-            } else if x > to.x {
-                x -= 1;
-            } else if y < to.y {
-                y += 1;
-            } else if y > to.y {
-                y -= 1;
-            }
-
-            if self.is_blocked(x, y) {
-                corridor.push(Point::new(x, y));
-                self.set_walkable(x, y, true);
-            }
         }
     }
 
@@ -303,42 +242,6 @@ mod tests {
         let expected_exists = vec![(2, 1, 1.0), (1, 2, 1.0), (2, 2, 1.45)];
         assert_eq!(exists, expected_exists);
     }
-
-    #[test]
-    fn test_create_room() {
-        let mut map = MapBuffer::new(5, 5);
-        map.add_room(Rect::new(1, 1, 3, 3));
-        for x in 0..map.width {
-            for y in 0..map.height {
-                if x == 0 || y == 0 || x == 4 || y == 4 {
-                    assert!(map.is_blocked(x, y));
-                } else {
-                    assert!(map.is_blocked(x, y) == false);
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn test_add_corridor() {
-        let map_str = "
-        ##########
-        #    #   #
-        ##########
-        ";
-        let mut map = MapBuffer::from_string(map_str);
-        let expected_map_str = "
-        ##########
-        #        #
-        ##########
-        ";
-        let expected_map = MapBuffer::from_string(expected_map_str);
-
-        map.add_corridor(Point::new(1, 1), Point::new(8, 1));
-
-        assert_eq!(map.walkables, expected_map.walkables);
-    }
-
 
     #[test]
     fn test_available_exists() {

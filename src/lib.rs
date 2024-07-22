@@ -29,6 +29,7 @@
 //!  
 
 pub mod filter;
+pub mod rooms;
 pub mod geometry;
 pub mod metric;
 pub mod map_buffer;
