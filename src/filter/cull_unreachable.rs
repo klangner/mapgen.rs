@@ -6,9 +6,9 @@
 
 use rand::prelude::StdRng;
 use crate::geometry::Vec2u;
+use crate::path::DijkstraMap;
 use crate::MapFilter;
 use crate::MapBuffer;
-use crate::dijkstra::DijkstraMap;
 
 
 /// Remove unreachable areas from the map.

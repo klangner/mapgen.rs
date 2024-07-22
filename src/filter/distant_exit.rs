@@ -7,9 +7,9 @@
 use std::f32;
 use rand::prelude::StdRng;
 use crate::geometry::Vec2u;
+use crate::path::DijkstraMap;
 use crate::MapFilter;
 use crate::MapBuffer;
-use crate::dijkstra::DijkstraMap;
 
 
 /// Add exist position to the map based on the distance from the start point.

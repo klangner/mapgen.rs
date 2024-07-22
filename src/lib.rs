@@ -33,7 +33,7 @@ pub mod geometry;
 pub mod metric;
 pub mod layer;
 
-pub (crate) mod dijkstra;
+pub (crate) mod path;
 pub (crate) mod random;
 
 use std::time::{SystemTime, UNIX_EPOCH};

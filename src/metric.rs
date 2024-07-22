@@ -4,9 +4,7 @@
 //! and the provide generator score as an average.
 //! 
 
-use crate::{geometry::Vec2u, layer::WalkableLayer};
-
-use super::dijkstra::DijkstraMap;
+use crate::{geometry::Vec2u, layer::WalkableLayer, path::DijkstraMap};
 
 
 /// This metric calculates the percentage of walkable cells (Floor).
