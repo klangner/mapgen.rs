@@ -2,7 +2,7 @@
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::MazeBuilder;
+//! use mapgen::dungeon::MazeBuilder;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = MazeBuilder::new();

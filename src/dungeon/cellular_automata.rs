@@ -10,7 +10,7 @@
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::CellularAutomata;
+//! use mapgen::dungeon::CellularAutomata;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = CellularAutomata::new();

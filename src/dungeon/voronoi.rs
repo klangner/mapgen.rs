@@ -2,7 +2,7 @@
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::VoronoiHive;
+//! use mapgen::dungeon::VoronoiHive;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = VoronoiHive::new();

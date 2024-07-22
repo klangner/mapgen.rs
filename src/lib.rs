@@ -9,26 +9,24 @@
 //! Example
 //! ```
 //! use mapgen::{MapFilter, MapBuilder};
-//! use mapgen::filter::{
+//! use mapgen::dungeon::{
 //!     NoiseGenerator,
 //!     CellularAutomata,
-//!     starting_point::{AreaStartingPosition, XStart, YStart}
 //! };
 //! 
 //! let map = MapBuilder::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
-//!             .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
 //!             .build();
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
-//! assert_eq!(map.starting_point.is_some(), true);
 //! ```
 //!  
 
-pub mod filter;
+pub mod dungeon;
 pub mod rooms;
+pub mod poi;
 pub mod geometry;
 pub mod metric;
 pub mod layer;
@@ -40,7 +38,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
 
 pub use filter_based_map::{MapBuffer, Symmetry};
-pub use filter::*;
+pub use dungeon::*;
 
 
 /// Trait which should be implemented by map modifier. 
@@ -98,10 +96,9 @@ impl MapBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use filter::{
+    use dungeon::{
         CellularAutomata,
         NoiseGenerator,
-        {AreaStartingPosition, XStart, YStart},
     };
 
     #[test]
@@ -109,12 +106,10 @@ mod tests {
         let map = MapBuilder::new(80, 50)
             .with(NoiseGenerator::new(0.55))
             .with(CellularAutomata::new())
-            .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
             .build();
 
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);
-        assert!(map.starting_point.is_some());
     }
 
 }
