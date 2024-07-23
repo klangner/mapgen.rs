@@ -30,7 +30,7 @@ pub struct DrunkardsWalk {
     spawn_mode: DrunkSpawnMode,
     drunken_lifetime: i32,
     floor_percent: f32,
-    brush_size: usize,
+    brush_size: u32,
     symmetry: Symmetry,
 }
 
@@ -45,7 +45,7 @@ impl DrunkardsWalk {
         spawn_mode: DrunkSpawnMode,
         drunken_lifetime: i32,
         floor_percent: f32,
-        brush_size: usize,
+        brush_size: u32,
         symmetry: Symmetry,
     ) -> Box<DrunkardsWalk> {
         Box::new(DrunkardsWalk {

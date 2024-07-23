@@ -36,15 +36,15 @@ use crate::layer::WalkableLayer;
 /// max_depth is the maximum number of iterations this search shall support.
 pub struct DijkstraMap {
     pub tiles: Vec<f32>,
-    size_x: usize,
-    size_y: usize,
+    size_x: u32,
+    size_y: u32,
     max_depth: f32,
 }
 
 impl DijkstraMap {
     //! Construct a new Dijkstra map, ready to run.
     pub fn new(map: &WalkableLayer, starting_point: &Vec2u) -> DijkstraMap {
-        let len = map.width * map.height;
+        let len = (map.width * map.height) as usize;
         let tiles = vec![f32::MAX; len];
         let mut d = DijkstraMap {
             tiles,
@@ -62,8 +62,8 @@ impl DijkstraMap {
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
     fn build(&mut self, map: &WalkableLayer, starting_point: &Vec2u) {
-        let mapsize: usize = self.size_x * self.size_y;
-        let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
+        let mapsize = self.size_x * self.size_y;
+        let mut open_list: VecDeque<((u32, u32), f32)> = VecDeque::with_capacity(mapsize as usize);
 
         open_list.push_back(((starting_point.x, starting_point.y), 0.0));
         let idx = self.xy_idx(starting_point.x, starting_point.y);
@@ -87,8 +87,8 @@ impl DijkstraMap {
         }
     }
 
-    fn xy_idx(&self, x: usize, y: usize) -> usize {
-        (y * self.size_x) + x
+    fn xy_idx(&self, x: u32, y: u32) -> usize {
+        (y * self.size_x + x) as usize
     }
 }
 
@@ -122,8 +122,8 @@ mod tests {
         assert_eq!(dm.size_y, 3);
         for i in 0..10 {
             assert_eq!(dm.tiles[i], f32::MAX);
-            assert_eq!(dm.tiles[2 * dm.size_x + i], f32::MAX);
-            let idx = dm.size_x + i;
+            assert_eq!(dm.tiles[2 * dm.size_x as usize + i], f32::MAX);
+            let idx = dm.size_x as usize + i;
             if i < 3 || i == 9 {
                 assert_eq!(dm.tiles[idx], f32::MAX);
             } else {

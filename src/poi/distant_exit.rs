@@ -21,9 +21,7 @@ impl DistantExit {
                 best_idx = i;
             }
         }
-        let x = best_idx % map.width;
-        let y = best_idx / map.width;
-        Vec2u::new(x, y)
+        map.idx_point(best_idx)
     }
 }
 

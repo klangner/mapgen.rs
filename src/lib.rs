@@ -48,14 +48,14 @@ pub trait MapFilter {
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
 pub struct MapBuilder {
-    width: usize,
-    height: usize,
+    width: u32,
+    height: u32,
     modifiers: Vec<Box<dyn MapFilter>>,
 }
 
 impl MapBuilder {
     /// Create Map Builder with initial map generator
-    pub fn new(width: usize, height: usize) -> MapBuilder {
+    pub fn new(width: u32, height: u32) -> MapBuilder {
         MapBuilder {
             width,
             height,

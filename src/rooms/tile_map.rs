@@ -10,15 +10,15 @@ use crate::{
 
 #[derive(Default, Clone)]
 pub struct RoomsMap {
-    pub width: usize,
-    pub height: usize,
+    pub width: u32,
+    pub height: u32,
     pub rooms: Vec<Rect>,
     pub corridors: Vec<Vec<Vec2u>>,
     pub walkable_layer: WalkableLayer,
 }
 
 impl RoomsMap {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: u32, height: u32) -> Self {
         Self {
             width,
             height,
@@ -60,21 +60,21 @@ impl RoomsMap {
         }
     }
 
-    pub fn is_walkable(&self, x: usize, y: usize) -> bool {
+    pub fn is_walkable(&self, x: u32, y: u32) -> bool {
         self.walkable_layer.is_walkable(x, y)
     }
 
-    pub fn is_blocked(&self, x: usize, y: usize) -> bool {
+    pub fn is_blocked(&self, x: u32, y: u32) -> bool {
         !self.is_walkable(x, y)
     }
 
     /// Modify tile at the given location
-    pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
+    pub fn set_walkable(&mut self, x: u32, y: u32, set: bool) {
         self.walkable_layer.set_walkable(x, y, set);
     }
 
-    pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x
+    pub fn xy_idx(&self, x: u32, y: u32) -> usize {
+        self.walkable_layer.xy_idx(x, y)
     }
 }
 

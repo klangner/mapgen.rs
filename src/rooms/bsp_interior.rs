@@ -24,15 +24,15 @@ use rand::prelude::*;
 use super::RoomsMap;
 
 pub struct BspInterior {
-    min_room_size: usize,
+    min_room_size: u32,
 }
 
 impl BspInterior {
-    pub fn new(min_room_size: usize) -> Self {
+    pub fn new(min_room_size: u32) -> Self {
         Self { min_room_size }
     }
 
-    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
         // Create room with dimensions
         let mut map = RoomsMap::new(map_width, max_height);
         let mut rects = vec![Rect::new(1, 1, map.width - 2, map.height - 2)];

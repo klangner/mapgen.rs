@@ -4,19 +4,14 @@
 /// Position on the map
 #[derive(Default, PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Vec2u {
-    pub x: usize,
-    pub y: usize,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl Vec2u {
     /// Create new point
-    pub fn new(x: usize, y: usize) -> Vec2u {
+    pub fn new(x: u32, y: u32) -> Vec2u {
         Vec2u { x, y }
-    }
-
-    /// Create new point from i32 coords
-    pub fn new_i32(x: i32, y: i32) -> Vec2u {
-        Vec2u::new(x as usize, y as usize)
     }
 
     /// Euclidean distance to a given point
@@ -30,24 +25,20 @@ impl Vec2u {
 /// Rectangle region on the map
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Rect {
-    pub x1: usize,
-    pub x2: usize,
-    pub y1: usize,
-    pub y2: usize,
+    pub x1: u32,
+    pub x2: u32,
+    pub y1: u32,
+    pub y2: u32,
 }
 
 impl Rect {
-    pub fn new(x: usize, y: usize, width: usize, height: usize) -> Rect {
+    pub fn new(x: u32, y: u32, width: u32, height: u32) -> Rect {
         Rect {
             x1: x,
             y1: y,
             x2: x + width,
             y2: y + height,
         }
-    }
-
-    pub fn new_i32(x: i32, y: i32, width: i32, height: i32) -> Rect {
-        Rect::new(x as usize, y as usize, width as usize, height as usize)
     }
 
     /// Returns true if this overlaps with other
@@ -59,7 +50,7 @@ impl Rect {
         Vec2u::new((self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2)
     }
 
-    pub fn width(&self) -> usize {
+    pub fn width(&self) -> u32 {
         if self.x2 >= self.x1 {
             self.x2 - self.x1
         } else {
@@ -67,7 +58,7 @@ impl Rect {
         }
     }
 
-    pub fn height(&self) -> usize {
+    pub fn height(&self) -> u32 {
         if self.y2 >= self.y1 {
             self.y2 - self.y1
         } else {
@@ -76,15 +67,15 @@ impl Rect {
     }
 }
 
-/// Calculate abs value between 2 usize values
+/// Calculate abs difference value between 2 u32 values
 /// Example:
 /// ```
-/// use mapgen::geometry::usize_abs;
+/// use mapgen::geometry::diff_abs;
 ///
-/// assert_eq!(usize_abs(5, 3), 2);
-/// assert_eq!(usize_abs(3, 5), 2);
+/// assert_eq!(diff_abs(5, 3), 2);
+/// assert_eq!(diff_abs(3, 5), 2);
 /// ```
-pub fn usize_abs(x: usize, y: usize) -> usize {
+pub fn diff_abs(x: u32, y: u32) -> u32 {
     if x >= y {
         x - y
     } else {

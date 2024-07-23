@@ -151,7 +151,8 @@ impl<'a> Grid<'a> {
             if neighbors.len() == 1 {
                 return Some(neighbors[0]);
             } else {
-                return Some(neighbors[self.rng.roll_dice(1, neighbors.len()) - 1]);
+                let len = self.rng.roll_dice(1, neighbors.len() as u32) - 1;
+                return Some(neighbors[len as usize]);
             }
         }
         None
@@ -201,8 +202,8 @@ impl<'a> Grid<'a> {
         }
 
         for cell in self.cells.iter() {
-            let x = (cell.column as usize + 1) * 2;
-            let y = (cell.row as usize + 1) * 2;
+            let x = (cell.column as u32 + 1) * 2;
+            let y = (cell.row as u32 + 1) * 2;
 
             map.set_walkable(x, y, true);
             if !cell.walls[TOP] {

@@ -52,8 +52,7 @@ impl AreaStartingPosition {
             if w {
                 available_floors.push((
                     idx,
-                    Vec2u::new(idx % map.width, idx / map.width)
-                        .distance_to(&Vec2u::new(seed_x, seed_y)),
+                    map.idx_point(idx).distance_to(&Vec2u::new(seed_x, seed_y)),
                 ));
             }
         }
@@ -63,10 +62,7 @@ impl AreaStartingPosition {
 
         available_floors.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
 
-        let start_x = available_floors[0].0 % map.width;
-        let start_y = available_floors[0].0 / map.width;
-
-        Vec2u::new(start_x, start_y)
+        map.idx_point(available_floors[0].0)
     }
 }
 

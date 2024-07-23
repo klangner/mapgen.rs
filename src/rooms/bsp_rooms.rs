@@ -24,15 +24,15 @@ use rand::prelude::*;
 use super::RoomsMap;
 
 pub struct BspRooms {
-    max_split: usize,
+    max_split: u32,
 }
 
 impl BspRooms {
-    pub fn new(max_split: usize) -> Self {
+    pub fn new(max_split: u32) -> Self {
         Self { max_split }
     }
 
-    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
         let mut map = RoomsMap::new(map_width, max_height);
 
         // Start with a single map-sized rectangle
@@ -59,8 +59,8 @@ impl BspRooms {
         let mut rects: Vec<Rect> = Vec::new();
         let width = rect.width();
         let height = rect.height();
-        let half_width = usize::max(width / 2, 1);
-        let half_height = usize::max(height / 2, 1);
+        let half_width = u32::max(width / 2, 1);
+        let half_height = u32::max(height / 2, 1);
 
         rects.push(Rect::new(rect.x1, rect.y1, half_width, half_height));
         rects.push(Rect::new(
@@ -89,7 +89,7 @@ impl BspRooms {
         if rects.len() == 1 {
             return rects[0];
         }
-        let idx = rng.random_range(0, rects.len());
+        let idx = rng.random_range(0, rects.len() as u32) as usize;
         rects[idx]
     }
 
@@ -98,8 +98,8 @@ impl BspRooms {
         let rect_width = rect.width();
         let rect_height = rect.height();
 
-        let w = usize::max(3, rng.random_range(1, usize::min(rect_width, 20))) + 1;
-        let h = usize::max(3, rng.random_range(1, usize::min(rect_height, 20))) + 1;
+        let w = u32::max(3, rng.random_range(1, u32::min(rect_width, 20))) + 1;
+        let h = u32::max(3, rng.random_range(1, u32::min(rect_height, 20))) + 1;
 
         result.x1 += rng.random_range(0, 6);
         result.y1 += rng.random_range(0, 6);

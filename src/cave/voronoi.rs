@@ -20,7 +20,7 @@ use rand::prelude::*;
 use super::CaveMap;
 
 pub struct VoronoiHive {
-    n_seeds: usize,
+    n_seeds: u32,
 }
 
 impl MapFilter for VoronoiHive {
@@ -38,14 +38,11 @@ impl VoronoiHive {
         let mut new_map = map.clone();
         let seeds = self.generate_seeds(rng, map.width, map.height);
 
-        let mut voronoi_distance = vec![(0, 0.0f32); self.n_seeds];
-        let mut voronoi_membership: Vec<i32> = vec![0; map.width * map.height];
+        let mut voronoi_distance = vec![(0, 0.0f32); self.n_seeds as usize];
+        let mut voronoi_membership: Vec<i32> = vec![0; (map.width * map.height) as usize];
         for (i, vid) in voronoi_membership.iter_mut().enumerate() {
-            let x = i % map.width;
-            let y = i / map.width;
-
             for (seed, pos) in seeds.iter().enumerate() {
-                let distance = pos.distance_to(&Vec2u::new(x, y));
+                let distance = pos.distance_to(&map.idx_point(i));
                 voronoi_distance[seed] = (seed, distance);
             }
 
@@ -82,10 +79,10 @@ impl VoronoiHive {
     }
 
     /// Generate random seeds
-    fn generate_seeds(&self, rng: &mut StdRng, width: usize, height: usize) -> Vec<Vec2u> {
+    fn generate_seeds(&self, rng: &mut StdRng, width: u32, height: u32) -> Vec<Vec2u> {
         let mut seeds: Vec<Vec2u> = Vec::new();
 
-        while seeds.len() < self.n_seeds {
+        while (seeds.len() as u32) < self.n_seeds {
             let vx = rng.roll_dice(1, width - 1);
             let vy = rng.roll_dice(1, height - 1);
             let candidate = Vec2u::new(vx, vy);

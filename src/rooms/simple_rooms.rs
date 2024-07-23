@@ -23,13 +23,13 @@ use crate::random::Rng;
 use rand::prelude::*;
 
 pub struct SimpleRooms {
-    max_rooms: usize,
-    min_room_size: usize,
-    max_room_size: usize,
+    max_rooms: u32,
+    min_room_size: u32,
+    max_room_size: u32,
 }
 
 impl SimpleRooms {
-    pub fn new(max_rooms: usize, min_room_size: usize, max_room_size: usize) -> Self {
+    pub fn new(max_rooms: u32, min_room_size: u32, max_room_size: u32) -> Self {
         Self {
             max_rooms,
             min_room_size,
@@ -37,7 +37,7 @@ impl SimpleRooms {
         }
     }
 
-    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
         // Create room with dimensions
         let mut map = RoomsMap::new(map_width, max_height);
 

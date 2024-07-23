@@ -3,51 +3,53 @@
 
 use std::fmt;
 
+use crate::geometry::Vec2u;
+
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct WalkableLayer {
-    pub width: usize,
-    pub height: usize,
+    pub width: u32,
+    pub height: u32,
     pub tiles: Vec<bool>,
 }
 
 pub struct DataLayer<T> {
-    pub width: usize,
-    pub height: usize,
+    pub width: u32,
+    pub height: u32,
     pub walkables: Vec<T>,
 }
 
 impl WalkableLayer {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: u32, height: u32) -> Self {
         Self {
             width,
             height,
-            tiles: vec![false; width * height],
+            tiles: vec![false; (width * height) as usize],
         }
     }
 
-    pub fn is_walkable(&self, x: usize, y: usize) -> bool {
+    pub fn is_walkable(&self, x: u32, y: u32) -> bool {
         if x >= self.width || y >= self.height {
             false
         } else {
-            let idx = y * self.width + x;
+            let idx = self.xy_idx(x, y);
             self.tiles[idx]
         }
     }
 
-    pub fn is_blocked(&self, x: usize, y: usize) -> bool {
+    pub fn is_blocked(&self, x: u32, y: u32) -> bool {
         !self.is_walkable(x, y)
     }
 
     /// Modify tile at the given location
-    pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
+    pub fn set_walkable(&mut self, x: u32, y: u32, set: bool) {
         if x < self.width && y < self.height {
             let idx = self.xy_idx(x, y);
             self.tiles[idx] = set;
         }
     }
 
-    pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x
+    pub fn xy_idx(&self, x: u32, y: u32) -> usize {
+        (y * self.width + x) as usize
     }
 
     /// Create layer from given string
@@ -60,26 +62,34 @@ impl WalkableLayer {
             .collect();
         let cols = lines
             .iter()
-            .map(|l| l.len())
+            .map(|l| l.len() as u32)
             .max()
             .get_or_insert(1)
             .to_owned();
-        let rows = lines.len();
+        let rows = lines.len() as u32;
         let mut map = Self::new(cols, rows);
 
-        for i in 0..rows {
+        for i in 0..rows as usize {
             let line = lines[i].as_bytes();
             for j in 0..line.len() {
                 if line[j] as char == ' ' {
-                    map.set_walkable(j, i, true);
+                    map.set_walkable(j as u32, i as u32, true);
                 }
             }
         }
         map
     }
+    
+    pub fn idx_point(&self, idx: usize) -> Vec2u {
+        Vec2u {
+            x: idx as u32 % self.width,
+            y: idx as u32 / self.width,
+        }
+    }
+
 
     /// Get available exists from the given tile
-    pub fn get_available_exits(&self, x: usize, y: usize) -> Vec<(usize, usize, f32)> {
+    pub fn get_available_exits(&self, x: u32, y: u32) -> Vec<(u32, u32, f32)> {
         let mut exits = Vec::new();
 
         // Cardinal directions
@@ -115,11 +125,11 @@ impl WalkableLayer {
 }
 
 impl<T: Clone> DataLayer<T> {
-    pub fn new(width: usize, height: usize, default: T) -> Self {
+    pub fn new(width: u32, height: u32, default: T) -> Self {
         Self {
             width,
             height,
-            walkables: vec![default; width * height],
+            walkables: vec![default; (width * height) as usize],
         }
     }
 }

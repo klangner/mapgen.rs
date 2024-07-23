@@ -8,7 +8,7 @@
 //!
 
 use crate::{
-    geometry::{usize_abs, Vec2u},
+    geometry::{diff_abs, Vec2u},
     layer::WalkableLayer,
 };
 use std::fmt;
@@ -25,15 +25,15 @@ pub enum Symmetry {
 #[derive(Default, Clone)]
 pub struct CaveMap {
     pub walkable_layer: WalkableLayer,
-    pub width: usize,
-    pub height: usize,
+    pub width: u32,
+    pub height: u32,
     pub starting_point: Option<Vec2u>,
     pub exit_point: Option<Vec2u>,
 }
 
 impl CaveMap {
     /// Generates an empty map, consisting entirely of solid walls
-    pub fn new(width: usize, height: usize) -> CaveMap {
+    pub fn new(width: u32, height: u32) -> CaveMap {
         CaveMap {
             walkable_layer: WalkableLayer::new(width, height),
             width,
@@ -56,33 +56,33 @@ impl CaveMap {
     }
 
     /// Get TileType at the given location
-    pub fn is_walkable(&self, x: usize, y: usize) -> bool {
+    pub fn is_walkable(&self, x: u32, y: u32) -> bool {
         self.walkable_layer.is_walkable(x, y)
     }
 
-    pub fn is_blocked(&self, x: usize, y: usize) -> bool {
+    pub fn is_blocked(&self, x: u32, y: u32) -> bool {
         !self.is_walkable(x, y)
     }
 
     /// Modify tile at the given location
-    pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
+    pub fn set_walkable(&mut self, x: u32, y: u32, set: bool) {
         if x < self.width && y < self.height {
             self.walkable_layer.set_walkable(x, y, set);
         }
     }
 
-    pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x
+    pub fn xy_idx(&self, x: u32, y: u32) -> usize {
+        self.walkable_layer.xy_idx(x, y)
     }
 
     pub fn idx_point(&self, idx: usize) -> Vec2u {
         Vec2u {
-            x: idx % self.width,
-            y: idx / self.width,
+            x: idx as u32 % self.width,
+            y: idx as u32 / self.width,
         }
     }
 
-    pub fn paint(&mut self, mode: Symmetry, brush_size: usize, x: usize, y: usize) {
+    pub fn paint(&mut self, mode: Symmetry, brush_size: u32, x: u32, y: u32) {
         match mode {
             Symmetry::None => self.apply_paint(brush_size, x, y),
             Symmetry::Horizontal => {
@@ -90,7 +90,7 @@ impl CaveMap {
                 if x == center_x {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_x = usize_abs(center_x, x);
+                    let dist_x = diff_abs(center_x, x);
                     self.apply_paint(brush_size, center_x + dist_x, y);
                     self.apply_paint(brush_size, center_x - dist_x, y);
                 }
@@ -100,7 +100,7 @@ impl CaveMap {
                 if y == center_y {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_y = usize_abs(center_y, y);
+                    let dist_y = diff_abs(center_y, y);
                     self.apply_paint(brush_size, x, center_y + dist_y);
                     self.apply_paint(brush_size, x, center_y - dist_y);
                 }
@@ -111,10 +111,10 @@ impl CaveMap {
                 if x == center_x && y == center_y {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_x = usize_abs(center_x, x);
+                    let dist_x = diff_abs(center_x, x);
                     self.apply_paint(brush_size, center_x + dist_x, y);
                     self.apply_paint(brush_size, center_x - dist_x, y);
-                    let dist_y = usize_abs(center_y, y);
+                    let dist_y = diff_abs(center_y, y);
                     self.apply_paint(brush_size, x, center_y + dist_y);
                     self.apply_paint(brush_size, x, center_y - dist_y);
                 }
@@ -122,7 +122,7 @@ impl CaveMap {
         }
     }
 
-    fn apply_paint(&mut self, brush_size: usize, x: usize, y: usize) {
+    fn apply_paint(&mut self, brush_size: u32, x: u32, y: u32) {
         match brush_size {
             1 => {
                 self.set_walkable(x, y, true);
