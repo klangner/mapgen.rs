@@ -1,23 +1,13 @@
 //! Remove unreachable areas from the map.
-//! 
-//! This modifier reiquires starting position on the map.
 //! It will add wall on every tile which is not accessible from the starting point.
 //! 
 
-use rand::prelude::StdRng;
-use crate::MapFilter;
-use crate::MapBuffer;
-use crate::dijkstra::DijkstraMap;
+use crate::geometry::Vec2u;
+use crate::layer::WalkableLayer;
+use crate::path::DijkstraMap;
 
 
-/// Remove unreachable areas from the map.
-pub struct CullUnreachable {}
-
-impl MapFilter for CullUnreachable {
-    fn modify_map(&self, _: &mut StdRng, map: &MapBuffer)  -> MapBuffer {
-        self.build(map)
-    }
-}
+pub struct CullUnreachable;
 
 impl CullUnreachable {
     #[allow(dead_code)]
@@ -25,10 +15,10 @@ impl CullUnreachable {
         Box::new(CullUnreachable{})
     }
 
-    fn build(&self, map: &MapBuffer) -> MapBuffer {
+    pub fn remove_walkable_tiles(starting_point: &Vec2u, map: &WalkableLayer) -> WalkableLayer {
         let mut new_map = map.clone();
 
-        let dijkstra_map = DijkstraMap::new(map);
+        let dijkstra_map = DijkstraMap::new(map, &starting_point);
         for i in 0..new_map.walkables.len() {
             if new_map.walkables[i] {
                 let distance_to_start = dijkstra_map.tiles[i];
@@ -47,11 +37,7 @@ impl CullUnreachable {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
-    use rand::prelude::*;
-    use super::*;
-    use super::MapFilter;
-    use crate::geometry::Point;
-    use crate::map_buffer::MapBuffer;
+    use crate::{geometry::Vec2u, layer::WalkableLayer, poi::CullUnreachable};
 
     #[test]
     fn test_culling() {
@@ -60,20 +46,17 @@ mod tests {
         #  #     #
         ##########
         ";
-        let mut map = MapBuffer::from_string(map_str);
-        map.starting_point = Some(Point::new(9, 1));
+        let map = WalkableLayer::from_string(map_str);
+        let starting_point = Vec2u::new(9, 1);
         let expected_map_str = "
         ##########
         ####     #
         ##########
         ";
-        let expected_map = MapBuffer::from_string(expected_map_str);
+        let expected_map = WalkableLayer::from_string(expected_map_str);
 
+        let new_map = CullUnreachable::remove_walkable_tiles(&starting_point, &map);
 
-        let modifier = CullUnreachable::new();
-        let mut rng = StdRng::seed_from_u64(0);
-        let new_map = modifier.modify_map(&mut rng, &map);
-
-        assert_eq!(new_map.walkables, expected_map.walkables);
+        assert_eq!(new_map, expected_map);
     }
 }

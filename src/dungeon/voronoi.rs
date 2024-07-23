@@ -2,7 +2,7 @@
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::VoronoiHive;
+//! use mapgen::dungeon::VoronoiHive;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = VoronoiHive::new();
@@ -16,10 +16,11 @@
 use rand::prelude::*;
 use crate::MapFilter;
 use crate::{
-    map_buffer::MapBuffer,
     random::Rng,
-    geometry::Point,
+    geometry::Vec2u,
 };
+
+use super::MapBuffer;
 
 
 pub struct VoronoiHive {
@@ -51,7 +52,7 @@ impl VoronoiHive {
             let y = i / map.width;
 
             for (seed, pos) in seeds.iter().enumerate() {
-                let distance = pos.distance_to(&Point::new(x, y));
+                let distance = pos.distance_to(&Vec2u::new(x, y));
                 voronoi_distance[seed] = (seed, distance);
             }
 
@@ -80,13 +81,13 @@ impl VoronoiHive {
     }    
     
     /// Generate random seeds
-    fn generate_seeds(&self, rng: &mut StdRng, width: usize, height: usize) -> Vec<Point> {
-        let mut seeds: Vec<Point> = Vec::new();
+    fn generate_seeds(&self, rng: &mut StdRng, width: usize, height: usize) -> Vec<Vec2u> {
+        let mut seeds: Vec<Vec2u> = Vec::new();
 
         while seeds.len() < self.n_seeds {
             let vx = rng.roll_dice(1, width-1);
             let vy = rng.roll_dice(1, height-1);
-            let candidate = Point::new(vx, vy);
+            let candidate = Vec2u::new(vx, vy);
             if !seeds.contains(&candidate) {
                 seeds.push(candidate);
             }

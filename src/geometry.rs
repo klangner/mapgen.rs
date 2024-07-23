@@ -3,24 +3,24 @@
 
 /// Position on the map
 #[derive(Default, PartialEq, Copy, Clone, Debug, Eq, Hash)]
-pub struct Point {
+pub struct Vec2u {
     pub x: usize,
     pub y: usize
 }
 
-impl Point {
+impl Vec2u {
     /// Create new point
-    pub fn new(x: usize, y: usize) -> Point {
-        Point {x, y}
+    pub fn new(x: usize, y: usize) -> Vec2u {
+        Vec2u {x, y}
     }
 
     /// Create new point from i32 coords
-    pub fn new_i32(x: i32, y: i32) -> Point {
-        Point::new(x as usize, y as usize)
+    pub fn new_i32(x: i32, y: i32) -> Vec2u {
+        Vec2u::new(x as usize, y as usize)
     }
 
     /// Euclidean distance to a given point
-    pub fn distance_to(self, point: &Point) -> f32 {
+    pub fn distance_to(self, point: &Vec2u) -> f32 {
         let a = (self.x as f32 - point.x as f32).powf(2.0);
         let b = (self.y as f32 - point.y as f32).powf(2.0);
         (a + b).sqrt()
@@ -50,8 +50,8 @@ impl Rect {
         self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     }
 
-    pub fn center(&self) -> Point {
-        Point::new((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+    pub fn center(&self) -> Vec2u {
+        Vec2u::new((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
     }
 
     pub fn width(&self) -> usize {
@@ -92,8 +92,8 @@ mod tests {
 
     #[test]
     fn test_distance() {
-        let p1 = Point::new(10, 10);
-        let p2 = Point::new(14, 7);
+        let p1 = Vec2u::new(10, 10);
+        let p2 = Vec2u::new(14, 7);
         let distance = p1.distance_to(&p2);
         assert_eq!(distance, 5.0);
     }

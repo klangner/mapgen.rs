@@ -5,7 +5,7 @@
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::NoiseGenerator;
+//! use mapgen::dungeon::NoiseGenerator;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = NoiseGenerator::uniform();

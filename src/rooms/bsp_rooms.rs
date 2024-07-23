@@ -6,12 +6,11 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::filter::BspRooms;
+//! use mapgen::rooms::BspRooms;
 //! 
 //! let mut rng = StdRng::seed_from_u64(100);
-//! let gen = BspRooms::new();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let bsp = BspRooms::default();
+//! let map = bsp.generate_rooms(80, 50, &mut rng);
 //! 
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -19,33 +18,28 @@
 //! 
 
 use rand::prelude::*;
-use crate::MapFilter;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use crate::MapBuffer;
+
+use super::RoomBasedMap;
 
 
 pub struct BspRooms {
     max_split: usize,
 }
 
-impl MapFilter for BspRooms {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer)  -> MapBuffer {
-        self.build_rooms(map, rng)
-    }
-}
-
 impl BspRooms {
-    pub fn new() -> Box<BspRooms> {
-        Box::new(BspRooms {
-            max_split: 240,
-        })
+    pub fn new(max_split: usize) -> Self {
+        Self {
+            max_split,
+        }
     }
 
-    fn build_rooms(&self, map: &MapBuffer, rng : &mut StdRng) -> MapBuffer {
-        let mut new_map = map.clone();
+    pub fn generate_rooms(&self, map_width: usize, max_height: usize, rng : &mut StdRng) -> RoomBasedMap {
+        let mut map = RoomBasedMap::new(map_width, max_height);
+
         // Start with a single map-sized rectangle
-        let mut rects = vec![Rect::new(2, 2, new_map.width-5, new_map.height-5)];
+        let mut rects = vec![Rect::new(2, 2, map.width-5, map.height-5)];
         let first_room = rects[0];
         rects.append(&mut self.split_into_subrects(first_room)); // Divide the first room
 
@@ -55,13 +49,13 @@ impl BspRooms {
             let rect = self.get_random_rect(rng, &rects);
             let candidate = self.get_random_sub_rect(rect, rng);
 
-            if self.is_possible(candidate, &new_map) {
-                new_map.add_room(candidate);
+            if self.is_possible(candidate, &map) {
+                map.add_room(candidate);
                 rects.append(&mut self.split_into_subrects(rect));
             }
         }
 
-        new_map
+        map
     }
 
     fn split_into_subrects(&self, rect: Rect) -> Vec<Rect> {
@@ -101,7 +95,7 @@ impl BspRooms {
         result
     }
 
-    fn is_possible(&self, rect: Rect, map: &MapBuffer) -> bool {
+    fn is_possible(&self, rect: Rect, map: &RoomBasedMap) -> bool {
         let mut expanded = rect;
         expanded.x1 -= 2;
         expanded.x2 += 2;
@@ -130,19 +124,23 @@ impl BspRooms {
     }
 }
 
+impl Default for BspRooms {
+    fn default() -> Self {
+        Self { max_split: 240 }
+    }
+}
 /// ------------------------------------------------------------------------------------------------
 /// Module unit tests
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::map_buffer::MapBuffer;
 
     #[test]
     fn no_corridors_on_borders() {
          let mut rng = StdRng::seed_from_u64(907647352);
-        let gen = BspRooms::new();
-        let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+        let bsp = BspRooms::default();
+        let map = bsp.generate_rooms(80, 50, &mut rng);
         for i in 0..80 {
             assert!(map.is_blocked(i, 0));
             assert!(map.is_blocked(i, 49));
