@@ -48,7 +48,7 @@ impl AreaStartingPosition {
         };
 
         let mut available_floors: Vec<(usize, f32)> = Vec::new();
-        for (idx, &w) in map.walkables.iter().enumerate() {
+        for (idx, &w) in map.tiles.iter().enumerate() {
             if w {
                 available_floors.push((
                     idx,

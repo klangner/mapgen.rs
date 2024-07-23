@@ -7,7 +7,7 @@ use std::fmt;
 pub struct WalkableLayer {
     pub width: usize,
     pub height: usize,
-    pub walkables: Vec<bool>,
+    pub tiles: Vec<bool>,
 }
 
 pub struct DataLayer<T> {
@@ -21,7 +21,7 @@ impl WalkableLayer {
         Self {
             width,
             height,
-            walkables: vec![false; width * height],
+            tiles: vec![false; width * height],
         }
     }
 
@@ -30,7 +30,7 @@ impl WalkableLayer {
             false
         } else {
             let idx = y * self.width + x;
-            self.walkables[idx]
+            self.tiles[idx]
         }
     }
 
@@ -42,7 +42,7 @@ impl WalkableLayer {
     pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
         if x < self.width && y < self.height {
             let idx = self.xy_idx(x, y);
-            self.walkables[idx] = set;
+            self.tiles[idx] = set;
         }
     }
 

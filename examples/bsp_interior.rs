@@ -1,13 +1,15 @@
 use mapgen::{
     poi::{AreaStartingPosition, DistantExit, XStart, YStart},
-    rooms::BspInterior,
+    rooms::{BspInterior, NearestCorridors},
 };
 use rand::prelude::*;
 
 fn main() {
     let mut rng = StdRng::seed_from_u64(907647352);
     let bsp = BspInterior::default();
-    let map = bsp.generate_rooms(20, 10, &mut rng);
+    let rooms = bsp.generate(20, 10, &mut rng);
+    let corridors = NearestCorridors::default();
+    let map = corridors.generate(&rooms);
     let starting_point = AreaStartingPosition::find(XStart::LEFT, YStart::TOP, &map.walkable_layer);
     let exit_point = DistantExit::find(&starting_point, &map.walkable_layer);
 

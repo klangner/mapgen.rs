@@ -10,7 +10,7 @@
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let bsp = BspRooms::default();
-//! let map = bsp.generate_rooms(80, 50, &mut rng);
+//! let map = bsp.generate(80, 50, &mut rng);
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -32,7 +32,7 @@ impl BspRooms {
         Self { max_split }
     }
 
-    pub fn generate_rooms(
+    pub fn generate(
         &self,
         map_width: usize,
         max_height: usize,
@@ -169,7 +169,7 @@ mod tests {
     fn no_corridors_on_borders() {
         let mut rng = StdRng::seed_from_u64(907647352);
         let bsp = BspRooms::default();
-        let map = bsp.generate_rooms(80, 50, &mut rng);
+        let map = bsp.generate(80, 50, &mut rng);
         for i in 0..80 {
             assert!(map.is_blocked(i, 0));
             assert!(map.is_blocked(i, 49));

@@ -87,7 +87,7 @@ impl DrunkardsWalk {
         let desired_floor_tiles = (self.floor_percent * total_tiles as f32) as usize;
         let mut floor_tile_count = new_map
             .walkable_layer
-            .walkables
+            .tiles
             .iter()
             .filter(|&&a| a)
             .count();
@@ -146,7 +146,7 @@ impl DrunkardsWalk {
             digger_count += 1;
             floor_tile_count = new_map
                 .walkable_layer
-                .walkables
+                .tiles
                 .iter()
                 .filter(|&&a| a)
                 .count();

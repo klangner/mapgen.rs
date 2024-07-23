@@ -17,7 +17,7 @@ impl NearestCorridors {
         Self {}
     }
 
-    pub fn generate_corridors(&self, map: &RoomBasedMap) -> RoomBasedMap {
+    pub fn generate(&self, map: &RoomBasedMap) -> RoomBasedMap {
         let mut new_map = map.clone();
         let mut connected: HashSet<usize> = HashSet::new();
         for (i, room) in map.rooms.iter().enumerate() {

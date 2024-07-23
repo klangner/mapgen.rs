@@ -18,12 +18,12 @@ impl CullUnreachable {
         let mut new_map = map.clone();
 
         let dijkstra_map = DijkstraMap::new(map, starting_point);
-        for i in 0..new_map.walkables.len() {
-            if new_map.walkables[i] {
+        for i in 0..new_map.tiles.len() {
+            if new_map.tiles[i] {
                 let distance_to_start = dijkstra_map.tiles[i];
                 // We can't get to this tile - so we'll make it a wall
                 if distance_to_start == f32::MAX {
-                    new_map.walkables[i] = false;
+                    new_map.tiles[i] = false;
                 }
             }
         }

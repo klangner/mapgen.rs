@@ -10,8 +10,8 @@ use crate::{geometry::Vec2u, layer::WalkableLayer, path::DijkstraMap};
 /// If this number is very low (like < 10%) then it means that the map
 /// is probably to degenerated and shouldn't be used
 pub fn density(walkable_layer: &WalkableLayer) -> f32 {
-    let floor_count = walkable_layer.walkables.iter().filter(|&&x| x).count();
-    floor_count as f32 / walkable_layer.walkables.len() as f32
+    let floor_count = walkable_layer.tiles.iter().filter(|&&x| x).count();
+    floor_count as f32 / walkable_layer.tiles.len() as f32
 }
 
 /// Calculate the length of the shortes path from the starting point

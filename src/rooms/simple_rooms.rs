@@ -10,7 +10,7 @@
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let simple_rooms = SimpleRooms::default();
-//! let map = simple_rooms.generate_rooms(80, 50, &mut rng);
+//! let map = simple_rooms.generate(80, 50, &mut rng);
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -37,7 +37,7 @@ impl SimpleRooms {
         }
     }
 
-    pub fn generate_rooms(
+    pub fn generate(
         &self,
         map_width: usize,
         max_height: usize,

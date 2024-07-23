@@ -196,7 +196,7 @@ impl<'a> Grid<'a> {
 
     fn copy_to_map(&self, map: &mut MapBuffer) {
         // Clear the map
-        for i in map.walkable_layer.walkables.iter_mut() {
+        for i in map.walkable_layer.tiles.iter_mut() {
             *i = false;
         }
 

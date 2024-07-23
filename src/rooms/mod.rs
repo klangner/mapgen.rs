@@ -8,12 +8,12 @@
 
 pub mod bsp_interior;
 pub mod bsp_rooms;
-pub mod room_based_map;
-pub mod rooms_corridors_nearest;
+pub mod tile_map;
+pub mod corridors_nearest;
 pub mod simple_rooms;
 
 pub use bsp_interior::BspInterior;
 pub use bsp_rooms::BspRooms;
-pub use room_based_map::RoomBasedMap;
-pub use rooms_corridors_nearest::NearestCorridors;
+pub use tile_map::RoomBasedMap;
+pub use corridors_nearest::NearestCorridors;
 pub use simple_rooms::SimpleRooms;
