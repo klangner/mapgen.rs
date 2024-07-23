@@ -26,7 +26,6 @@
 //!
 
 use std::collections::VecDeque;
-use std::f32::MAX;
 
 use crate::geometry::Vec2u;
 use crate::layer::WalkableLayer;
@@ -46,7 +45,7 @@ impl DijkstraMap {
     //! Construct a new Dijkstra map, ready to run.
     pub fn new(map: &WalkableLayer, starting_point: &Vec2u) -> DijkstraMap {
         let len = map.width * map.height;
-        let tiles = vec![MAX; len];
+        let tiles = vec![f32::MAX; len];
         let mut d = DijkstraMap {
             tiles,
             size_x: map.width,
@@ -122,11 +121,11 @@ mod tests {
         assert_eq!(dm.size_x, 10);
         assert_eq!(dm.size_y, 3);
         for i in 0..10 {
-            assert_eq!(dm.tiles[i], MAX);
-            assert_eq!(dm.tiles[2 * dm.size_x + i], MAX);
+            assert_eq!(dm.tiles[i], f32::MAX);
+            assert_eq!(dm.tiles[2 * dm.size_x + i], f32::MAX);
             let idx = dm.size_x + i;
             if i < 3 || i == 9 {
-                assert_eq!(dm.tiles[idx], MAX);
+                assert_eq!(dm.tiles[idx], f32::MAX);
             } else {
                 assert_eq!(dm.tiles[idx], (8 - i) as f32);
             }
@@ -145,7 +144,9 @@ mod tests {
         let starting_point = Vec2u::new(2, 2);
         let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [
-            MAX, MAX, MAX, MAX, MAX, 1.45, 1.0, MAX, MAX, 1.0, 0.0, MAX, MAX, MAX, MAX, MAX,
+            f32::MAX, f32::MAX, f32::MAX, f32::MAX, 
+            f32::MAX, 1.45, 1.0, f32::MAX, f32::MAX, 
+            1.0, 0.0, f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX,
         ];
 
         assert_eq!(dm.tiles, expected);
@@ -163,9 +164,13 @@ mod tests {
         let starting_point = Vec2u::new(8, 2);
         let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [
-            MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, MAX, 7.45, 6.45, 5.45, 4.45, 3.45,
-            2.45, 1.45, 1.0, MAX, MAX, 7.9, 6.9, MAX, 4.0, 3.0, 2.0, 1.0, 0.0, MAX, MAX, MAX, MAX,
-            MAX, MAX, MAX, MAX, MAX, MAX, MAX,
+            f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX, 
+            f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX, 
+            7.45, 6.45, 5.45, 4.45, 3.45,
+            2.45, 1.45, 1.0, f32::MAX, f32::MAX, 
+            7.9, 6.9, f32::MAX, 4.0, 3.0, 2.0, 
+            1.0, 0.0, f32::MAX, f32::MAX, f32::MAX, f32::MAX,
+            f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX, f32::MAX,
         ];
 
         for (v, e) in dm.tiles.iter().zip(expected.iter()) {

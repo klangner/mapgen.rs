@@ -22,7 +22,7 @@ impl CullUnreachable {
             if new_map.walkables[i] {
                 let distance_to_start = dijkstra_map.tiles[i];
                 // We can't get to this tile - so we'll make it a wall
-                if distance_to_start == std::f32::MAX {
+                if distance_to_start == f32::MAX {
                     new_map.walkables[i] = false;
                 }
             }
