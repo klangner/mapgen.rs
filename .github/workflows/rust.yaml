@@ -69,8 +69,8 @@ jobs:
         override: true
         components: clippy
 
-    - name: Run cargo clippy --all-targets --package tiled
-      run: cargo clippy --all-targets --package tiled
+    - name: Run cargo clippy --all-targets --package mapgen
+      run: cargo clippy --all-targets --package mapgen
 
   docs:
     runs-on: ubuntu-24.04
@@ -92,5 +92,5 @@ jobs:
         override: true
         components: rust-docs
 
-    - name: Run cargo doc -p tiled --no-deps
-      run: cargo doc -p tiled --no-deps
+    - name: Run cargo doc -p mapgen --no-deps
+      run: cargo doc -p mapgen --no-deps
