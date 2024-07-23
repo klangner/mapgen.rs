@@ -17,7 +17,7 @@ use crate::MapFilter;
 use crate::{geometry::Vec2u, random::Rng};
 use rand::prelude::*;
 
-use super::filter_based_map::Symmetry;
+use super::tile_map::Symmetry;
 use super::MapBuffer;
 
 #[derive(PartialEq, Copy, Clone)]

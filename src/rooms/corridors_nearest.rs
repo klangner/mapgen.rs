@@ -42,3 +42,35 @@ impl NearestCorridors {
         new_map
     }
 }
+
+/// ------------------------------------------------------------------------------------------------
+/// Module unit tests
+/// ------------------------------------------------------------------------------------------------
+#[cfg(test)]
+mod tests {
+    use crate::{geometry::Rect, layer::WalkableLayer};
+
+    use super::*;
+
+    #[test]
+    fn no_corridors_on_borders() {
+        let mut rooms = RoomBasedMap::new(10, 5);
+        rooms.add_room(Rect::new(1, 1, 3, 3));
+        rooms.add_room(Rect::new(6, 1, 3, 3));
+        let corridors = NearestCorridors::default();
+        let map = corridors.generate(&rooms);
+
+        let map_str = "
+        ##########
+        #   ##   #
+        #        #
+        #   ##   #
+        ##########
+        ";
+        let expected = WalkableLayer::from_string(map_str);
+
+        println!("{}", &map.walkable_layer);
+
+        assert_eq!(map.walkable_layer, expected);
+    }
+}

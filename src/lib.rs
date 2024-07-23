@@ -38,7 +38,7 @@ use rand::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub use dungeon::*;
-pub use filter_based_map::{MapBuffer, Symmetry};
+pub use tile_map::{MapBuffer, Symmetry};
 
 /// Trait which should be implemented by map modifier.
 /// Modifier takes initiall map and apply changes to it.

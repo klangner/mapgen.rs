@@ -56,6 +56,7 @@ impl RoomBasedMap {
             }
 
             corridor.push(Vec2u::new(x, y));
+            self.walkable_layer.set_walkable(x, y, true);
         }
     }
 
