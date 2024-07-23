@@ -34,42 +34,47 @@ This library consists of different map filters which can be combined to create c
 
 Add dependency to your project
 ```
-mapgen = "0.4"
+mapgen = "0.5"
 ```
 
-Using single map generator:
-
+Generate room based map
 ```rust
 use rand::prelude::*;
-use mapgen::{Map, MapFilter};
-use mapgen::filter::CellularAutomata;
+use mapgen::{
+    poi::{AreaStartingPosition, DistantExit, XStart, YStart}, 
+    rooms::BspInterior};
 
-let mut rng = StdRng::seed_from_u64(100);
-let gen = CellularAutomata::new();
-let map = gen.modify_map(&mut rng, &Map::new(80, 50));
+
+fn main() {
+    let mut rng = StdRng::seed_from_u64(907647352);
+    let bsp = BspInterior::default();
+    let map = bsp.generate_rooms(20, 10, &mut rng);
+    let starting_point = AreaStartingPosition::find(XStart::LEFT, YStart::TOP, &map.walkable_layer);
+    let exit_point = DistantExit::find(&starting_point, &map.walkable_layer);
+
+    println!("{:}", &map);
+    println!("Start: {:?}, exit: {:?}", starting_point, exit_point);
+}
 ```
 
-Use MapBuilder for chaining map generator and modifiers
+Using single dungeon generators:
 
 ```rust
-use mapgen::{
-    MapBuilder,
-    filter::{
-        NoiseGenerator, 
-        CellularAutomata,
-        AreaStartingPosition,
-        XStart, 
-        YStart,
-    },
-};
+use mapgen::dungeon::{CellularAutomata, NoiseGenerator};
+use mapgen::{poi::*, MapBuilder};
 
-let map = MapBuilder::new(80, 50)
+
+fn main() {
+    let map = MapBuilder::new(20, 20)
         .with(NoiseGenerator::uniform())
         .with(CellularAutomata::new())
-        .with(AreaStartingPosition::new(XStart::CENTER, YStart::CENTER))
-        .with(CullUnreachable::new())
-        .with(DistantExit::new())
-        .build();
+        .build();  
+    
+    let starting_point = AreaStartingPosition::find(XStart::CENTER, YStart::CENTER, &map.walkable_layer);
+    let walkables = CullUnreachable::remove_walkable_tiles(&starting_point, &map.walkable_layer);
+    
+    println!("{:}", &walkables);
+}
 ```
 
 For more information check the [doc](https://docs.rs/mapgen)

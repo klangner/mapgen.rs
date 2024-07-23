@@ -12,7 +12,8 @@
 //! ```
 //! 
 
-use crate::{geometry::Vec2u, layer::WalkableLayer};
+use crate::geometry::Vec2u;
+use crate::layer::WalkableLayer;
 
 
 /// Initial x region position
