@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::dungeon::MazeBuilder;
+//! use mapgen::{CaveMap, MapFilter};
+//! use mapgen::cave::MazeBuilder;
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = MazeBuilder::new();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -17,12 +17,12 @@ use crate::random::Rng;
 use crate::MapFilter;
 use rand::prelude::*;
 
-use super::MapBuffer;
+use super::CaveMap;
 
 pub struct MazeBuilder {}
 
 impl MapFilter for MazeBuilder {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -33,7 +33,7 @@ impl MazeBuilder {
     }
 
     #[allow(clippy::map_entry)]
-    fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         let mut maze = Grid::new((map.width as i32 / 2) - 2, (map.height as i32 / 2) - 2, rng);
         maze.generate_maze(&mut new_map);
@@ -157,7 +157,7 @@ impl<'a> Grid<'a> {
         None
     }
 
-    fn generate_maze(&mut self, map: &mut MapBuffer) {
+    fn generate_maze(&mut self, map: &mut CaveMap) {
         let mut i = 0;
         loop {
             self.cells[self.current].visited = true;
@@ -194,7 +194,7 @@ impl<'a> Grid<'a> {
         }
     }
 
-    fn copy_to_map(&self, map: &mut MapBuffer) {
+    fn copy_to_map(&self, map: &mut CaveMap) {
         // Clear the map
         for i in map.walkable_layer.tiles.iter_mut() {
             *i = false;

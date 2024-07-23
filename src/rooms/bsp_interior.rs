@@ -21,7 +21,7 @@ use crate::geometry::{Rect, Vec2u};
 use crate::random::Rng;
 use rand::prelude::*;
 
-use super::RoomBasedMap;
+use super::RoomsMap;
 
 pub struct BspInterior {
     min_room_size: usize,
@@ -32,14 +32,9 @@ impl BspInterior {
         Self { min_room_size }
     }
 
-    pub fn generate(
-        &self,
-        map_width: usize,
-        max_height: usize,
-        rng: &mut StdRng,
-    ) -> RoomBasedMap {
+    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
         // Create room with dimensions
-        let mut map = RoomBasedMap::new(map_width, max_height);
+        let mut map = RoomsMap::new(map_width, max_height);
         let mut rects = vec![Rect::new(1, 1, map.width - 2, map.height - 2)];
         let first_room = rects[0];
         // Divide the first room

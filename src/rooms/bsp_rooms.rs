@@ -21,7 +21,7 @@ use crate::geometry::Rect;
 use crate::random::Rng;
 use rand::prelude::*;
 
-use super::RoomBasedMap;
+use super::RoomsMap;
 
 pub struct BspRooms {
     max_split: usize,
@@ -32,13 +32,8 @@ impl BspRooms {
         Self { max_split }
     }
 
-    pub fn generate(
-        &self,
-        map_width: usize,
-        max_height: usize,
-        rng: &mut StdRng,
-    ) -> RoomBasedMap {
-        let mut map = RoomBasedMap::new(map_width, max_height);
+    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
+        let mut map = RoomsMap::new(map_width, max_height);
 
         // Start with a single map-sized rectangle
         let mut rects = vec![Rect::new(2, 2, map.width - 5, map.height - 5)];
@@ -114,7 +109,7 @@ impl BspRooms {
         result
     }
 
-    fn is_possible(&self, rect: Rect, map: &RoomBasedMap) -> bool {
+    fn is_possible(&self, rect: Rect, map: &RoomsMap) -> bool {
         let mut expanded = rect;
         expanded.x1 -= 2;
         expanded.x2 += 2;

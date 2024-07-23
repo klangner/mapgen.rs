@@ -1,4 +1,4 @@
-use mapgen::dungeon::{CellularAutomata, NoiseGenerator};
+use mapgen::cave::{CellularAutomata, NoiseGenerator};
 use mapgen::{poi::*, MapBuilder};
 
 fn main() {

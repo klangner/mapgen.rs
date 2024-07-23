@@ -9,19 +9,19 @@
 //! Example usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::dungeon::CellularAutomata;
+//! use mapgen::{CaveMap, MapFilter};
+//! use mapgen::cave::CellularAutomata;
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = CellularAutomata::new();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
 //! ```
 //!
 
-use crate::MapBuffer;
+use crate::CaveMap;
 use crate::MapFilter;
 use rand::prelude::*;
 
@@ -31,7 +31,7 @@ pub struct CellularAutomata {
 }
 
 impl MapFilter for CellularAutomata {
-    fn modify_map(&self, _rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn modify_map(&self, _rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         self.build(map)
     }
 }
@@ -43,7 +43,7 @@ impl CellularAutomata {
     }
 
     /// Generate map
-    fn build(&self, map: &MapBuffer) -> MapBuffer {
+    fn build(&self, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         for _ in 0..self.num_iteraction {
             new_map = apply_iteration(&new_map);
@@ -53,7 +53,7 @@ impl CellularAutomata {
     }
 }
 
-fn apply_iteration(map: &MapBuffer) -> MapBuffer {
+fn apply_iteration(map: &CaveMap) -> CaveMap {
     let mut new_map = map.clone();
 
     for y in 1..map.height - 1 {
@@ -87,14 +87,14 @@ mod tests {
 
     #[test]
     fn test_iteration_wal() {
-        let map = MapBuffer::new(3, 3);
+        let map = CaveMap::new(3, 3);
         let new_map = apply_iteration(&map);
         assert!(new_map.is_blocked(1, 1));
     }
 
     #[test]
     fn test_iteration_floor() {
-        let mut map = MapBuffer::new(3, 3);
+        let mut map = CaveMap::new(3, 3);
         for i in 0..3 {
             for j in 0..2 {
                 map.set_walkable(i, j, true);

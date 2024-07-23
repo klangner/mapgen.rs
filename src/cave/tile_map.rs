@@ -23,7 +23,7 @@ pub enum Symmetry {
 
 /// Map data
 #[derive(Default, Clone)]
-pub struct MapBuffer {
+pub struct CaveMap {
     pub walkable_layer: WalkableLayer,
     pub width: usize,
     pub height: usize,
@@ -31,10 +31,10 @@ pub struct MapBuffer {
     pub exit_point: Option<Vec2u>,
 }
 
-impl MapBuffer {
+impl CaveMap {
     /// Generates an empty map, consisting entirely of solid walls
-    pub fn new(width: usize, height: usize) -> MapBuffer {
-        MapBuffer {
+    pub fn new(width: usize, height: usize) -> CaveMap {
+        CaveMap {
             walkable_layer: WalkableLayer::new(width, height),
             width,
             height,
@@ -145,7 +145,7 @@ impl MapBuffer {
     }
 }
 
-impl fmt::Display for MapBuffer {
+impl fmt::Display for CaveMap {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
@@ -167,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_new_map() {
-        let map = MapBuffer::new(10, 10);
+        let map = CaveMap::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
                 assert!(map.is_blocked(i, j));
@@ -182,7 +182,7 @@ mod tests {
         #        #
         ##########
         ";
-        let map = MapBuffer::from_string(map_str);
+        let map = CaveMap::from_string(map_str);
 
         assert_eq!(map.width, 10);
         assert_eq!(map.height, 3);
@@ -202,7 +202,7 @@ mod tests {
         let x = 64;
         let y = 45;
 
-        let map = MapBuffer::new(65, 65);
+        let map = CaveMap::new(65, 65);
 
         let idx = map.xy_idx(x, y);
 

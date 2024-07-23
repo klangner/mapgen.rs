@@ -9,7 +9,7 @@
 //! Example
 //! ```
 //! use mapgen::{MapFilter, MapBuilder};
-//! use mapgen::dungeon::{
+//! use mapgen::cave::{
 //!     NoiseGenerator,
 //!     CellularAutomata,
 //! };
@@ -24,7 +24,7 @@
 //! ```
 //!  
 
-pub mod dungeon;
+pub mod cave;
 pub mod geometry;
 pub mod layer;
 pub mod metric;
@@ -37,13 +37,13 @@ pub(crate) mod random;
 use rand::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub use dungeon::*;
-pub use tile_map::{MapBuffer, Symmetry};
+pub use cave::*;
+pub use tile_map::{CaveMap, Symmetry};
 
 /// Trait which should be implemented by map modifier.
 /// Modifier takes initiall map and apply changes to it.
 pub trait MapFilter {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer;
+    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap;
 }
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
@@ -69,7 +69,7 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build(&mut self) -> MapBuffer {
+    pub fn build(&mut self) -> CaveMap {
         let system_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Can't access system time");
@@ -78,8 +78,8 @@ impl MapBuilder {
     }
 
     /// Build map using provided random number generator
-    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> MapBuffer {
-        let mut map = MapBuffer::new(self.width, self.height);
+    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> CaveMap {
+        let mut map = CaveMap::new(self.width, self.height);
 
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
@@ -96,7 +96,7 @@ impl MapBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dungeon::{CellularAutomata, NoiseGenerator};
+    use cave::{CellularAutomata, NoiseGenerator};
 
     #[test]
     fn test_ca_map() {

@@ -2,7 +2,7 @@
 //!
 use std::collections::HashSet;
 
-use super::RoomBasedMap;
+use super::RoomsMap;
 
 pub struct NearestCorridors;
 
@@ -17,7 +17,7 @@ impl NearestCorridors {
         Self {}
     }
 
-    pub fn generate(&self, map: &RoomBasedMap) -> RoomBasedMap {
+    pub fn generate(&self, map: &RoomsMap) -> RoomsMap {
         let mut new_map = map.clone();
         let mut connected: HashSet<usize> = HashSet::new();
         for (i, room) in map.rooms.iter().enumerate() {
@@ -54,7 +54,7 @@ mod tests {
 
     #[test]
     fn no_corridors_on_borders() {
-        let mut rooms = RoomBasedMap::new(10, 5);
+        let mut rooms = RoomsMap::new(10, 5);
         rooms.add_room(Rect::new(1, 1, 3, 3));
         rooms.add_room(Rect::new(6, 1, 3, 3));
         let corridors = NearestCorridors::default();

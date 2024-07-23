@@ -17,7 +17,7 @@
 //! ```
 //!
 
-use super::RoomBasedMap;
+use super::RoomsMap;
 use crate::geometry::Rect;
 use crate::random::Rng;
 use rand::prelude::*;
@@ -37,14 +37,9 @@ impl SimpleRooms {
         }
     }
 
-    pub fn generate(
-        &self,
-        map_width: usize,
-        max_height: usize,
-        rng: &mut StdRng,
-    ) -> RoomBasedMap {
+    pub fn generate(&self, map_width: usize, max_height: usize, rng: &mut StdRng) -> RoomsMap {
         // Create room with dimensions
-        let mut map = RoomBasedMap::new(map_width, max_height);
+        let mut map = RoomsMap::new(map_width, max_height);
 
         for _ in 0..self.max_rooms {
             let w = rng.random_range(self.min_room_size, self.max_room_size);

@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::dungeon::VoronoiHive;
+//! use mapgen::{CaveMap, MapFilter};
+//! use mapgen::cave::VoronoiHive;
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = VoronoiHive::new();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -17,14 +17,14 @@ use crate::MapFilter;
 use crate::{geometry::Vec2u, random::Rng};
 use rand::prelude::*;
 
-use super::MapBuffer;
+use super::CaveMap;
 
 pub struct VoronoiHive {
     n_seeds: usize,
 }
 
 impl MapFilter for VoronoiHive {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -34,7 +34,7 @@ impl VoronoiHive {
         Box::new(VoronoiHive { n_seeds: 64 })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         let seeds = self.generate_seeds(rng, map.width, map.height);
 

@@ -1,12 +1,12 @@
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
-//! use mapgen::{MapBuffer, MapFilter};
-//! use mapgen::dungeon::DrunkardsWalk;
+//! use mapgen::{CaveMap, MapFilter};
+//! use mapgen::cave::DrunkardsWalk;
 //!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = DrunkardsWalk::open_area();
-//! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
+//! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -18,7 +18,7 @@ use crate::{geometry::Vec2u, random::Rng};
 use rand::prelude::*;
 
 use super::tile_map::Symmetry;
-use super::MapBuffer;
+use super::CaveMap;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DrunkSpawnMode {
@@ -35,7 +35,7 @@ pub struct DrunkardsWalk {
 }
 
 impl MapFilter for DrunkardsWalk {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -77,7 +77,7 @@ impl DrunkardsWalk {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 1, Symmetry::Both)
     }
 
-    fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
+    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         // Set a central starting point
         let starting_position = Vec2u::new(new_map.width / 2, new_map.height / 2);
@@ -85,12 +85,7 @@ impl DrunkardsWalk {
 
         let total_tiles = new_map.width * new_map.height;
         let desired_floor_tiles = (self.floor_percent * total_tiles as f32) as usize;
-        let mut floor_tile_count = new_map
-            .walkable_layer
-            .tiles
-            .iter()
-            .filter(|&&a| a)
-            .count();
+        let mut floor_tile_count = new_map.walkable_layer.tiles.iter().filter(|&&a| a).count();
         let mut digger_count = 0;
         while floor_tile_count < desired_floor_tiles {
             let mut drunk_x;
@@ -144,12 +139,7 @@ impl DrunkardsWalk {
             }
 
             digger_count += 1;
-            floor_tile_count = new_map
-                .walkable_layer
-                .tiles
-                .iter()
-                .filter(|&&a| a)
-                .count();
+            floor_tile_count = new_map.walkable_layer.tiles.iter().filter(|&&a| a).count();
         }
 
         new_map

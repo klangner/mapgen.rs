@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[derive(Default, Clone)]
-pub struct RoomBasedMap {
+pub struct RoomsMap {
     pub width: usize,
     pub height: usize,
     pub rooms: Vec<Rect>,
@@ -17,7 +17,7 @@ pub struct RoomBasedMap {
     pub walkable_layer: WalkableLayer,
 }
 
-impl RoomBasedMap {
+impl RoomsMap {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -78,7 +78,7 @@ impl RoomBasedMap {
     }
 }
 
-impl fmt::Display for RoomBasedMap {
+impl fmt::Display for RoomsMap {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.height {
             let bytes: Vec<u8> = (0..self.width)
@@ -100,7 +100,7 @@ mod tests {
 
     #[test]
     fn test_new_map() {
-        let map = RoomBasedMap::new(10, 10);
+        let map = RoomsMap::new(10, 10);
         for i in 0..10 {
             for j in 0..10 {
                 assert!(map.is_blocked(i, j));
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_create_room() {
-        let mut map = RoomBasedMap::new(5, 5);
+        let mut map = RoomsMap::new(5, 5);
         map.add_room(Rect::new(1, 1, 3, 3));
         for x in 0..map.width {
             for y in 0..map.height {
