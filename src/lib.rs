@@ -1,11 +1,11 @@
 //! Generators for dungeon type maps.
-//! 
+//!
 //! Generators can bu used directly or they can be combined with
 //! `MapGenerator`s and `MapModifier`s
-//! 
+//!
 //! * MapGenerators are use to create initial map.
 //! * MapModifiers modify existing map.
-//! 
+//!
 //! Example
 //! ```
 //! use mapgen::{MapFilter, MapBuilder};
@@ -13,35 +13,34 @@
 //!     NoiseGenerator,
 //!     CellularAutomata,
 //! };
-//! 
+//!
 //! let map = MapBuilder::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
 //!             .build();
-//! 
+//!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
 //! ```
 //!  
 
 pub mod dungeon;
-pub mod rooms;
-pub mod poi;
 pub mod geometry;
-pub mod metric;
 pub mod layer;
+pub mod metric;
+pub mod poi;
+pub mod rooms;
 
-pub (crate) mod path;
-pub (crate) mod random;
+pub(crate) mod path;
+pub(crate) mod random;
 
-use std::time::{SystemTime, UNIX_EPOCH};
 use rand::prelude::*;
+use std::time::{SystemTime, UNIX_EPOCH};
 
-pub use filter_based_map::{MapBuffer, Symmetry};
 pub use dungeon::*;
+pub use filter_based_map::{MapBuffer, Symmetry};
 
-
-/// Trait which should be implemented by map modifier. 
+/// Trait which should be implemented by map modifier.
 /// Modifier takes initiall map and apply changes to it.
 pub trait MapFilter {
     fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer;
@@ -57,21 +56,23 @@ pub struct MapBuilder {
 impl MapBuilder {
     /// Create Map Builder with initial map generator
     pub fn new(width: usize, height: usize) -> MapBuilder {
-        MapBuilder { 
+        MapBuilder {
             width,
             height,
             modifiers: Vec::new(),
         }
     }
 
-    pub fn with(&mut self, modifier : Box<dyn MapFilter>) -> &mut MapBuilder {
+    pub fn with(&mut self, modifier: Box<dyn MapFilter>) -> &mut MapBuilder {
         self.modifiers.push(modifier);
         self
     }
 
     /// Build map using random number seeded with system time
     pub fn build(&mut self) -> MapBuffer {
-        let system_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Can't access system time");
+        let system_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Can't access system time");
         let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
         self.build_with_rng(&mut rng)
     }
@@ -79,7 +80,7 @@ impl MapBuilder {
     /// Build map using provided random number generator
     pub fn build_with_rng(&mut self, rng: &mut StdRng) -> MapBuffer {
         let mut map = MapBuffer::new(self.width, self.height);
-        
+
         // Build additional layers in turn
         for modifier in self.modifiers.iter() {
             map = modifier.modify_map(rng, &map);
@@ -87,7 +88,6 @@ impl MapBuilder {
 
         map
     }
-
 }
 
 /// ------------------------------------------------------------------------------------------------
@@ -96,10 +96,7 @@ impl MapBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dungeon::{
-        CellularAutomata,
-        NoiseGenerator,
-    };
+    use dungeon::{CellularAutomata, NoiseGenerator};
 
     #[test]
     fn test_ca_map() {
@@ -111,5 +108,4 @@ mod tests {
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);
     }
-
 }

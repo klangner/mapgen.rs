@@ -1,10 +1,12 @@
 //! Generators for dungeon type maps.
-//! 
+//!
 
 use std::fmt;
 
-use crate::{geometry::{Vec2u, Rect}, layer::WalkableLayer};
-
+use crate::{
+    geometry::{Rect, Vec2u},
+    layer::WalkableLayer,
+};
 
 #[derive(Default, Clone)]
 pub struct RoomBasedMap {
@@ -20,12 +22,12 @@ impl RoomBasedMap {
         Self {
             width,
             height,
-            walkable_layer : WalkableLayer::new(width, height),
+            walkable_layer: WalkableLayer::new(width, height),
             rooms: Vec::new(),
             corridors: Vec::new(),
         }
     }
-    
+
     /// Create room on the map at given location
     /// Room is created by setting all tiles in the room to the Floor
     pub fn add_room(&mut self, rect: Rect) {
@@ -37,7 +39,7 @@ impl RoomBasedMap {
         }
     }
 
-    pub fn add_corridor(&mut self, from: Vec2u, to:Vec2u) {
+    pub fn add_corridor(&mut self, from: Vec2u, to: Vec2u) {
         let mut corridor = Vec::new();
         let mut x = from.x;
         let mut y = from.y;
@@ -71,9 +73,8 @@ impl RoomBasedMap {
     }
 
     pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x        
+        y * self.width + x
     }
-    
 }
 
 impl fmt::Display for RoomBasedMap {

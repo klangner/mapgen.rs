@@ -1,5 +1,5 @@
 //! Helper function for random number generator
-//! 
+//!
 use rand::prelude::*;
 
 pub trait Rng {
@@ -11,7 +11,7 @@ pub trait Rng {
 
 impl Rng for StdRng {
     fn roll_dice(&mut self, min: usize, max: usize) -> usize {
-        self.random_range(min, max+1)
+        self.random_range(min, max + 1)
     }
 
     fn random_range(&mut self, start: usize, end: usize) -> usize {
@@ -29,8 +29,8 @@ impl Rng for StdRng {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
-    use rand::prelude::*;
     use super::Rng;
+    use rand::prelude::*;
 
     #[test]
     fn test_range() {
@@ -64,5 +64,4 @@ mod tests {
         assert_eq!(min, 1);
         assert_eq!(max, 7);
     }
-
 }

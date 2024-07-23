@@ -1,8 +1,7 @@
 //! Generators for dungeon type maps.
-//! 
+//!
 
 use std::fmt;
-
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct WalkableLayer {
@@ -22,10 +21,10 @@ impl WalkableLayer {
         Self {
             width,
             height,
-            walkables : vec![false; width*height],
+            walkables: vec![false; width * height],
         }
     }
-    
+
     pub fn is_walkable(&self, x: usize, y: usize) -> bool {
         if x >= self.width || y >= self.height {
             false
@@ -48,17 +47,23 @@ impl WalkableLayer {
     }
 
     pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x        
+        y * self.width + x
     }
-    
+
     /// Create layer from given string
     #[allow(clippy::needless_range_loop)]
     pub fn from_string(map_string: &str) -> Self {
-        let lines: Vec<&str> = map_string.split('\n')
+        let lines: Vec<&str> = map_string
+            .split('\n')
             .map(|l| l.trim())
             .filter(|l| !l.is_empty())
             .collect();
-        let cols = lines.iter().map(|l| l.len()).max().get_or_insert(1).to_owned();
+        let cols = lines
+            .iter()
+            .map(|l| l.len())
+            .max()
+            .get_or_insert(1)
+            .to_owned();
         let rows = lines.len();
         let mut map = Self::new(cols, rows);
 
@@ -78,20 +83,35 @@ impl WalkableLayer {
         let mut exits = Vec::new();
 
         // Cardinal directions
-        if x > 0 && self.is_walkable(x-1, y) { exits.push((x-1, y, 1.0)) };
-        if self.is_walkable(x+1, y) { exits.push((x+1, y, 1.0)) };
-        if y > 0 && self.is_walkable(x, y-1) { exits.push((x, y-1, 1.0)) };
-        if self.is_walkable(x, y+1) { exits.push((x, y+1, 1.0)) };
+        if x > 0 && self.is_walkable(x - 1, y) {
+            exits.push((x - 1, y, 1.0))
+        };
+        if self.is_walkable(x + 1, y) {
+            exits.push((x + 1, y, 1.0))
+        };
+        if y > 0 && self.is_walkable(x, y - 1) {
+            exits.push((x, y - 1, 1.0))
+        };
+        if self.is_walkable(x, y + 1) {
+            exits.push((x, y + 1, 1.0))
+        };
 
         // Diagonals
-        if x > 0 && y > 0 && self.is_walkable(x-1, y-1) { exits.push((x-1, y-1, 1.45)); }
-        if y > 0 && self.is_walkable(x+1, y-1) { exits.push((x+1, y-1, 1.45)); }
-        if x > 0 && self.is_walkable(x-1, y+1) { exits.push((x-1, y+1, 1.45)); }
-        if self.is_walkable(x+1, y+1) { exits.push((x+1, y+1, 1.45)); }
+        if x > 0 && y > 0 && self.is_walkable(x - 1, y - 1) {
+            exits.push((x - 1, y - 1, 1.45));
+        }
+        if y > 0 && self.is_walkable(x + 1, y - 1) {
+            exits.push((x + 1, y - 1, 1.45));
+        }
+        if x > 0 && self.is_walkable(x - 1, y + 1) {
+            exits.push((x - 1, y + 1, 1.45));
+        }
+        if self.is_walkable(x + 1, y + 1) {
+            exits.push((x + 1, y + 1, 1.45));
+        }
 
         exits
-    }    
- 
+    }
 }
 
 impl<T: Clone> DataLayer<T> {
@@ -99,11 +119,10 @@ impl<T: Clone> DataLayer<T> {
         Self {
             width,
             height,
-            walkables : vec![default; width*height],
+            walkables: vec![default; width * height],
         }
     }
 }
-    
 
 impl fmt::Display for WalkableLayer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -134,7 +153,7 @@ mod tests {
             }
         }
     }
-    
+
     #[test]
     fn test_from_string() {
         let map_str = "
@@ -183,5 +202,4 @@ mod tests {
 
         assert_eq!(exists.len(), 1);
     }
-
 }

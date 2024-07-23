@@ -1,8 +1,8 @@
-use rand::prelude::*;
 use mapgen::{
-    poi::{AreaStartingPosition, DistantExit, XStart, YStart}, 
-    rooms::BspInterior};
-
+    poi::{AreaStartingPosition, DistantExit, XStart, YStart},
+    rooms::BspInterior,
+};
+use rand::prelude::*;
 
 fn main() {
     let mut rng = StdRng::seed_from_u64(907647352);

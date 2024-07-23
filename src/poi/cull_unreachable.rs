@@ -1,18 +1,17 @@
 //! Remove unreachable areas from the map.
 //! It will add wall on every tile which is not accessible from the starting point.
-//! 
+//!
 
 use crate::geometry::Vec2u;
 use crate::layer::WalkableLayer;
 use crate::path::DijkstraMap;
-
 
 pub struct CullUnreachable;
 
 impl CullUnreachable {
     #[allow(dead_code)]
     pub fn new() -> Box<CullUnreachable> {
-        Box::new(CullUnreachable{})
+        Box::new(CullUnreachable {})
     }
 
     pub fn remove_walkable_tiles(starting_point: &Vec2u, map: &WalkableLayer) -> WalkableLayer {

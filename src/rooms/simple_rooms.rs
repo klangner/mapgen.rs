@@ -1,27 +1,26 @@
 //! Random rooms map generator.
-//! 
-//! Try to generate rooms of different size to fill the map area. 
+//!
+//! Try to generate rooms of different size to fill the map area.
 //! Rooms will not overlap.
-//! 
+//!
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::rooms::SimpleRooms;
-//! 
+//!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let simple_rooms = SimpleRooms::default();
 //! let map = simple_rooms.generate_rooms(80, 50, &mut rng);
-//! 
+//!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
 //! ```
-//! 
+//!
 
-use rand::prelude::*;
+use super::RoomBasedMap;
 use crate::geometry::Rect;
 use crate::random::Rng;
-use super::RoomBasedMap;
-
+use rand::prelude::*;
 
 pub struct SimpleRooms {
     max_rooms: usize,
@@ -38,7 +37,12 @@ impl SimpleRooms {
         }
     }
 
-    pub fn generate_rooms(&self, map_width: usize, max_height: usize, rng : &mut StdRng) -> RoomBasedMap {
+    pub fn generate_rooms(
+        &self,
+        map_width: usize,
+        max_height: usize,
+        rng: &mut StdRng,
+    ) -> RoomBasedMap {
         // Create room with dimensions
         let mut map = RoomBasedMap::new(map_width, max_height);
 
@@ -60,6 +64,10 @@ impl SimpleRooms {
 
 impl Default for SimpleRooms {
     fn default() -> Self {
-        Self { max_rooms: 30, min_room_size: 6, max_room_size: 10 }
+        Self {
+            max_rooms: 30,
+            min_room_size: 6,
+            max_room_size: 10,
+        }
     }
 }

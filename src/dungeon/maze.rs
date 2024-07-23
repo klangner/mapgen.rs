@@ -3,40 +3,39 @@
 //! use rand::prelude::*;
 //! use mapgen::{MapBuffer, MapFilter};
 //! use mapgen::dungeon::MazeBuilder;
-//! 
+//!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let gen = MazeBuilder::new();
 //! let map = gen.modify_map(&mut rng, &MapBuffer::new(80, 50));
-//! 
+//!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
 //! ```
-//! 
+//!
 
-use rand::prelude::*;
-use crate::MapFilter;
 use crate::random::Rng;
+use crate::MapFilter;
+use rand::prelude::*;
 
 use super::MapBuffer;
-
 
 pub struct MazeBuilder {}
 
 impl MapFilter for MazeBuilder {
-    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer)  -> MapBuffer {
+    fn modify_map(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
         self.build(rng, map)
     }
 }
 
 impl MazeBuilder {
     pub fn new() -> Box<MazeBuilder> {
-        Box::new(MazeBuilder{})
+        Box::new(MazeBuilder {})
     }
 
     #[allow(clippy::map_entry)]
     fn build(&self, rng: &mut StdRng, map: &MapBuffer) -> MapBuffer {
         let mut new_map = map.clone();
-        let mut maze = Grid::new((map.width as i32/ 2)-2, (map.height as i32/ 2)-2, rng);
+        let mut maze = Grid::new((map.width as i32 / 2) - 2, (map.height as i32 / 2) - 2, rng);
         maze.generate_maze(&mut new_map);
         new_map
     }
@@ -44,10 +43,10 @@ impl MazeBuilder {
 
 /* Maze code taken under MIT from https://github.com/cyucelen/mazeGenerator/ */
 
-const TOP : usize = 0;
-const RIGHT : usize = 1;
-const BOTTOM : usize = 2;
-const LEFT : usize = 3;
+const TOP: usize = 0;
+const RIGHT: usize = 1;
+const BOTTOM: usize = 2;
+const LEFT: usize = 3;
 
 #[derive(Copy, Clone)]
 struct Cell {
@@ -59,31 +58,28 @@ struct Cell {
 
 impl Cell {
     fn new(row: i32, column: i32) -> Cell {
-        Cell{
+        Cell {
             row,
             column,
             walls: [true, true, true, true],
-            visited: false
+            visited: false,
         }
     }
 
-    fn remove_walls(&mut self, next : &mut Cell) {
+    fn remove_walls(&mut self, next: &mut Cell) {
         let x = self.column - next.column;
         let y = self.row - next.row;
 
         if x == 1 {
             self.walls[LEFT] = false;
             next.walls[RIGHT] = false;
-        }
-        else if x == -1 {
+        } else if x == -1 {
             self.walls[RIGHT] = false;
             next.walls[LEFT] = false;
-        }
-        else if y == 1 {
+        } else if y == 1 {
             self.walls[TOP] = false;
             next.walls[BOTTOM] = false;
-        }
-        else if y == -1 {
+        } else if y == -1 {
             self.walls[BOTTOM] = false;
             next.walls[TOP] = false;
         }
@@ -96,18 +92,18 @@ struct Grid<'a> {
     cells: Vec<Cell>,
     backtrace: Vec<usize>,
     current: usize,
-    rng : &'a mut StdRng
+    rng: &'a mut StdRng,
 }
 
 impl<'a> Grid<'a> {
-    fn new(width: i32, height:i32, rng: &mut StdRng) -> Grid {
-        let mut grid = Grid{
+    fn new(width: i32, height: i32, rng: &mut StdRng) -> Grid {
+        let mut grid = Grid {
             width,
             height,
             cells: Vec::new(),
             backtrace: Vec::new(),
             current: 0,
-            rng
+            rng,
         };
 
         for row in 0..height {
@@ -120,7 +116,7 @@ impl<'a> Grid<'a> {
     }
 
     fn calculate_index(&self, row: i32, column: i32) -> i32 {
-        if row < 0 || column < 0 || column > self.width-1 || row > self.height-1 {
+        if row < 0 || column < 0 || column > self.width - 1 || row > self.height - 1 {
             -1
         } else {
             column + (row * self.width)
@@ -128,16 +124,16 @@ impl<'a> Grid<'a> {
     }
 
     fn get_available_neighbors(&self) -> Vec<usize> {
-        let mut neighbors : Vec<usize> = Vec::new();
+        let mut neighbors: Vec<usize> = Vec::new();
 
         let current_row = self.cells[self.current].row;
         let current_column = self.cells[self.current].column;
 
-        let neighbor_indices : [i32; 4] = [
-            self.calculate_index(current_row -1, current_column),
+        let neighbor_indices: [i32; 4] = [
+            self.calculate_index(current_row - 1, current_column),
             self.calculate_index(current_row, current_column + 1),
             self.calculate_index(current_row + 1, current_column),
-            self.calculate_index(current_row, current_column - 1)
+            self.calculate_index(current_row, current_column - 1),
         ];
 
         for i in neighbor_indices.iter() {
@@ -155,7 +151,7 @@ impl<'a> Grid<'a> {
             if neighbors.len() == 1 {
                 return Some(neighbors[0]);
             } else {
-                return Some(neighbors[(self.rng.roll_dice(1, neighbors.len())-1) as usize]);
+                return Some(neighbors[(self.rng.roll_dice(1, neighbors.len()) - 1) as usize]);
             }
         }
         None
@@ -200,17 +196,27 @@ impl<'a> Grid<'a> {
 
     fn copy_to_map(&self, map: &mut MapBuffer) {
         // Clear the map
-        for i in map.walkable_layer.walkables.iter_mut() { *i = false; }
+        for i in map.walkable_layer.walkables.iter_mut() {
+            *i = false;
+        }
 
         for cell in self.cells.iter() {
             let x = (cell.column as usize + 1) * 2;
             let y = (cell.row as usize + 1) * 2;
 
             map.set_walkable(x, y, true);
-            if !cell.walls[TOP] { map.set_walkable(x, y-1, true) }
-            if !cell.walls[RIGHT] { map.set_walkable(x+1, y, true) }
-            if !cell.walls[BOTTOM] { map.set_walkable(x, y+1, true) }
-            if !cell.walls[LEFT] { map.set_walkable(x-1, y, true) }
+            if !cell.walls[TOP] {
+                map.set_walkable(x, y - 1, true)
+            }
+            if !cell.walls[RIGHT] {
+                map.set_walkable(x + 1, y, true)
+            }
+            if !cell.walls[BOTTOM] {
+                map.set_walkable(x, y + 1, true)
+            }
+            if !cell.walls[LEFT] {
+                map.set_walkable(x - 1, y, true)
+            }
         }
     }
 }

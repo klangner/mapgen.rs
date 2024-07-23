@@ -1,17 +1,17 @@
 //! Support function for 2D geometry
-//! 
+//!
 
 /// Position on the map
 #[derive(Default, PartialEq, Copy, Clone, Debug, Eq, Hash)]
 pub struct Vec2u {
     pub x: usize,
-    pub y: usize
+    pub y: usize,
 }
 
 impl Vec2u {
     /// Create new point
     pub fn new(x: usize, y: usize) -> Vec2u {
-        Vec2u {x, y}
+        Vec2u { x, y }
     }
 
     /// Create new point from i32 coords
@@ -30,28 +30,33 @@ impl Vec2u {
 /// Rectangle region on the map
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct Rect {
-    pub x1 : usize,
-    pub x2 : usize,
-    pub y1 : usize,
-    pub y2 : usize
+    pub x1: usize,
+    pub x2: usize,
+    pub y1: usize,
+    pub y2: usize,
 }
 
 impl Rect {
     pub fn new(x: usize, y: usize, width: usize, height: usize) -> Rect {
-        Rect{x1:x, y1:y, x2:x+width, y2:y+height}
+        Rect {
+            x1: x,
+            y1: y,
+            x2: x + width,
+            y2: y + height,
+        }
     }
 
-    pub fn new_i32(x:i32, y: i32, width:i32, height:i32) -> Rect {
+    pub fn new_i32(x: i32, y: i32, width: i32, height: i32) -> Rect {
         Rect::new(x as usize, y as usize, width as usize, height as usize)
     }
 
     /// Returns true if this overlaps with other
-    pub fn intersect(&self, other:&Rect) -> bool {
+    pub fn intersect(&self, other: &Rect) -> bool {
         self.x1 <= other.x2 && self.x2 >= other.x1 && self.y1 <= other.y2 && self.y2 >= other.y1
     }
 
     pub fn center(&self) -> Vec2u {
-        Vec2u::new((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+        Vec2u::new((self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2)
     }
 
     pub fn width(&self) -> usize {
@@ -75,12 +80,16 @@ impl Rect {
 /// Example:
 /// ```
 /// use mapgen::geometry::usize_abs;
-/// 
+///
 /// assert_eq!(usize_abs(5, 3), 2);
 /// assert_eq!(usize_abs(3, 5), 2);
 /// ```
 pub fn usize_abs(x: usize, y: usize) -> usize {
-    if x >= y {x - y} else {y - x}
+    if x >= y {
+        x - y
+    } else {
+        y - x
+    }
 }
 
 /// ------------------------------------------------------------------------------------------------
@@ -111,5 +120,4 @@ mod tests {
         assert_eq!(rect1.width(), 40);
         assert_eq!(rect1.height(), 30);
     }
-
 }

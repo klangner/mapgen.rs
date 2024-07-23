@@ -1,28 +1,27 @@
 //! Random rooms map generator.
-//! 
-//! Try to generate rooms of different size to fill the map area. 
+//!
+//! Try to generate rooms of different size to fill the map area.
 //! Rooms will not overlap.
-//! 
+//!
 //! Example generator usage:
 //! ```
 //! use rand::prelude::*;
 //! use mapgen::rooms::BspRooms;
-//! 
+//!
 //! let mut rng = StdRng::seed_from_u64(100);
 //! let bsp = BspRooms::default();
 //! let map = bsp.generate_rooms(80, 50, &mut rng);
-//! 
+//!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
 //! ```
-//! 
+//!
 
-use rand::prelude::*;
 use crate::geometry::Rect;
 use crate::random::Rng;
+use rand::prelude::*;
 
 use super::RoomBasedMap;
-
 
 pub struct BspRooms {
     max_split: usize,
@@ -30,16 +29,19 @@ pub struct BspRooms {
 
 impl BspRooms {
     pub fn new(max_split: usize) -> Self {
-        Self {
-            max_split,
-        }
+        Self { max_split }
     }
 
-    pub fn generate_rooms(&self, map_width: usize, max_height: usize, rng : &mut StdRng) -> RoomBasedMap {
+    pub fn generate_rooms(
+        &self,
+        map_width: usize,
+        max_height: usize,
+        rng: &mut StdRng,
+    ) -> RoomBasedMap {
         let mut map = RoomBasedMap::new(map_width, max_height);
 
         // Start with a single map-sized rectangle
-        let mut rects = vec![Rect::new(2, 2, map.width-5, map.height-5)];
+        let mut rects = vec![Rect::new(2, 2, map.width - 5, map.height - 5)];
         let first_room = rects[0];
         rects.append(&mut self.split_into_subrects(first_room)); // Divide the first room
 
@@ -65,16 +67,33 @@ impl BspRooms {
         let half_width = usize::max(width / 2, 1);
         let half_height = usize::max(height / 2, 1);
 
-        rects.push(Rect::new( rect.x1, rect.y1, half_width, half_height ));
-        rects.push(Rect::new( rect.x1, rect.y1 + half_height, half_width, half_height ));
-        rects.push(Rect::new( rect.x1 + half_width, rect.y1, half_width, half_height ));
-        rects.push(Rect::new( rect.x1 + half_width, rect.y1 + half_height, half_width, half_height ));
+        rects.push(Rect::new(rect.x1, rect.y1, half_width, half_height));
+        rects.push(Rect::new(
+            rect.x1,
+            rect.y1 + half_height,
+            half_width,
+            half_height,
+        ));
+        rects.push(Rect::new(
+            rect.x1 + half_width,
+            rect.y1,
+            half_width,
+            half_height,
+        ));
+        rects.push(Rect::new(
+            rect.x1 + half_width,
+            rect.y1 + half_height,
+            half_width,
+            half_height,
+        ));
 
         rects
     }
 
-    fn get_random_rect(&self, rng : &mut StdRng, rects: &[Rect]) -> Rect {
-        if rects.len() == 1 { return rects[0]; }
+    fn get_random_rect(&self, rng: &mut StdRng, rects: &[Rect]) -> Rect {
+        if rects.len() == 1 {
+            return rects[0];
+        }
         let idx = rng.random_range(0, rects.len());
         rects[idx]
     }
@@ -105,15 +124,25 @@ impl BspRooms {
         let mut can_build = true;
 
         for r in map.rooms.iter() {
-            if r.intersect(&rect) { can_build = false; }
+            if r.intersect(&rect) {
+                can_build = false;
+            }
         }
 
-        for y in expanded.y1 ..= expanded.y2 {
-            for x in expanded.x1 ..= expanded.x2 {
-                if x > map.width - 2 { can_build = false; }
-                if y > map.height - 2 { can_build = false; }
-                if x < 1 { can_build = false; }
-                if y < 1 { can_build = false; }
+        for y in expanded.y1..=expanded.y2 {
+            for x in expanded.x1..=expanded.x2 {
+                if x > map.width - 2 {
+                    can_build = false;
+                }
+                if y > map.height - 2 {
+                    can_build = false;
+                }
+                if x < 1 {
+                    can_build = false;
+                }
+                if y < 1 {
+                    can_build = false;
+                }
                 if can_build && map.is_walkable(x as usize, y as usize) {
                     can_build = false;
                 }
@@ -138,17 +167,16 @@ mod tests {
 
     #[test]
     fn no_corridors_on_borders() {
-         let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = StdRng::seed_from_u64(907647352);
         let bsp = BspRooms::default();
         let map = bsp.generate_rooms(80, 50, &mut rng);
         for i in 0..80 {
             assert!(map.is_blocked(i, 0));
             assert!(map.is_blocked(i, 49));
-        } 
+        }
         for j in 0..50 {
             assert!(map.is_blocked(0, j));
             assert!(map.is_blocked(79, j));
-        } 
+        }
     }
-
 }

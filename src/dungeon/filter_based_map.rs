@@ -2,35 +2,40 @@
 //! Those elements are used by MapFilters to generate map in several steps.
 //! E.g. Most MapFilters will only update few MapInfo elements (like which cell is walkable) and some
 //! other will depend on provided data (like adding exit point)
-//! 
-//! This structure is not intented to be your map in the game. 
+//!
+//! This structure is not intented to be your map in the game.
 //! The MapBuilder builds from this data the Map structure which is more suites for it.
-//! 
+//!
 
+use crate::{
+    geometry::{usize_abs, Vec2u},
+    layer::WalkableLayer,
+};
 use std::fmt;
-use crate::{geometry::{usize_abs, Vec2u}, layer::WalkableLayer};
-
 
 #[derive(PartialEq, Copy, Clone)]
-pub enum Symmetry { None, Horizontal, Vertical, Both }
-
+pub enum Symmetry {
+    None,
+    Horizontal,
+    Vertical,
+    Both,
+}
 
 /// Map data
 #[derive(Default, Clone)]
 pub struct MapBuffer {
     pub walkable_layer: WalkableLayer,
-    pub width : usize,
-    pub height : usize,
+    pub width: usize,
+    pub height: usize,
     pub starting_point: Option<Vec2u>,
     pub exit_point: Option<Vec2u>,
 }
 
 impl MapBuffer {
-
     /// Generates an empty map, consisting entirely of solid walls
     pub fn new(width: usize, height: usize) -> MapBuffer {
-        MapBuffer{
-            walkable_layer : WalkableLayer::new(width, height),
+        MapBuffer {
+            walkable_layer: WalkableLayer::new(width, height),
             width,
             height,
             starting_point: None,
@@ -40,7 +45,7 @@ impl MapBuffer {
 
     /// Create map from given string
     pub fn from_string(map_string: &str) -> Self {
-        let walkable_layer = WalkableLayer::from_string(map_string); 
+        let walkable_layer = WalkableLayer::from_string(map_string);
         Self {
             width: walkable_layer.width,
             height: walkable_layer.height,
@@ -67,9 +72,9 @@ impl MapBuffer {
     }
 
     pub fn xy_idx(&self, x: usize, y: usize) -> usize {
-        y * self.width + x        
+        y * self.width + x
     }
-    
+
     pub fn idx_point(&self, idx: usize) -> Vec2u {
         Vec2u {
             x: idx % self.width,
@@ -124,9 +129,13 @@ impl MapBuffer {
             }
             _ => {
                 let half_brush_size = brush_size / 2;
-                for brush_y in y-half_brush_size .. y+half_brush_size {
-                    for brush_x in x-half_brush_size .. x+half_brush_size {
-                        if brush_x > 1 && brush_x < self.width-1 && brush_y > 1 && brush_y < self.height-1 {
+                for brush_y in y - half_brush_size..y + half_brush_size {
+                    for brush_x in x - half_brush_size..x + half_brush_size {
+                        if brush_x > 1
+                            && brush_x < self.width - 1
+                            && brush_y > 1
+                            && brush_y < self.height - 1
+                        {
                             self.set_walkable(brush_x, brush_y, true);
                         }
                     }
