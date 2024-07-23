@@ -6,6 +6,12 @@ use super::RoomBasedMap;
 
 pub struct NearestCorridors;
 
+impl Default for NearestCorridors {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl NearestCorridors {
     pub fn new() -> Self {
         Self {}

@@ -63,7 +63,7 @@ impl DijkstraMap {
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
     fn build(&mut self, map: &WalkableLayer, starting_point: &Vec2u) {
-        let mapsize: usize = (self.size_x * self.size_y) as usize;
+        let mapsize: usize = self.size_x * self.size_y;
         let mut open_list: VecDeque<((usize, usize), f32)> = VecDeque::with_capacity(mapsize);
 
         open_list.push_back(((starting_point.x, starting_point.y), 0.0));

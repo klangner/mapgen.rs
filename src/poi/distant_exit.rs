@@ -14,7 +14,7 @@ impl DistantExit {
     pub fn find(starting_point: &Vec2u, map: &WalkableLayer) -> Vec2u {
         let mut best_idx = 0;
         let mut best_value = 0.0;
-        let dijkstra_map = DijkstraMap::new(map, &starting_point);
+        let dijkstra_map = DijkstraMap::new(map, starting_point);
         for (i, &value) in dijkstra_map.tiles.iter().enumerate() {
             if value < f32::MAX && value > best_value {
                 best_value = value;

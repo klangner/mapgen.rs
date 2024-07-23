@@ -103,8 +103,8 @@ impl BspRooms {
         let rect_width = rect.width();
         let rect_height = rect.height();
 
-        let w = usize::max(3, rng.random_range(1, usize::min(rect_width as usize, 20))) + 1;
-        let h = usize::max(3, rng.random_range(1, usize::min(rect_height as usize, 20))) + 1;
+        let w = usize::max(3, rng.random_range(1, usize::min(rect_width, 20))) + 1;
+        let h = usize::max(3, rng.random_range(1, usize::min(rect_height, 20))) + 1;
 
         result.x1 += rng.random_range(0, 6);
         result.y1 += rng.random_range(0, 6);
@@ -143,7 +143,7 @@ impl BspRooms {
                 if y < 1 {
                     can_build = false;
                 }
-                if can_build && map.is_walkable(x as usize, y as usize) {
+                if can_build && map.is_walkable(x, y) {
                     can_build = false;
                 }
             }

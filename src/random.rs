@@ -36,7 +36,7 @@ mod tests {
     fn test_range() {
         let mut rng = StdRng::seed_from_u64(100);
         let x = rng.random_range(5, 8);
-        assert!(x >= 5 && x < 8);
+        assert!((5..8).contains(&x));
     }
 
     #[test]

@@ -116,7 +116,7 @@ mod tests {
                 if x == 0 || y == 0 || x == 4 || y == 4 {
                     assert!(map.is_blocked(x, y));
                 } else {
-                    assert!(map.is_blocked(x, y) == false);
+                    assert!(!map.is_blocked(x, y));
                 }
             }
         }

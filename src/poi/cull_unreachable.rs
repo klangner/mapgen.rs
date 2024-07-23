@@ -17,7 +17,7 @@ impl CullUnreachable {
     pub fn remove_walkable_tiles(starting_point: &Vec2u, map: &WalkableLayer) -> WalkableLayer {
         let mut new_map = map.clone();
 
-        let dijkstra_map = DijkstraMap::new(map, &starting_point);
+        let dijkstra_map = DijkstraMap::new(map, starting_point);
         for i in 0..new_map.walkables.len() {
             if new_map.walkables[i] {
                 let distance_to_start = dijkstra_map.tiles[i];

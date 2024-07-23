@@ -151,7 +151,7 @@ impl<'a> Grid<'a> {
             if neighbors.len() == 1 {
                 return Some(neighbors[0]);
             } else {
-                return Some(neighbors[(self.rng.roll_dice(1, neighbors.len()) - 1) as usize]);
+                return Some(neighbors[self.rng.roll_dice(1, neighbors.len()) - 1]);
             }
         }
         None

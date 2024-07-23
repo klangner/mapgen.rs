@@ -39,7 +39,7 @@ impl VoronoiHive {
         let seeds = self.generate_seeds(rng, map.width, map.height);
 
         let mut voronoi_distance = vec![(0, 0.0f32); self.n_seeds];
-        let mut voronoi_membership: Vec<i32> = vec![0; map.width as usize * map.height as usize];
+        let mut voronoi_membership: Vec<i32> = vec![0; map.width * map.height];
         for (i, vid) in voronoi_membership.iter_mut().enumerate() {
             let x = i % map.width;
             let y = i / map.width;

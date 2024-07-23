@@ -29,7 +29,7 @@ impl WalkableLayer {
         if x >= self.width || y >= self.height {
             false
         } else {
-            let idx = (y as usize) * self.width + (x as usize);
+            let idx = y * self.width + x;
             self.walkables[idx]
         }
     }
@@ -41,7 +41,7 @@ impl WalkableLayer {
     /// Modify tile at the given location
     pub fn set_walkable(&mut self, x: usize, y: usize, set: bool) {
         if x < self.width && y < self.height {
-            let idx = self.xy_idx(x as usize, y as usize);
+            let idx = self.xy_idx(x, y);
             self.walkables[idx] = set;
         }
     }
