@@ -11,45 +11,58 @@ use mapgen::{layer::WalkableLayer, MapBuilder, MazeBuilder};
 const WINDOW_WIDTH: usize = 1280;
 const WINDOW_HEIGHT: usize = 768;
 
-const TILE_SIZE: f32 = 32.;
+const MAP_WIDTH: u32 = 80;
+const MAP_HEIGHT: u32 = 48;
+
+// Tileset
+const TILE_SIZE: u32 = 32;
 
 
 #[derive(Debug)]
 struct MapView {
     camera: Camera2D,
+    move_speed: f32,
+    texture: Texture2D,
 }
 
 impl MapView {
-    pub fn new() -> Self {
-        let mut camera = Camera2D::from_display_rect(Rect::new(0., 0., WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32));
-        camera.zoom = Vec2::new(2.0 / WINDOW_WIDTH as f32, 2.0 / WINDOW_HEIGHT as f32);
+    pub fn new(texture: Texture2D) -> Self {
+        // let mut camera = Camera2D::from_display_rect(Rect::new(0., 0., WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32));
+        let width = (MAP_WIDTH * TILE_SIZE) as f32;
+        let height = (MAP_HEIGHT * TILE_SIZE) as f32;
+        let mut camera = Camera2D::from_display_rect(Rect::new(0., 0., width, height));
+        camera.zoom = Vec2::new(2.0 / width, 2.0 / height);
+        camera.target = Vec2::new((MAP_WIDTH * TILE_SIZE) as f32 / 2., (MAP_HEIGHT * TILE_SIZE) as f32 / 2.);
+
         Self {
-            camera 
+            camera,
+            move_speed: 400., 
+            texture,
         }
     }
 
     pub fn zoom_in(&mut self, _dt: f32) {
-        self.camera.zoom = Vec2::new(self.camera.zoom.x * 1.1,  self.camera.zoom.y * 1.1);
+        self.camera.zoom = Vec2::new(self.camera.zoom.x * 1.05,  self.camera.zoom.y * 1.05);
     }
 
     pub fn zoom_out(&mut self, _dt: f32) {
-        self.camera.zoom = Vec2::new(self.camera.zoom.x * 0.9,  self.camera.zoom.y * 0.9);
+        self.camera.zoom = Vec2::new(self.camera.zoom.x * 0.95,  self.camera.zoom.y * 0.95);
     }
 
     pub fn move_right(&mut self, dt: f32) {
-        self.camera.target.x += 100.0 * dt;
+        self.camera.target.x += self.move_speed * dt;
     }
 
     pub fn move_left(&mut self, dt: f32) {
-        self.camera.target.x -= 100.0 * dt;
+        self.camera.target.x -= self.move_speed * dt;
     }
 
     pub fn move_down(&mut self, dt: f32) {
-        self.camera.target.y += 100.0 * dt;
+        self.camera.target.y += self.move_speed * dt;
     }
 
     pub fn move_up(&mut self, dt: f32) {
-        self.camera.target.y -= 100.0 * dt;
+        self.camera.target.y -= self.move_speed * dt;
     }
 
     fn draw(&self, map: &WalkableLayer) {
@@ -58,13 +71,22 @@ impl MapView {
         clear_background(LIGHTGRAY);
         for x in 0..map.width {
             for y in 0..map.height {
-                let color = if map.is_blocked(x, y) { DARKGRAY } else { WHITE };
-                draw_rectangle(
-                    x as f32 * TILE_SIZE, 
-                    y as f32 * TILE_SIZE, 
-                    TILE_SIZE, 
-                    TILE_SIZE, 
-                    color);
+                let (frame_x, frame_y) = if map.is_walkable(x, y) { (0,11) } else { (0,1) };
+                let source = Rect::new(
+                    (frame_x * TILE_SIZE) as f32,
+                    (frame_y * TILE_SIZE) as f32, 
+                    TILE_SIZE as f32, 
+                    TILE_SIZE as f32);
+                let params = DrawTextureParams {
+                    source: Some(source),
+                    ..Default::default()
+                };
+                draw_texture_ex(
+                    &self.texture, 
+                    (x * TILE_SIZE) as f32, 
+                    (y * TILE_SIZE) as f32, 
+                    WHITE, 
+                    params);
             }
         }
     }
@@ -84,10 +106,12 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let input: Input = Input::new();
-    let mut map_view = MapView::new();
-    let map = MapBuilder::new(100, 80)
+    let map = MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
         .with(MazeBuilder::new())
         .build();  
+    let tileset = load_texture("assets/tiles.png").await.unwrap();
+    tileset.set_filter(FilterMode::Nearest);
+    let mut map_view = MapView::new(tileset);
 
     loop {
         let dt = get_frame_time();
