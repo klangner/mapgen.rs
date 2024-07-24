@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/klangner/mapgen.rs"
 homepage = "https://github.com/klangner/mapgen.rs"
 documentation = "https://docs.rs/mapgen"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 rand = "0.8"
