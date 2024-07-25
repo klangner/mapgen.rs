@@ -1,21 +1,14 @@
 // Draw map on the screen
 
 mod input;
+mod generator;
+mod settings;
 
+use generator::*;
 use input::{Action, Input};
+use settings::*;
 use macroquad::prelude::*;
-use mapgen::{layer::WalkableLayer, MapBuilder, MazeBuilder};
-
-
-// Settings
-const WINDOW_WIDTH: usize = 1280;
-const WINDOW_HEIGHT: usize = 768;
-
-const MAP_WIDTH: u32 = 80;
-const MAP_HEIGHT: u32 = 48;
-
-// Tileset
-const TILE_SIZE: u32 = 32;
+use mapgen::layer::WalkableLayer;
 
 
 #[derive(Debug)]
@@ -92,7 +85,6 @@ impl MapView {
     }
 }
 
-
 fn window_conf() -> Conf {
     Conf {
         window_title: "Map viewer".to_owned(),
@@ -106,9 +98,7 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let input: Input = Input::new();
-    let map = MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
-        .with(MazeBuilder::new())
-        .build();  
+    let mut map = MapGenerator::new();
     let tileset = load_texture("assets/tiles.png").await.unwrap();
     tileset.set_filter(FilterMode::Nearest);
     let mut map_view = MapView::new(tileset);
@@ -141,9 +131,10 @@ async fn main() {
             map_view.move_down(dt);
         }
 
-        // Update world (nothing there yet)
+        // Update world 
+        map.process_actions();
         // Draw world
-        map_view.draw(&map.walkable_layer);
+        map_view.draw(&map.tileset);
         
         next_frame().await
     }
