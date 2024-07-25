@@ -3,7 +3,7 @@
 //! * Generate room with one of the generators ([SimpleRooms], [BspInterior], etc)
 //! * Generate corridors to connect rooms e.g [NearestCorridors]
 //! * Then we can use add start end exit point [crate::poi::AreaStartingPosition]
-//! and [crate::poi::CullUnreachable]
+//!     and [crate::poi::CullUnreachable]
 //!
 
 pub mod bsp_interior;
