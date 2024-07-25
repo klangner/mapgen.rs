@@ -1,3 +1,5 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use rand::prelude::*;
 use super::settings::*;
 use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
@@ -12,9 +14,9 @@ impl MapGenerator {
     pub fn new() -> Self {
         Self { tileset: Self::maze() }
     }
-
+    
     pub fn bsp_interior() -> WalkableLayer {
-        let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = Self::rng();
         let bsp = BspInterior::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -23,7 +25,7 @@ impl MapGenerator {
     }
     
     pub fn bsp_room() -> WalkableLayer {
-        let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = Self::rng();
         let bsp = BspRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -54,7 +56,7 @@ impl MapGenerator {
     }
 
     pub fn simple_rooms() -> WalkableLayer {
-        let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = Self::rng();
         let bsp = SimpleRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -68,9 +70,17 @@ impl MapGenerator {
             .build()
             .walkable_layer
     }
+    
+    fn rng() -> StdRng {
+        let system_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Can't access system time");
+        StdRng::seed_from_u64(system_time.as_millis() as u64)
+    }
+
 
     pub fn process_actions(&mut self) {
-        if is_key_down(KeyCode::Key1) {
+        if is_key_pressed(KeyCode::Key1) {
             self.tileset = Self::bsp_interior();
         } else if is_key_pressed(KeyCode::Key2) {
             self.tileset = Self::bsp_room();
