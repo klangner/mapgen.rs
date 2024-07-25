@@ -7,16 +7,18 @@
         html,
         body,
         canvas {
-            margin: 0px;
+            margin: 10px;
             padding: 0px;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: absolute;
-            background: black;
+            width: 1280px;
+            height: 768px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            /* background: black; */
             z-index: 0;
         }
     </style>
+
 </head>
 
 <body>
@@ -24,6 +26,19 @@
     <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
     <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
     <script>load("demo.wasm");</script> <!-- Your compiled wasm file -->
+    
+    <h3>Keybindings</h3>
+    <ul>
+        <li>WASD or arrow keys - Panning the map</li>
+        <li>[, ] - Zoom Out, Zoom In</li>
+        <li>1 - BSP Interior</li> 
+        <li>2 - BSP Rooms</li>
+        <li>3 - Cellular Automata</li>
+        <li>4 - Drunkar Walk</li>
+        <li>5 - Maze</li>
+        <li>6 - Simple rooms</li>
+        <li>7 - Voronoi Hive</li>
+    </ul>
 </body>
 
 </html>

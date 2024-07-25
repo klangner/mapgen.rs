@@ -17,7 +17,7 @@
 //! let map = MapBuilder::new(80, 50)
 //!             .with(NoiseGenerator::uniform())
 //!             .with(CellularAutomata::new())
-//!             .build();
+//!             .build(100);
 //!
 //! assert_eq!(map.width, 80);
 //! assert_eq!(map.height, 50);
@@ -32,9 +32,7 @@ pub mod poi;
 pub mod rooms;
 
 pub(crate) mod path;
-// pub(crate) mod random;
-
-use std::time::{SystemTime, UNIX_EPOCH};
+// use std::time::{SystemTime, UNIX_EPOCH};
 
 pub use cave::*;
 use fastrand::Rng;
@@ -69,11 +67,8 @@ impl MapBuilder {
     }
 
     /// Build map using random number seeded with system time
-    pub fn build(&mut self) -> CaveMap {
-        let system_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Can't access system time");
-        let mut rng = Rng::with_seed(system_time.as_millis() as u64);
+    pub fn build(&mut self, seed: u64) -> CaveMap {
+        let mut rng = Rng::with_seed(seed);
         self.build_with_rng(&mut rng)
     }
 
@@ -103,7 +98,7 @@ mod tests {
         let map = MapBuilder::new(80, 50)
             .with(NoiseGenerator::new(0.55))
             .with(CellularAutomata::new())
-            .build();
+            .build(100);
 
         assert_eq!(map.width, 80);
         assert_eq!(map.height, 50);

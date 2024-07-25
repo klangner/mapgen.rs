@@ -14,9 +14,7 @@
 //!
 
 use fastrand::Rng;
-
 use crate::MapFilter;
-
 use super::CaveMap;
 
 pub struct MazeBuilder {}

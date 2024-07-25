@@ -131,9 +131,9 @@ async fn main() {
             map_view.move_down(dt);
         }
 
-        // Update world 
+        // // Update world 
         map.process_actions();
-        // Draw world
+        // // Draw world
         map_view.draw(&map.tileset);
         
         next_frame().await

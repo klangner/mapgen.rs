@@ -1,7 +1,7 @@
 use fastrand::Rng;
-use macroquad::time::get_time;
+// use macroquad::time::get_time;
 use super::settings::*;
-use macroquad::input::{is_key_pressed, KeyCode};
+use macroquad::{input::{is_key_pressed, KeyCode}, time::get_time};
 use mapgen::{layer::WalkableLayer, rooms::*, cave::*, MapBuilder, MazeBuilder};
 
 
@@ -33,24 +33,27 @@ impl MapGenerator {
     }
     
     pub fn maze() -> WalkableLayer {
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
             .with(MazeBuilder::new())
-            .build()
+            .build_with_rng(&mut rng)
             .walkable_layer
     }
     
     pub fn cellular_automata() -> WalkableLayer {
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
             .with(NoiseGenerator::uniform())
             .with(CellularAutomata::new())
-            .build()
+            .build_with_rng(&mut rng)
             .walkable_layer
     }
 
     pub fn drunkar_walk() -> WalkableLayer {
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
             .with(DrunkardsWalk::open_halls())
-            .build()
+            .build_with_rng(&mut rng)
             .walkable_layer
     }
 
@@ -64,9 +67,10 @@ impl MapGenerator {
     }
     
     pub fn voronoi() -> WalkableLayer {
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
             .with(VoronoiHive::new())
-            .build()
+            .build_with_rng(&mut rng)
             .walkable_layer
     }
     
