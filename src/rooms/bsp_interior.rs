@@ -9,7 +9,7 @@
 //! use fastrand::Rng;
 //!
 //! let mut rng = Rng::with_seed(100);
-//! let bsp = BspInterior::default();
+//! let bsp = BspInterior::new();
 //! let map = bsp.generate(80, 50, &mut rng);
 //!
 //! assert_eq!(map.width, 80);

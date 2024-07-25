@@ -150,7 +150,7 @@ impl<'a> Grid<'a> {
                 return Some(neighbors[0]);
             } else {
                 let len = self.rng.choice(1..(neighbors.len() + 1)).unwrap() - 1;
-                return Some(neighbors[len as usize]);
+                return Some(neighbors[len]);
             }
         }
         None

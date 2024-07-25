@@ -22,7 +22,7 @@ impl MapGenerator {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspInterior::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
-        let corridors = NearestCorridors::default();
+        let corridors = NearestCorridors::new();
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }
@@ -31,7 +31,7 @@ impl MapGenerator {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
-        let corridors = NearestCorridors::default();
+        let corridors = NearestCorridors::new();
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }
@@ -65,7 +65,7 @@ impl MapGenerator {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = SimpleRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
-        let corridors = NearestCorridors::default();
+        let corridors = NearestCorridors::new();
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }

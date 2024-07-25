@@ -57,7 +57,7 @@ mod tests {
         let mut rooms = RoomsMap::new(10, 5);
         rooms.add_room(Rect::new(1, 1, 3, 3));
         rooms.add_room(Rect::new(6, 1, 3, 3));
-        let corridors = NearestCorridors::default();
+        let corridors = NearestCorridors::new();
         let map = corridors.generate(&rooms);
 
         let map_str = "
