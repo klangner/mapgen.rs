@@ -32,18 +32,18 @@ pub mod poi;
 pub mod rooms;
 
 pub(crate) mod path;
-pub(crate) mod random;
+// pub(crate) mod random;
 
-use rand::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub use cave::*;
+use fastrand::Rng;
 pub use tile_map::{CaveMap, Symmetry};
 
 /// Trait which should be implemented by map modifier.
 /// Modifier takes initiall map and apply changes to it.
 pub trait MapFilter {
-    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap;
+    fn modify_map(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap;
 }
 
 /// Used to chain MapBuilder and MapModifiers to create the final map.
@@ -73,12 +73,12 @@ impl MapBuilder {
         let system_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Can't access system time");
-        let mut rng = StdRng::seed_from_u64(system_time.as_millis() as u64);
+        let mut rng = Rng::with_seed(system_time.as_millis() as u64);
         self.build_with_rng(&mut rng)
     }
 
     /// Build map using provided random number generator
-    pub fn build_with_rng(&mut self, rng: &mut StdRng) -> CaveMap {
+    pub fn build_with_rng(&mut self, rng: &mut Rng) -> CaveMap {
         let mut map = CaveMap::new(self.width, self.height);
 
         // Build additional layers in turn

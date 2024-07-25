@@ -1,10 +1,10 @@
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::{CaveMap, MapFilter};
 //! use mapgen::cave::VoronoiHive;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let gen = VoronoiHive::new();
 //! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
@@ -13,9 +13,10 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use crate::MapFilter;
-use crate::{geometry::Vec2u, random::Rng};
-use rand::prelude::*;
+use crate::geometry::Vec2u;
 
 use super::CaveMap;
 
@@ -24,7 +25,7 @@ pub struct VoronoiHive {
 }
 
 impl MapFilter for VoronoiHive {
-    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn modify_map(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -34,7 +35,7 @@ impl VoronoiHive {
         Box::new(VoronoiHive { n_seeds: 64 })
     }
 
-    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn build(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         let seeds = self.generate_seeds(rng, map.width, map.height);
 
@@ -79,12 +80,12 @@ impl VoronoiHive {
     }
 
     /// Generate random seeds
-    fn generate_seeds(&self, rng: &mut StdRng, width: u32, height: u32) -> Vec<Vec2u> {
+    fn generate_seeds(&self, rng: &mut Rng, width: u32, height: u32) -> Vec<Vec2u> {
         let mut seeds: Vec<Vec2u> = Vec::new();
 
         while (seeds.len() as u32) < self.n_seeds {
-            let vx = rng.roll_dice(1, width - 1);
-            let vy = rng.roll_dice(1, height - 1);
+            let vx = rng.u32(1..width);
+            let vy = rng.u32(1..height);
             let candidate = Vec2u::new(vx, vy);
             if !seeds.contains(&candidate) {
                 seeds.push(candidate);

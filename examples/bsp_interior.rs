@@ -1,11 +1,11 @@
+use fastrand::Rng;
 use mapgen::{
     poi::{AreaStartingPosition, DistantExit, XStart, YStart},
     rooms::{BspInterior, NearestCorridors},
 };
-use rand::prelude::*;
 
 fn main() {
-    let mut rng = StdRng::seed_from_u64(907647352);
+    let mut rng = Rng::with_seed(907647352);
     let bsp = BspInterior::default();
     let rooms = bsp.generate(20, 10, &mut rng);
     let corridors = NearestCorridors::default();

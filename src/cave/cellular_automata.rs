@@ -8,11 +8,11 @@
 //!
 //! Example usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::{CaveMap, MapFilter};
 //! use mapgen::cave::CellularAutomata;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let gen = CellularAutomata::new();
 //! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
@@ -21,9 +21,10 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use crate::CaveMap;
 use crate::MapFilter;
-use rand::prelude::*;
 
 /// Map filter
 pub struct CellularAutomata {
@@ -31,7 +32,7 @@ pub struct CellularAutomata {
 }
 
 impl MapFilter for CellularAutomata {
-    fn modify_map(&self, _rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn modify_map(&self, _rng: &mut Rng, map: &CaveMap) -> CaveMap {
         self.build(map)
     }
 }

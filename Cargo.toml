@@ -11,7 +11,7 @@ documentation = "https://docs.rs/mapgen"
 edition = "2021"
 
 [dependencies]
-rand = "0.8"
+fastrand = "2.1"
 
 [workspace]
 members = ["demo"]

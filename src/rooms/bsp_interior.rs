@@ -5,10 +5,10 @@
 //!
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::rooms::BspInterior;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let bsp = BspInterior::default();
 //! let map = bsp.generate(80, 50, &mut rng);
 //!
@@ -17,9 +17,9 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use crate::geometry::{Rect, Vec2u};
-use crate::random::Rng;
-use rand::prelude::*;
 
 use super::RoomsMap;
 
@@ -32,7 +32,7 @@ impl BspInterior {
         Self { min_room_size }
     }
 
-    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut Rng) -> RoomsMap {
         // Create room with dimensions
         let mut map = RoomsMap::new(map_width, max_height);
         let mut rects = vec![Rect::new(1, 1, map.width - 2, map.height - 2)];
@@ -50,17 +50,17 @@ impl BspInterior {
         for i in 0..map.rooms.len() - 1 {
             let room = map.rooms[i];
             let next_room = map.rooms[i + 1];
-            let start_x = rng.random_range(room.x1, room.x2);
-            let start_y = rng.random_range(room.y1, room.y2);
-            let end_x = rng.random_range(next_room.x1, next_room.x2);
-            let end_y = rng.random_range(next_room.y1, next_room.y2);
+            let start_x = rng.choice(room.x1..room.x2).unwrap();
+            let start_y = rng.choice(room.y1..room.y2).unwrap();
+            let end_x = rng.choice(next_room.x1..next_room.x2).unwrap();
+            let end_y = rng.choice(next_room.y1..next_room.y2).unwrap();
             map.add_corridor(Vec2u::new(start_x, start_y), Vec2u::new(end_x, end_y));
         }
 
         map
     }
 
-    fn add_subrects(&self, rect: Rect, rng: &mut StdRng, rects: &mut Vec<Rect>) {
+    fn add_subrects(&self, rect: Rect, rng: &mut Rng, rects: &mut Vec<Rect>) {
         // Remove the last rect from the list
         if !rects.is_empty() {
             rects.remove(rects.len() - 1);
@@ -72,7 +72,7 @@ impl BspInterior {
         let half_width = width / 2;
         let half_height = height / 2;
 
-        let split = rng.roll_dice(1, 4);
+        let split = rng.choice(1..5).unwrap();
 
         if split <= 2 {
             // Horizontal split
@@ -117,7 +117,7 @@ mod tests {
 
     #[test]
     fn no_corridors_on_borders() {
-        let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = Rng::with_seed(907647352);
         let bsp = BspInterior::default();
         let map = bsp.generate(80, 50, &mut rng);
         for i in 0..80 {

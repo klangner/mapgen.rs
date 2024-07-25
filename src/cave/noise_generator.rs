@@ -3,11 +3,11 @@
 //!
 //! Example usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::{CaveMap, MapFilter};
 //! use mapgen::cave::NoiseGenerator;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let gen = NoiseGenerator::uniform();
 //! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
@@ -16,9 +16,10 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use crate::CaveMap;
 use crate::MapFilter;
-use rand::prelude::*;
 
 /// Map noise generator
 pub struct NoiseGenerator {
@@ -26,7 +27,7 @@ pub struct NoiseGenerator {
 }
 
 impl MapFilter for NoiseGenerator {
-    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn modify_map(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         self.build(map, rng)
     }
 }
@@ -43,12 +44,12 @@ impl NoiseGenerator {
     }
 
     /// Generate map
-    fn build(&self, map: &CaveMap, rng: &mut StdRng) -> CaveMap {
+    fn build(&self, map: &CaveMap, rng: &mut Rng) -> CaveMap {
         let mut new_map = map.clone();
         let p = (self.prob * 100.0) as u32;
         for y in 1..new_map.height - 1 {
             for x in 1..new_map.width - 1 {
-                let roll = rng.next_u32() % 100;
+                let roll = rng.u32(0..u32::MAX) % 100;
                 if roll > p {
                     new_map.set_walkable(x, y, true)
                 } else {

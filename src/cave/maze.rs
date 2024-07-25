@@ -1,10 +1,10 @@
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::{CaveMap, MapFilter};
 //! use mapgen::cave::MazeBuilder;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let gen = MazeBuilder::new();
 //! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
@@ -13,16 +13,16 @@
 //! ```
 //!
 
-use crate::random::Rng;
+use fastrand::Rng;
+
 use crate::MapFilter;
-use rand::prelude::*;
 
 use super::CaveMap;
 
 pub struct MazeBuilder {}
 
 impl MapFilter for MazeBuilder {
-    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn modify_map(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -33,7 +33,7 @@ impl MazeBuilder {
     }
 
     #[allow(clippy::map_entry)]
-    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn build(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         let mut maze = Grid::new((map.width as i32 / 2) - 2, (map.height as i32 / 2) - 2, rng);
         maze.generate_maze(&mut new_map);
@@ -92,11 +92,11 @@ struct Grid<'a> {
     cells: Vec<Cell>,
     backtrace: Vec<usize>,
     current: usize,
-    rng: &'a mut StdRng,
+    rng: &'a mut Rng,
 }
 
 impl<'a> Grid<'a> {
-    fn new(width: i32, height: i32, rng: &mut StdRng) -> Grid {
+    fn new(width: i32, height: i32, rng: &mut Rng) -> Grid {
         let mut grid = Grid {
             width,
             height,
@@ -151,7 +151,7 @@ impl<'a> Grid<'a> {
             if neighbors.len() == 1 {
                 return Some(neighbors[0]);
             } else {
-                let len = self.rng.roll_dice(1, neighbors.len() as u32) - 1;
+                let len = self.rng.choice(1..(neighbors.len()+1)).unwrap() - 1;
                 return Some(neighbors[len as usize]);
             }
         }

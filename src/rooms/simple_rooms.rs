@@ -5,10 +5,10 @@
 //!
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::rooms::SimpleRooms;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let simple_rooms = SimpleRooms::default();
 //! let map = simple_rooms.generate(80, 50, &mut rng);
 //!
@@ -17,10 +17,10 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use super::RoomsMap;
 use crate::geometry::Rect;
-use crate::random::Rng;
-use rand::prelude::*;
 
 pub struct SimpleRooms {
     max_rooms: u32,
@@ -37,15 +37,15 @@ impl SimpleRooms {
         }
     }
 
-    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut Rng) -> RoomsMap {
         // Create room with dimensions
         let mut map = RoomsMap::new(map_width, max_height);
 
         for _ in 0..self.max_rooms {
-            let w = rng.random_range(self.min_room_size, self.max_room_size);
-            let h = rng.random_range(self.min_room_size, self.max_room_size);
-            let x = rng.random_range(1, map.width - w);
-            let y = rng.random_range(1, map.height - h);
+            let w = rng.choice(self.min_room_size..self.max_room_size).unwrap();
+            let h = rng.choice(self.min_room_size..self.max_room_size).unwrap();
+            let x = rng.choice(1..map.width - w).unwrap();
+            let y = rng.choice(1..map.height - h).unwrap();
             let new_room = Rect::new(x, y, w, h);
             let intersects = map.rooms.iter().any(|r| new_room.intersect(r));
             if !intersects {

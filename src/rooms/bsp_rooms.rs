@@ -5,10 +5,10 @@
 //!
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
 //! use mapgen::rooms::BspRooms;
+//! use fastrand::Rng;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let bsp = BspRooms::default();
 //! let map = bsp.generate(80, 50, &mut rng);
 //!
@@ -17,10 +17,8 @@
 //! ```
 //!
 
+use fastrand::Rng;
 use crate::geometry::Rect;
-use crate::random::Rng;
-use rand::prelude::*;
-
 use super::RoomsMap;
 
 pub struct BspRooms {
@@ -32,7 +30,7 @@ impl BspRooms {
         Self { max_split }
     }
 
-    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut StdRng) -> RoomsMap {
+    pub fn generate(&self, map_width: u32, max_height: u32, rng: &mut Rng) -> RoomsMap {
         let mut map = RoomsMap::new(map_width, max_height);
 
         // Start with a single map-sized rectangle
@@ -85,24 +83,24 @@ impl BspRooms {
         rects
     }
 
-    fn get_random_rect(&self, rng: &mut StdRng, rects: &[Rect]) -> Rect {
+    fn get_random_rect(&self, rng: &mut Rng, rects: &[Rect]) -> Rect {
         if rects.len() == 1 {
             return rects[0];
         }
-        let idx = rng.random_range(0, rects.len() as u32) as usize;
+        let idx = rng.choice(0..rects.len()).unwrap();
         rects[idx]
     }
 
-    fn get_random_sub_rect(&self, rect: Rect, rng: &mut StdRng) -> Rect {
+    fn get_random_sub_rect(&self, rect: Rect, rng: &mut Rng) -> Rect {
         let mut result = rect;
         let rect_width = rect.width();
         let rect_height = rect.height();
 
-        let w = u32::max(3, rng.random_range(1, u32::min(rect_width, 20))) + 1;
-        let h = u32::max(3, rng.random_range(1, u32::min(rect_height, 20))) + 1;
+        let w = u32::max(3, rng.choice(1..u32::min(rect_width, 20)).unwrap_or(1)) + 1;
+        let h = u32::max(3, rng.choice(1..u32::min(rect_height, 20)).unwrap_or(1)) + 1;
 
-        result.x1 += rng.random_range(0, 6);
-        result.y1 += rng.random_range(0, 6);
+        result.x1 += rng.u32(0..6);
+        result.y1 += rng.u32(0..6);
         result.x2 = result.x1 + w;
         result.y2 = result.y1 + h;
 
@@ -163,7 +161,7 @@ mod tests {
 
     #[test]
     fn no_corridors_on_borders() {
-        let mut rng = StdRng::seed_from_u64(907647352);
+        let mut rng = Rng::with_seed(907647352);
         let bsp = BspRooms::default();
         let map = bsp.generate(80, 50, &mut rng);
         for i in 0..80 {

@@ -7,4 +7,4 @@ edition = "2021"
 [dependencies]
 macroquad = "0.4"
 mapgen = {path = ".." }
-rand = "0.8"
+fastrand = "2.1"

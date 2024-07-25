@@ -1,10 +1,10 @@
 //! Example generator usage:
 //! ```
-//! use rand::prelude::*;
+//! use fastrand::Rng;
 //! use mapgen::{CaveMap, MapFilter};
 //! use mapgen::cave::DrunkardsWalk;
 //!
-//! let mut rng = StdRng::seed_from_u64(100);
+//! let mut rng = Rng::with_seed(100);
 //! let gen = DrunkardsWalk::open_area();
 //! let map = gen.modify_map(&mut rng, &CaveMap::new(80, 50));
 //!
@@ -13,9 +13,10 @@
 //! ```
 //!
 
+use fastrand::Rng;
+
 use crate::MapFilter;
-use crate::{geometry::Vec2u, random::Rng};
-use rand::prelude::*;
+use crate::geometry::Vec2u;
 
 use super::tile_map::Symmetry;
 use super::CaveMap;
@@ -35,7 +36,7 @@ pub struct DrunkardsWalk {
 }
 
 impl MapFilter for DrunkardsWalk {
-    fn modify_map(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn modify_map(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         self.build(rng, map)
     }
 }
@@ -77,7 +78,7 @@ impl DrunkardsWalk {
         Self::new(DrunkSpawnMode::Random, 400, 0.4, 1, Symmetry::Both)
     }
 
-    fn build(&self, rng: &mut StdRng, map: &CaveMap) -> CaveMap {
+    fn build(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         // Set a central starting point
         let starting_position = Vec2u::new(new_map.width / 2, new_map.height / 2);
@@ -100,8 +101,8 @@ impl DrunkardsWalk {
                         drunk_x = starting_position.x;
                         drunk_y = starting_position.y;
                     } else {
-                        drunk_x = rng.roll_dice(1, new_map.width - 3) + 1;
-                        drunk_y = rng.roll_dice(1, new_map.height - 3) + 1;
+                        drunk_x = rng.choice(1..(new_map.width+1) - 3).unwrap() + 1;
+                        drunk_y = rng.choice(1..(new_map.height+1) - 3).unwrap() + 1;
                     }
                 }
             }
@@ -111,7 +112,7 @@ impl DrunkardsWalk {
                 new_map.set_walkable(drunk_x, drunk_y, false);
                 new_map.paint(self.symmetry, self.brush_size, drunk_x, drunk_y);
 
-                let stagger_direction = rng.roll_dice(1, 4);
+                let stagger_direction = rng.choice(1..5).unwrap();
                 match stagger_direction {
                     1 => {
                         if drunk_x > 1 {

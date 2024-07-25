@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use fastrand::Rng;
 use macroquad::time::get_time;
 use super::settings::*;
 use macroquad::input::{is_key_pressed, KeyCode};
@@ -15,7 +15,7 @@ impl MapGenerator {
     }
     
     pub fn bsp_interior() -> WalkableLayer {
-        let mut rng = Self::rng();
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspInterior::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -24,7 +24,7 @@ impl MapGenerator {
     }
     
     pub fn bsp_room() -> WalkableLayer {
-        let mut rng = Self::rng();
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -55,7 +55,7 @@ impl MapGenerator {
     }
 
     pub fn simple_rooms() -> WalkableLayer {
-        let mut rng = Self::rng();
+        let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = SimpleRooms::default();
         let rooms = bsp.generate(MAP_WIDTH, MAP_HEIGHT, &mut rng);
         let corridors = NearestCorridors::default();
@@ -70,11 +70,6 @@ impl MapGenerator {
             .walkable_layer
     }
     
-    fn rng() -> StdRng {
-        StdRng::seed_from_u64((get_time() * 1000.) as u64)
-    }
-
-
     pub fn process_actions(&mut self) {
         if is_key_pressed(KeyCode::Key1) {
             self.tileset = Self::bsp_interior();
