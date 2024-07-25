@@ -79,14 +79,13 @@ impl WalkableLayer {
         }
         map
     }
-    
+
     pub fn idx_point(&self, idx: usize) -> Vec2u {
         Vec2u {
             x: idx as u32 % self.width,
             y: idx as u32 / self.width,
         }
     }
-
 
     /// Get available exists from the given tile
     pub fn get_available_exits(&self, x: u32, y: u32) -> Vec<(u32, u32, f32)> {

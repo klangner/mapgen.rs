@@ -15,8 +15,8 @@
 
 use fastrand::Rng;
 
-use crate::MapFilter;
 use crate::geometry::Vec2u;
+use crate::MapFilter;
 
 use super::CaveMap;
 

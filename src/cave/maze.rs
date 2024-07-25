@@ -13,9 +13,9 @@
 //! ```
 //!
 
-use fastrand::Rng;
-use crate::MapFilter;
 use super::CaveMap;
+use crate::MapFilter;
+use fastrand::Rng;
 
 pub struct MazeBuilder {}
 
@@ -149,7 +149,7 @@ impl<'a> Grid<'a> {
             if neighbors.len() == 1 {
                 return Some(neighbors[0]);
             } else {
-                let len = self.rng.choice(1..(neighbors.len()+1)).unwrap() - 1;
+                let len = self.rng.choice(1..(neighbors.len() + 1)).unwrap() - 1;
                 return Some(neighbors[len as usize]);
             }
         }

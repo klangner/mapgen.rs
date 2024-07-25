@@ -1,15 +1,14 @@
 // Draw map on the screen
 
-mod input;
 mod generator;
+mod input;
 mod settings;
 
 use generator::*;
 use input::{Action, Input};
-use settings::*;
 use macroquad::prelude::*;
 use mapgen::layer::WalkableLayer;
-
+use settings::*;
 
 #[derive(Debug)]
 struct MapView {
@@ -25,21 +24,24 @@ impl MapView {
         let height = (MAP_HEIGHT * TILE_SIZE) as f32;
         let mut camera = Camera2D::from_display_rect(Rect::new(0., 0., width, height));
         camera.zoom = Vec2::new(2.0 / width, 2.0 / height);
-        camera.target = Vec2::new((MAP_WIDTH * TILE_SIZE) as f32 / 2., (MAP_HEIGHT * TILE_SIZE) as f32 / 2.);
+        camera.target = Vec2::new(
+            (MAP_WIDTH * TILE_SIZE) as f32 / 2.,
+            (MAP_HEIGHT * TILE_SIZE) as f32 / 2.,
+        );
 
         Self {
             camera,
-            move_speed: 400., 
+            move_speed: 400.,
             texture,
         }
     }
 
     pub fn zoom_in(&mut self, _dt: f32) {
-        self.camera.zoom = Vec2::new(self.camera.zoom.x * 1.05,  self.camera.zoom.y * 1.05);
+        self.camera.zoom = Vec2::new(self.camera.zoom.x * 1.05, self.camera.zoom.y * 1.05);
     }
 
     pub fn zoom_out(&mut self, _dt: f32) {
-        self.camera.zoom = Vec2::new(self.camera.zoom.x * 0.95,  self.camera.zoom.y * 0.95);
+        self.camera.zoom = Vec2::new(self.camera.zoom.x * 0.95, self.camera.zoom.y * 0.95);
     }
 
     pub fn move_right(&mut self, dt: f32) {
@@ -64,22 +66,28 @@ impl MapView {
         clear_background(LIGHTGRAY);
         for x in 0..map.width {
             for y in 0..map.height {
-                let (frame_x, frame_y) = if map.is_walkable(x, y) { (0,11) } else { (0,1) };
+                let (frame_x, frame_y) = if map.is_walkable(x, y) {
+                    (0, 11)
+                } else {
+                    (0, 1)
+                };
                 let source = Rect::new(
                     (frame_x * TILE_SIZE) as f32,
-                    (frame_y * TILE_SIZE) as f32, 
-                    TILE_SIZE as f32, 
-                    TILE_SIZE as f32);
+                    (frame_y * TILE_SIZE) as f32,
+                    TILE_SIZE as f32,
+                    TILE_SIZE as f32,
+                );
                 let params = DrawTextureParams {
                     source: Some(source),
                     ..Default::default()
                 };
                 draw_texture_ex(
-                    &self.texture, 
-                    (x * TILE_SIZE) as f32, 
-                    (y * TILE_SIZE) as f32, 
-                    WHITE, 
-                    params);
+                    &self.texture,
+                    (x * TILE_SIZE) as f32,
+                    (y * TILE_SIZE) as f32,
+                    WHITE,
+                    params,
+                );
             }
         }
     }
@@ -131,11 +139,11 @@ async fn main() {
             map_view.move_down(dt);
         }
 
-        // // Update world 
+        // // Update world
         map.process_actions();
         // // Draw world
         map_view.draw(&map.tileset);
-        
+
         next_frame().await
     }
 }

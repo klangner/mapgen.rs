@@ -17,9 +17,9 @@
 //! ```
 //!
 
-use fastrand::Rng;
-use crate::geometry::Rect;
 use super::RoomsMap;
+use crate::geometry::Rect;
+use fastrand::Rng;
 
 pub struct BspRooms {
     max_split: u32,

@@ -15,8 +15,8 @@
 
 use fastrand::Rng;
 
-use crate::MapFilter;
 use crate::geometry::Vec2u;
+use crate::MapFilter;
 
 use super::tile_map::Symmetry;
 use super::CaveMap;
@@ -101,8 +101,8 @@ impl DrunkardsWalk {
                         drunk_x = starting_position.x;
                         drunk_y = starting_position.y;
                     } else {
-                        drunk_x = rng.choice(1..(new_map.width+1) - 3).unwrap() + 1;
-                        drunk_y = rng.choice(1..(new_map.height+1) - 3).unwrap() + 1;
+                        drunk_x = rng.choice(1..(new_map.width + 1) - 3).unwrap() + 1;
+                        drunk_y = rng.choice(1..(new_map.height + 1) - 3).unwrap() + 1;
                     }
                 }
             }

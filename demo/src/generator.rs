@@ -1,9 +1,11 @@
 use fastrand::Rng;
 // use macroquad::time::get_time;
 use super::settings::*;
-use macroquad::{input::{is_key_pressed, KeyCode}, time::get_time};
-use mapgen::{layer::WalkableLayer, rooms::*, cave::*, MapBuilder, MazeBuilder};
-
+use macroquad::{
+    input::{is_key_pressed, KeyCode},
+    time::get_time,
+};
+use mapgen::{cave::*, layer::WalkableLayer, rooms::*, MapBuilder, MazeBuilder};
 
 pub struct MapGenerator {
     pub tileset: WalkableLayer,
@@ -11,9 +13,11 @@ pub struct MapGenerator {
 
 impl MapGenerator {
     pub fn new() -> Self {
-        Self { tileset: Self::maze() }
+        Self {
+            tileset: Self::maze(),
+        }
     }
-    
+
     pub fn bsp_interior() -> WalkableLayer {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspInterior::default();
@@ -22,7 +26,7 @@ impl MapGenerator {
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }
-    
+
     pub fn bsp_room() -> WalkableLayer {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         let bsp = BspRooms::default();
@@ -31,7 +35,7 @@ impl MapGenerator {
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }
-    
+
     pub fn maze() -> WalkableLayer {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
@@ -39,7 +43,7 @@ impl MapGenerator {
             .build_with_rng(&mut rng)
             .walkable_layer
     }
-    
+
     pub fn cellular_automata() -> WalkableLayer {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
@@ -65,7 +69,7 @@ impl MapGenerator {
         let map = corridors.generate(&rooms);
         map.walkable_layer
     }
-    
+
     pub fn voronoi() -> WalkableLayer {
         let mut rng = Rng::with_seed((get_time() * 1000.) as u64);
         MapBuilder::new(MAP_WIDTH, MAP_HEIGHT)
@@ -73,7 +77,7 @@ impl MapGenerator {
             .build_with_rng(&mut rng)
             .walkable_layer
     }
-    
+
     pub fn process_actions(&mut self) {
         if is_key_pressed(KeyCode::Key1) {
             self.tileset = Self::bsp_interior();

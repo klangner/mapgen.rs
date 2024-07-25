@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use macroquad::input::{is_key_down, KeyCode};
 
-
 #[derive(Eq, Hash, PartialEq)]
 pub enum Action {
     Quit,
@@ -28,10 +27,12 @@ impl Input {
             (Action::Down, vec![KeyCode::S, KeyCode::Down]),
             (Action::ZoomIn, vec![KeyCode::RightBracket]),
             (Action::ZoomOut, vec![KeyCode::LeftBracket]),
-        ].into_iter().collect();
+        ]
+        .into_iter()
+        .collect();
 
         Input { actions }
-    }    
+    }
 
     // Check if action was executed
     pub fn is_action_pressed(&self, action: Action) -> bool {
@@ -40,6 +41,5 @@ impl Input {
         } else {
             false
         }
-
     }
 }
