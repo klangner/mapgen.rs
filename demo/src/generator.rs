@@ -1,8 +1,7 @@
-use std::time::{SystemTime, UNIX_EPOCH};
-
 use rand::prelude::*;
+use macroquad::time::get_time;
 use super::settings::*;
-use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
+use macroquad::input::{is_key_pressed, KeyCode};
 use mapgen::{layer::WalkableLayer, rooms::*, cave::*, MapBuilder, MazeBuilder};
 
 
@@ -72,10 +71,7 @@ impl MapGenerator {
     }
     
     fn rng() -> StdRng {
-        let system_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Can't access system time");
-        StdRng::seed_from_u64(system_time.as_millis() as u64)
+        StdRng::seed_from_u64((get_time() * 1000.) as u64)
     }
 
 
