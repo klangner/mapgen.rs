@@ -3,7 +3,7 @@
 
 use std::fmt;
 
-use crate::geometry::Vec2u;
+use glam::UVec2;
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct WalkableLayer {
@@ -80,8 +80,8 @@ impl WalkableLayer {
         map
     }
 
-    pub fn idx_point(&self, idx: usize) -> Vec2u {
-        Vec2u {
+    pub fn idx_point(&self, idx: usize) -> UVec2 {
+        UVec2 {
             x: idx as u32 % self.width,
             y: idx as u32 / self.width,
         }

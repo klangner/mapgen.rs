@@ -27,7 +27,8 @@
 
 use std::collections::VecDeque;
 
-use crate::geometry::Vec2u;
+use glam::UVec2;
+
 use crate::layer::WalkableLayer;
 
 /// Representation of a Dijkstra flow map.
@@ -43,7 +44,7 @@ pub struct DijkstraMap {
 
 impl DijkstraMap {
     //! Construct a new Dijkstra map, ready to run.
-    pub fn new(map: &WalkableLayer, starting_point: &Vec2u) -> DijkstraMap {
+    pub fn new(map: &WalkableLayer, starting_point: &UVec2) -> DijkstraMap {
         let len = (map.width * map.height) as usize;
         let tiles = vec![f32::MAX; len];
         let mut d = DijkstraMap {
@@ -61,7 +62,7 @@ impl DijkstraMap {
     /// depth is further than the current depth.
     /// WARNING: Will give incorrect results when used with non-uniform exit costs. Much slower
     /// algorithm required to support that.
-    fn build(&mut self, map: &WalkableLayer, starting_point: &Vec2u) {
+    fn build(&mut self, map: &WalkableLayer, starting_point: &UVec2) {
         let mapsize = self.size_x * self.size_y;
         let mut open_list: VecDeque<((u32, u32), f32)> = VecDeque::with_capacity(mapsize as usize);
 
@@ -98,7 +99,6 @@ impl DijkstraMap {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::geometry::Vec2u;
 
     #[test]
     fn test_culling() {
@@ -108,7 +108,7 @@ mod tests {
         ##########
         ";
         let map = WalkableLayer::from_string(map_str);
-        let dm = DijkstraMap::new(&map, &Vec2u::new(8, 1));
+        let dm = DijkstraMap::new(&map, &UVec2::new(8, 1));
 
         println!(
             "{:?}",
@@ -141,7 +141,7 @@ mod tests {
         ####
         ";
         let map = WalkableLayer::from_string(map_str);
-        let starting_point = Vec2u::new(2, 2);
+        let starting_point = UVec2::new(2, 2);
         let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [
             f32::MAX,
@@ -174,7 +174,7 @@ mod tests {
         ##########
         ";
         let map = WalkableLayer::from_string(map_str);
-        let starting_point = Vec2u::new(8, 2);
+        let starting_point = UVec2::new(8, 2);
         let dm = DijkstraMap::new(&map, &starting_point);
         let expected = [
             f32::MAX,

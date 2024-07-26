@@ -26,7 +26,7 @@ impl NearestCorridors {
             for (j, other_room) in map.rooms.iter().enumerate() {
                 if i != j && !connected.contains(&j) {
                     let other_center = other_room.center();
-                    let distance = room_center.distance_to(&other_center);
+                    let distance = (room_center.as_vec2() - other_center.as_vec2()).length();
                     room_distance.push((j, distance));
                 }
             }

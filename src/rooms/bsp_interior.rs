@@ -18,8 +18,9 @@
 //!
 
 use fastrand::Rng;
+use glam::UVec2;
 
-use crate::geometry::{Rect, Vec2u};
+use crate::geometry::Rect;
 
 use super::RoomsMap;
 
@@ -54,7 +55,7 @@ impl BspInterior {
             let start_y = rng.choice(room.y1..room.y2).unwrap();
             let end_x = rng.choice(next_room.x1..next_room.x2).unwrap();
             let end_y = rng.choice(next_room.y1..next_room.y2).unwrap();
-            map.add_corridor(Vec2u::new(start_x, start_y), Vec2u::new(end_x, end_y));
+            map.add_corridor(UVec2::new(start_x, start_y), UVec2::new(end_x, end_y));
         }
 
         map

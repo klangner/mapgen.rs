@@ -2,7 +2,8 @@
 //! It will add wall on every tile which is not accessible from the starting point.
 //!
 
-use crate::geometry::Vec2u;
+use glam::UVec2;
+
 use crate::layer::WalkableLayer;
 use crate::path::DijkstraMap;
 
@@ -14,7 +15,7 @@ impl CullUnreachable {
         Box::new(CullUnreachable {})
     }
 
-    pub fn remove_walkable_tiles(starting_point: &Vec2u, map: &WalkableLayer) -> WalkableLayer {
+    pub fn remove_walkable_tiles(starting_point: &UVec2, map: &WalkableLayer) -> WalkableLayer {
         let mut new_map = map.clone();
 
         let dijkstra_map = DijkstraMap::new(map, starting_point);
@@ -36,7 +37,9 @@ impl CullUnreachable {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
-    use crate::{geometry::Vec2u, layer::WalkableLayer, poi::CullUnreachable};
+    use glam::UVec2;
+
+    use crate::{layer::WalkableLayer, poi::CullUnreachable};
 
     #[test]
     fn test_culling() {
@@ -46,7 +49,7 @@ mod tests {
         ##########
         ";
         let map = WalkableLayer::from_string(map_str);
-        let starting_point = Vec2u::new(9, 1);
+        let starting_point = UVec2::new(9, 1);
         let expected_map_str = "
         ##########
         ####     #

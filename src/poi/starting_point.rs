@@ -2,17 +2,19 @@
 //!
 //! Example modifier usage:
 //! ```
-//! use mapgen::{geometry::Vec2u, layer::WalkableLayer, poi::*};
+//! use mapgen::{layer::WalkableLayer, poi::*};
+//! use glam::UVec2;
 //!
 //! let mut map = WalkableLayer::new(80, 50);
 //! map.set_walkable(10, 10, true);
 //! let point = AreaStartingPosition::find(XStart::LEFT, YStart::TOP, &map);
 //!
-//! assert_eq!(point, Vec2u::new(10, 10));
+//! assert_eq!(point, UVec2::new(10, 10));
 //! ```
 //!
 
-use crate::geometry::Vec2u;
+use glam::{UVec2, Vec2};
+
 use crate::layer::WalkableLayer;
 
 /// Initial x region position
@@ -34,7 +36,7 @@ pub struct AreaStartingPosition;
 
 impl AreaStartingPosition {
     /// Create new modifier with given region
-    pub fn find(x_start: XStart, y_start: YStart, map: &WalkableLayer) -> Vec2u {
+    pub fn find(x_start: XStart, y_start: YStart, map: &WalkableLayer) -> UVec2 {
         let seed_x = match x_start {
             XStart::LEFT => 1,
             XStart::CENTER => map.width / 2,
@@ -52,7 +54,8 @@ impl AreaStartingPosition {
             if w {
                 available_floors.push((
                     idx,
-                    map.idx_point(idx).distance_to(&Vec2u::new(seed_x, seed_y)),
+                    (map.idx_point(idx).as_vec2() - Vec2::new(seed_x as f32, seed_y as f32))
+                        .length(),
                 ));
             }
         }
@@ -71,7 +74,9 @@ impl AreaStartingPosition {
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
-    use crate::{geometry::Vec2u, layer::WalkableLayer, poi::*};
+    use glam::UVec2;
+
+    use crate::{layer::WalkableLayer, poi::*};
 
     #[test]
     fn test_exit() {
@@ -84,6 +89,6 @@ mod tests {
         let map = WalkableLayer::from_string(map_str);
         let starting_point = AreaStartingPosition::find(XStart::CENTER, YStart::TOP, &map);
 
-        assert_eq!(starting_point, Vec2u::new(6, 1));
+        assert_eq!(starting_point, UVec2::new(6, 1));
     }
 }

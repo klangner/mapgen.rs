@@ -14,8 +14,8 @@
 //!
 
 use fastrand::Rng;
+use glam::UVec2;
 
-use crate::geometry::Vec2u;
 use crate::MapFilter;
 
 use super::CaveMap;
@@ -43,7 +43,7 @@ impl VoronoiHive {
         let mut voronoi_membership: Vec<i32> = vec![0; (map.width * map.height) as usize];
         for (i, vid) in voronoi_membership.iter_mut().enumerate() {
             for (seed, pos) in seeds.iter().enumerate() {
-                let distance = pos.distance_to(&map.idx_point(i));
+                let distance = (pos.as_vec2() - map.idx_point(i).as_vec2()).length();
                 voronoi_distance[seed] = (seed, distance);
             }
 
@@ -80,13 +80,13 @@ impl VoronoiHive {
     }
 
     /// Generate random seeds
-    fn generate_seeds(&self, rng: &mut Rng, width: u32, height: u32) -> Vec<Vec2u> {
-        let mut seeds: Vec<Vec2u> = Vec::new();
+    fn generate_seeds(&self, rng: &mut Rng, width: u32, height: u32) -> Vec<UVec2> {
+        let mut seeds: Vec<UVec2> = Vec::new();
 
         while (seeds.len() as u32) < self.n_seeds {
             let vx = rng.u32(1..width);
             let vy = rng.u32(1..height);
-            let candidate = Vec2u::new(vx, vy);
+            let candidate = UVec2::new(vx, vy);
             if !seeds.contains(&candidate) {
                 seeds.push(candidate);
             }

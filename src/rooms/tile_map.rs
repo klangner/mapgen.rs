@@ -3,17 +3,16 @@
 
 use std::fmt;
 
-use crate::{
-    geometry::{Rect, Vec2u},
-    layer::WalkableLayer,
-};
+use glam::UVec2;
+
+use crate::{geometry::Rect, layer::WalkableLayer};
 
 #[derive(Default, Clone)]
 pub struct RoomsMap {
     pub width: u32,
     pub height: u32,
     pub rooms: Vec<Rect>,
-    pub corridors: Vec<Vec<Vec2u>>,
+    pub corridors: Vec<Vec<UVec2>>,
     pub walkable_layer: WalkableLayer,
 }
 
@@ -39,7 +38,7 @@ impl RoomsMap {
         }
     }
 
-    pub fn add_corridor(&mut self, from: Vec2u, to: Vec2u) {
+    pub fn add_corridor(&mut self, from: UVec2, to: UVec2) {
         let mut corridor = Vec::new();
         let mut x = from.x;
         let mut y = from.y;
@@ -55,7 +54,7 @@ impl RoomsMap {
                 y -= 1;
             }
 
-            corridor.push(Vec2u::new(x, y));
+            corridor.push(UVec2::new(x, y));
             self.walkable_layer.set_walkable(x, y, true);
         }
     }

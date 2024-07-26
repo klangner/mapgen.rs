@@ -7,10 +7,9 @@
 //! The MapBuilder builds from this data the Map structure which is more suites for it.
 //!
 
-use crate::{
-    geometry::{diff_abs, Vec2u},
-    layer::WalkableLayer,
-};
+use glam::UVec2;
+
+use crate::layer::WalkableLayer;
 use std::fmt;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -27,8 +26,8 @@ pub struct CaveMap {
     pub walkable_layer: WalkableLayer,
     pub width: u32,
     pub height: u32,
-    pub starting_point: Option<Vec2u>,
-    pub exit_point: Option<Vec2u>,
+    pub starting_point: Option<UVec2>,
+    pub exit_point: Option<UVec2>,
 }
 
 impl CaveMap {
@@ -75,8 +74,8 @@ impl CaveMap {
         self.walkable_layer.xy_idx(x, y)
     }
 
-    pub fn idx_point(&self, idx: usize) -> Vec2u {
-        Vec2u {
+    pub fn idx_point(&self, idx: usize) -> UVec2 {
+        UVec2 {
             x: idx as u32 % self.width,
             y: idx as u32 / self.width,
         }
@@ -158,6 +157,14 @@ impl fmt::Display for CaveMap {
     }
 }
 
+fn diff_abs(x: u32, y: u32) -> u32 {
+    if x >= y {
+        x - y
+    } else {
+        y - x
+    }
+}
+
 /// ------------------------------------------------------------------------------------------------
 /// Module unit tests
 /// ------------------------------------------------------------------------------------------------
@@ -206,7 +213,7 @@ mod tests {
 
         let idx = map.xy_idx(x, y);
 
-        let Vec2u { x: x2, y: y2 } = map.idx_point(idx);
+        let UVec2 { x: x2, y: y2 } = map.idx_point(idx);
 
         assert_eq!(x, x2);
         assert_eq!(y, y2);

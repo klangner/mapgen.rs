@@ -4,7 +4,9 @@
 //! and the provide generator score as an average.
 //!
 
-use crate::{geometry::Vec2u, layer::WalkableLayer, path::DijkstraMap};
+use glam::UVec2;
+
+use crate::{layer::WalkableLayer, path::DijkstraMap};
 
 /// This metric calculates the percentage of walkable cells (Floor).
 /// If this number is very low (like < 10%) then it means that the map
@@ -17,7 +19,7 @@ pub fn density(walkable_layer: &WalkableLayer) -> f32 {
 /// Calculate the length of the shortes path from the starting point
 /// to the exit.
 /// If this path is very short, then the map is probably degenerated.
-pub fn path_length(map: &WalkableLayer, starting_point: &Vec2u, exit_point: &Vec2u) -> f32 {
+pub fn path_length(map: &WalkableLayer, starting_point: &UVec2, exit_point: &UVec2) -> f32 {
     let dijkstra = DijkstraMap::new(map, starting_point);
     dijkstra.tiles[map.xy_idx(exit_point.x, exit_point.y)]
 }
@@ -27,8 +29,9 @@ pub fn path_length(map: &WalkableLayer, starting_point: &Vec2u, exit_point: &Vec
 /// ------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
+    use glam::UVec2;
+
     use super::*;
-    use crate::geometry::Vec2u;
 
     #[test]
     fn test_density_no_floor() {
@@ -58,8 +61,8 @@ mod tests {
             ##########
             ";
         let map = WalkableLayer::from_string(map_str);
-        let starting_point = Vec2u::new(1, 1);
-        let exit_point = Vec2u::new(8, 1);
+        let starting_point = UVec2::new(1, 1);
+        let exit_point = UVec2::new(8, 1);
 
         let score = path_length(&map, &starting_point, &exit_point);
         assert!(f32::abs(score - 7.9) <= 0.01);

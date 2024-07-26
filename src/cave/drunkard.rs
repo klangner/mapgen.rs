@@ -14,8 +14,8 @@
 //!
 
 use fastrand::Rng;
+use glam::UVec2;
 
-use crate::geometry::Vec2u;
 use crate::MapFilter;
 
 use super::tile_map::Symmetry;
@@ -81,7 +81,7 @@ impl DrunkardsWalk {
     fn build(&self, rng: &mut Rng, map: &CaveMap) -> CaveMap {
         let mut new_map = map.clone();
         // Set a central starting point
-        let starting_position = Vec2u::new(new_map.width / 2, new_map.height / 2);
+        let starting_position = UVec2::new(new_map.width / 2, new_map.height / 2);
         new_map.set_walkable(starting_position.x, starting_position.y, true);
 
         let total_tiles = new_map.width * new_map.height;
