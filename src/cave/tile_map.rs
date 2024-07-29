@@ -89,7 +89,7 @@ impl CaveMap {
                 if x == center_x {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_x = diff_abs(center_x, x);
+                    let dist_x = center_x.abs_diff(x);
                     self.apply_paint(brush_size, center_x + dist_x, y);
                     self.apply_paint(brush_size, center_x - dist_x, y);
                 }
@@ -99,7 +99,7 @@ impl CaveMap {
                 if y == center_y {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_y = diff_abs(center_y, y);
+                    let dist_y = center_y.abs_diff(y);
                     self.apply_paint(brush_size, x, center_y + dist_y);
                     self.apply_paint(brush_size, x, center_y - dist_y);
                 }
@@ -110,10 +110,10 @@ impl CaveMap {
                 if x == center_x && y == center_y {
                     self.apply_paint(brush_size, x, y);
                 } else {
-                    let dist_x = diff_abs(center_x, x);
+                    let dist_x = center_x.abs_diff(x);
                     self.apply_paint(brush_size, center_x + dist_x, y);
                     self.apply_paint(brush_size, center_x - dist_x, y);
-                    let dist_y = diff_abs(center_y, y);
+                    let dist_y = center_y.abs_diff(y);
                     self.apply_paint(brush_size, x, center_y + dist_y);
                     self.apply_paint(brush_size, x, center_y - dist_y);
                 }
@@ -154,14 +154,6 @@ impl fmt::Display for CaveMap {
             let _ = writeln!(f, "{}", line);
         }
         Ok(())
-    }
-}
-
-fn diff_abs(x: u32, y: u32) -> u32 {
-    if x >= y {
-        x - y
-    } else {
-        y - x
     }
 }
 
